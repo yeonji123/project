@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,  useRef,} from 'react';
 import { Text, View, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, } from 'react-native';
 import MapView, { Marker, Circle, Callout } from 'react-native-maps';
 // npm i react-native-maps
@@ -9,10 +9,17 @@ import { Camera, Constants } from 'expo-camera';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import 'expo-dev-client';
 
-
-import QRCode from 'react-native-qrcode-svg';
 //npm i -S react-native-qrcode-svg
+import QRCode from 'react-native-qrcode-svg';
 
+//npm install react-native-camera-kit --save
+import { CameraScreen } from 'react-native-camera-kit';
+
+//fire store
+//npx expo install firebase
+import { db } from './firebaseConfig';
+import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { async } from '@firebase/util';
 
 //날씨 api키
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
@@ -38,6 +45,44 @@ export default function App() {
     longitude: 127.0757584, //경도
   });
 
+  //QR코드 스캐너
+  const [scaned, setScaned] = useState(true);
+  const ref = React.useRef(null);
+
+
+  //firestor 연동
+  const [users, setUsers] = useState();
+  const readfromDB = async () => {
+    try {
+      const data = await getDocs(collection(db, "Station")) 
+      setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+      users?.map((row, idx) => {
+        console.log('row'+idx,row)
+      })
+      console.log('data', data.docs.map)
+    } catch (error) {
+      console.log('eerror', error.message)
+    }
+  }
+
+
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    // 종료후 재시작을 했을때 초기화
+    setScaned(true);
+  }, []);
+
+  const onBarCodeRead = (event) => {
+    if (!scaned) return;
+    setScaned(false);
+    Vibration.vibrate();
+    Alert.alert("QR Code", event.nativeEvent.codeStringValue, [
+      { text: "OK", onPress: () => setScaned(true) },
+    ]);
+  };
+
+
   useEffect(() => {
     (async () => {
 
@@ -61,6 +106,7 @@ export default function App() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude
       })
+      
     })();
   }, []);
 
@@ -78,9 +124,12 @@ export default function App() {
     return <Text>No access to camera</Text>;
   }
 
+  
 
   const pressButton = () => {
     setWeatherModal(true)
+
+    readfromDB()
     console.log('button 누름')
   }
 
@@ -93,8 +142,22 @@ export default function App() {
 
     console.log('QR 누름')
   }
-
-
+  
+  //이동하기
+  const onDetail = (lat, lon) => { //병원 리스트 중 하나 클릭하면 해당 위도, 경도 가져옴....
+    setmapRegion({ //현재 위치
+      latitude: lat,
+      longitude: lon,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.005
+    })
+    mapRef.current.animateToRegion({ //해당 위치로 지도 이동
+      latitude: lat,
+      longitude: lon,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.005
+    }, 3 * 1000);
+  }
 
   return (
     <View style={styles.container}>
@@ -125,32 +188,31 @@ export default function App() {
                   null
               }
             </View>
-
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.modalView}>
-              
+
               <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ padding: 10 }}>
                   <View style={{ backgroundColor: 'yellow', alignItems: 'center', justifyContent: 'center', height: 320, width: 280 }}>
                     <Image source={{ uri: image }} style={{ resizeMode: "cover", height: '100%', width: '100%', borderWidth: 2, borderColor: '#EBE3D7' }} />
                   </View>
+                  <Text>Ddddd</Text>
+                  {
+                    users?.map((row, idx) => {
+                      return (
+                        <>
+                          <Text>user - {idx}</Text>
+                          <Text>{row.id}</Text>
+                          <Text>{row.age}</Text>
+                          <Text>{row.createA}</Text>
+                        </>
+                      )
+                    })
+                  }
                 </View>
-                <View style={{ alignContent: 'center', justifyContent: 'center', flexDirection: 'row', marginBottom: 5 }}>
-                  <View style={{ justifyContent: 'center', flexShrink: 1, }}>
-                    <Text style={{ fontSize: 17 }}> 10Point적립 완료!</Text>
-                  </View>
-                </View>
-
-                <View>
-                  <QRCode
-                    size={200}
-                    value={data.address}
-                    logoSize={300}
-                    logoBackgroundColor='transparent'
-                  />
-                </View>
-
 
               </TouchableWithoutFeedback>
+
+
 
               <View style={{ flexDirection: 'row', padding: 10 }}>
                 <Pressable
@@ -191,6 +253,19 @@ export default function App() {
                 }}
                 // style={styles.fixedRatio}
                 type={type}
+
+
+                //QR 코드 스캐너
+                zoomMode
+                focusMode
+                // Barcode Scanner Props
+                scanBarcode
+                showFrame={true}
+                laserColor="rgba(0, 0, 0, 0)"
+                frameColor="rgba(0, 0, 0, 0)"
+                surfaceColor="rgba(0, 0, 0, 0)"
+                onReadCode={onBarCodeRead}
+
               />
               <Text>  </Text>
               <View style={{ width: 300, }}>
@@ -257,7 +332,7 @@ export default function App() {
             });
           }}
         >
-          <Marker
+          {/* <Marker
             coordinate={mapRegion}
             draggable={true} //마커 드래그 가능
             onDragStart={(e) => { console.log("Drag start", e.nativeEvent.coordinate); }} //드래그 한 위도, 경도 나타냄
@@ -271,7 +346,40 @@ export default function App() {
             <Callout>
               <Text>This is Callout</Text>
             </Callout>
-          </Marker>
+          </Marker> */}
+
+          {
+            users?.map((e, idx) => {
+              if (e.id == "Station") {
+                return (
+                  <>
+                    <Marker
+                      key={idx}
+                      coordinate={{
+                        latitude: parseFloat(e.s_position_x),
+                        longitude: parseFloat(e.s_position_y),
+                      }}
+                      onPress={() => {
+                        //onDetail(e.s_position_x, e.s_position_y)
+                        
+                      }}
+                    >
+                      <Callout>
+                        <Text>station 위치</Text>
+                        <Text>{e.s_count}</Text>
+                        <Text>{e.s_num}</Text>
+                        <Text>{e.s_state}</Text>
+                      </Callout>
+                    </Marker>
+                  </>
+                )
+              }
+            })
+          }
+
+
+
+
           <Circle center={mapRegion} radius={100} />
         </MapView>
 
