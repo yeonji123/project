@@ -2,47 +2,51 @@ import React, { useEffect, useState,  useRef,} from 'react';
 import { Text, View, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, } from 'react-native';
 
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from "@react-navigation/stack";
+// import { NavigationContainer } from '@react-navigation/native';
+// import { createStackNavigator } from "@react-navigation/stack";
 
 
 
-const Stack = createStackNavigator();
-const LoginStack = createStackNavigator();
+// QR 코드 scanner
+import QRScanner from './Pages/Scanner/QRScanner';
 
-const Auth = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{headerShown: false,tabBarStyle: {display: 'none'}}}
-      />
-      <Stack.Screen
-        name="Join"
-        component={Join}
-        options={{headerShown: false,tabBarStyle: {display: 'none'}}}
-      />
-      <Stack.Screen
-        name="ReissuancePw"
-        component={ReissuancePw}
-        options={{headerShown: false,tabBarStyle: {display: 'none'}}}
-      />
-      <Stack.Screen
-        name="Kakao"
-        component={Kakao}
-        options={{headerShown: false,tabBarStyle: {display: 'none'}}}
-      />
-    </Stack.Navigator>
-  );
-};
+// const Stack = createStackNavigator();
+// const LoginStack = createStackNavigator();
+
+// const Auth = () => {
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen
+//         name="Login"
+//         component={Login}
+//         options={{headerShown: false,tabBarStyle: {display: 'none'}}}
+//       />
+//       <Stack.Screen
+//         name="Join"
+//         component={Join}
+//         options={{headerShown: false,tabBarStyle: {display: 'none'}}}
+//       />
+//       <Stack.Screen
+//         name="ReissuancePw"
+//         component={ReissuancePw}
+//         options={{headerShown: false,tabBarStyle: {display: 'none'}}}
+//       />
+//       <Stack.Screen
+//         name="Kakao"
+//         component={Kakao}
+//         options={{headerShown: false,tabBarStyle: {display: 'none'}}}
+//       />
+//     </Stack.Navigator>
+//   );
+// };
 
 export default function App() {
 
 
   return (
     <View style={styles.container}>
-      <Button title='map'></Button>
+      <Button title='scanner'/>
+      <QRScanner/>
     </View>
 
   );
