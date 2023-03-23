@@ -1,60 +1,137 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Alert,
-  Button,
-  Dimensions,
-  StyleSheet,
-  Vibration,
-  View,
-} from "react-native";
-import { Camera, CameraType, CameraKitCameraScreen } from "react-native-camera-kit";
+import React, {useState} from 'react';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from 'react-native-responsive-screen';
+import { StyleSheet, View, Text, Image, SafeAreaView, TouchableOpacity, PermissionsAndroid, Platform, } from 'react-native';
 
-const QRCodeScanner = () => {
-  const [scaned, setScaned] = useState(true);
-  const ref = useRef(null);
+import {CameraKitCameraScreen} from 'react-native-camera-kit';
 
-  useEffect(() => {
-    // 종료후 재시작을 했을때 초기화
-    setScaned(true);
-  }, []);
+function QRScanner({navigation}) {
+  const [qrvalue, setQrvalue] = useState('');
+  const [opneScanner, setOpneScanner] = useState(false);
 
-  const onBarCodeRead = (event) => {
-    if (!scaned) return;
-    setScaned(false);
-    Vibration.vibrate();
-    Alert.alert("QR Code", event.nativeEvent.codeStringValue, [
-      { text: "OK", onPress: () => setScaned(true) },
-    ]);
+  const onBarcodeScan = (qrvalue) => {
+    // Called after te successful scanning of QRCode/Barcode
+    setQrvalue(qrvalue);
+
+    //여기서 api로 연결해야하나?
+    setOpneScanner(false);
+    alert(qrvalue);
+  };
+
+  const onOpneScanner = () => {
+    // To Start Scanning
+    if (Platform.OS === 'android') {
+      async function requestCameraPermission() {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: 'Camera Permission',
+              message: 'App needs permission for camera access',
+            },
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            // If CAMERA Permission is granted
+            setQrvalue('');
+            setOpneScanner(true);
+          } else {
+            alert('CAMERA permission denied');
+          }
+        } catch (err) {
+          alert('Camera permission err', err);
+          console.warn(err);
+        }
+      }
+      // Calling the camera permission function
+      requestCameraPermission();
+    } else {
+      setQrvalue('');
+      setOpneScanner(true);
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <Camera
-        style={styles.scanner}
-        ref={ref}
-        cameraType={CameraType.Back} // Front/Back(default)
-        zoomMode
-        focusMode
-        // Barcode Scanner Props
-        scanBarcode
-        showFrame={false}
-        laserColor="rgba(0, 0, 0, 0)"
-        frameColor="rgba(0, 0, 0, 0)"
-        surfaceColor="rgba(0, 0, 0, 0)"
-        onReadCode={onBarCodeRead}
-      />
-    </View>
+    <SafeAreaView style={{flex: 1}}>
+      {opneScanner ? (
+        <View style={{flex: 1}}>
+          <CameraKitCameraScreen
+            showFrame={false}
+            // Show/hide scan frame
+            scanBarcode={true}
+            // Can restrict for the QR Code only
+            laserColor={'blue'}
+            // Color can be of your choice
+            frameColor={'yellow'}
+            // If frame is visible then frame color
+            colorForScannerFrame={'black'}
+            // Scanner Frame color
+            onReadCode={(event) =>
+              onBarcodeScan(event.nativeEvent.codeStringValue)
+            }
+          />
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <View style={{flex: 1}} />
+          <View style={{flex: 2}}>
+            <View style={styles.logoArea}>
+              
+            </View>
+            <View style={styles.btnArea}>
+              <TouchableOpacity style={styles.btn} onPress={onOpneScanner}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 17,
+                  }}>
+                  바코드 스캔하기
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={{flex: 1}} />
+        </View>
+      )}
+    </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    flex: 1, //전체의 공간을 차지한다는 의미
+    flexDirection: 'column',
+    backgroundColor: 'white',
   },
-  scanner: { flex: 1 },
+  logoArea: {
+    height: hp(20),
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: 'red',
+    paddingBottom: wp(15),
+  },
+  btnArea: {
+    height: hp(8),
+    // backgroundColor: 'orange',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: hp(1.5),
+  },
+  btn: {
+    flex: 1,
+    width: wp(75),
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2B8E1B',
+  },
+  btnoutline: {
+    flex: 1,
+    width: wp(75),
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#2B8E1B',
+  },
 });
-
-
-export default QRCodeScanner;
+export default QRScanner;
