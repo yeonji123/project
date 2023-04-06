@@ -24,7 +24,7 @@ import { async } from '@firebase/util';
 //날씨 api키
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
 
-export default function App() {
+const Map = () => {
 
   const [weather, setWeather] = React.useState("");
   const [address, setAddress] = React.useState("");
@@ -419,6 +419,9 @@ export default function App() {
 
   );
 }
+
+export default Map;
+
 
 const styles = StyleSheet.create({
   container: {

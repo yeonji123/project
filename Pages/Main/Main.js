@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { Text, View, StyleSheet, Image, ActivityIndicator } from 'react-native';
-import {useEffect} from 'react'
+import { Text, View, StyleSheet, Image, ActivityIndicator, Button } from 'react-native';
+import { useEffect, useState } from 'react'
 
 //날씨 api키
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
@@ -11,10 +10,11 @@ const wait = (timeout) => {
 }
 
 
-export default function App() {
+const Main = () => {
     //날씨
-    const [weather, setWeather] = React.useState("");
-    const [address, setAddress] = React.useState("");
+    const [weather, setWeather] = useState("");
+    const [address, setAddress] = useState("");
+
 
     useEffect(() => {
         (async () => {
@@ -58,9 +58,13 @@ export default function App() {
                   <ActivityIndicator />
               }
             </View>
+            <Button title='button' ></Button>
+
         </View>
     );
 }
+
+export default Main;
 
 const styles = StyleSheet.create({
     container: {
