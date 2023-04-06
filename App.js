@@ -1,8 +1,14 @@
 import React, { useEffect, useState, useRef, } from 'react';
 import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, } from 'react-native';
 
-import { NavigationContainer, createStackNavigator } from '@react-navigation/stack';
+import Main from './Pages/Main/Main';
+import Main2 from './Pages/Main/Main2';
+import Join from './Pages/SignUp/Join';
+import Login from './Pages/SignUp/Login';
 
+
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 const Stack = createStackNavigator();
 // expo install react-native-safe-area-context
 // npm install @react-navigation/native
@@ -10,9 +16,14 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View>
-
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Main2" component={Main2} />
+        <Stack.Screen name="Main" component={Main} />
+        <Stack.Screen name="Join" component={Join} />
+        <Stack.Screen name="Login" component={Login} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

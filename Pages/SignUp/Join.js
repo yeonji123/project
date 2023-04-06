@@ -4,10 +4,12 @@ import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Im
 
 const Join = ({navigation}) => {
     return (
-        <View style={styles.container}>
-            
+        <>
+            <View>
+                <Text>Join</Text>
 
-        </View>
+            </View>
+        </>
     );
 };
 

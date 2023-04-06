@@ -42,23 +42,9 @@ const Main = ({navigation}) => {
 
     return (
         <View style={styles.container}>
-            <Text>hihihihihihihih</Text>
-            <View style={styles.weathertab}>
-              {
-                weather != "" ?
-                  <>
-                    <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                      <Text style={{ color: 'gray' }}>     {address[0].district} </Text>
-                      <Text style={{ fontSize: 20, fontStyle: 'bold', }}> {weather.main.temp.toFixed(0)}°C       </Text>
-                    </View>
-                    <Image style={{ width: '20%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png` }} />
-                    <Text>{weather.weather[0].main}</Text>
-                  </>
-                  :
-                  <ActivityIndicator />
-              }
-            </View>
-
+            <Button title='Join' onPress={()=>(navigation.navigate("Join"))}></Button>
+            <Button title='Login' onPress={()=>(navigation.navigate("Login"))}></Button>
+            <Button title='Main' onPress={()=>(navigation.navigate("Main"))}></Button>
         </View>
     );
 }

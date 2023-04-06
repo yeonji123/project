@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Im
 const Login = ({navigation}) => {
     return (
         <>
-            <View style={styles.container}>
+            <View>
                 <Text>UMStation</Text>
             </View>
         
