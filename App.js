@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState, useRef, } from 'react';
 import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, } from 'react-native';
 
@@ -16,14 +17,18 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Main2" component={Main2} />
-        <Stack.Screen name="Main" component={Main} />
-        <Stack.Screen name="Join" component={Join} />
-        <Stack.Screen name="Login" component={Login} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <StatusBar style="auto" />
+
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Main2" component={Main2} />
+          <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen name="Join" component={Join} />
+          <Stack.Screen name="Login" component={Login} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
 }
 
