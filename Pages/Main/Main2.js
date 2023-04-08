@@ -45,6 +45,8 @@ const Main = ({navigation}) => {
             <Button title='Join' onPress={()=>(navigation.navigate("Join"))}></Button>
             <Button title='Login' onPress={()=>(navigation.navigate("Login"))}></Button>
             <Button title='Main' onPress={()=>(navigation.navigate("Main"))}></Button>
+            <Button title='Map' onPress={()=>(navigation.navigate("Map"))}></Button>
+            <Button title='QRScanner' onPress={()=>(navigation.navigate("QRScanner"))}></Button>
         </View>
     );
 }

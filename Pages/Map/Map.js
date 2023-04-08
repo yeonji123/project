@@ -8,7 +8,7 @@ import { Camera, Constants } from 'expo-camera';
 //npm i react-native-gesture-handler
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import 'expo-dev-client';
-
+                                          
 //npm i -S react-native-qrcode-svg
 import QRCode from 'react-native-qrcode-svg';
 
@@ -17,9 +17,9 @@ import { CameraScreen } from 'react-native-camera-kit';
 
 //fire store
 //npx expo install firebase
-import { db } from './firebaseConfig';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
-import { async } from '@firebase/util';
+// import { db } from './firebaseConfig';
+// import { addDoc, collection, getDocs } from 'firebase/firestore';
+// import { async } from '@firebase/util';
 
 //날씨 api키
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
@@ -51,22 +51,22 @@ const Map = () => {
 
 
   //firestor 연동
-  const [users, setUsers] = useState();
-  const readfromDB = async () => {
-    try {
-      const data = await getDocs(collection(db, "Station")) 
-      setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-      users?.map((row, idx) => {
-        console.log('row'+idx,row)
-      })
-      console.log('data', data.docs.map)
-    } catch (error) {
-      console.log('eerror', error.message)
-    }
-  }
+  // const [users, setUsers] = useState();
+  // const readfromDB = async () => {
+  //   try {
+  //     const data = await getDocs(collection(db, "Station")) 
+  //     setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+  //     users?.map((row, idx) => {
+  //       console.log('row'+idx,row)
+  //     })
+  //     console.log('data', data.docs.map)
+  //   } catch (error) {
+  //     console.log('eerror', error.message)
+  //   }
+  // }
 
-
-  const mapRef = useRef(null);
+  //에니메이션으로 이동
+  const mapRef = React.useRef(null);
 
   useEffect(() => {
     // 종료후 재시작을 했을때 초기화
@@ -196,7 +196,7 @@ const Map = () => {
                     <Image source={{ uri: image }} style={{ resizeMode: "cover", height: '100%', width: '100%', borderWidth: 2, borderColor: '#EBE3D7' }} />
                   </View>
                   <Text>Ddddd</Text>
-                  {
+                  {/* {
                     users?.map((row, idx) => {
                       return (
                         <>
@@ -207,7 +207,7 @@ const Map = () => {
                         </>
                       )
                     })
-                  }
+                  } */}
                 </View>
 
               </TouchableWithoutFeedback>
@@ -317,38 +317,35 @@ const Map = () => {
           initialRegion={{
             latitude: 36.7987869,
             longitude: 127.0757584,
-            latitudeDelta: 0.0005,
-            longitudeDelta: 0.0005,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
           }}
-
+          ref={mapRef}
           //사용자 위치에 맞게 마커가 표시된다.
           showsUserLocation={true}
           // userLocationUpdateInterval = 
           onUserLocationChange={(e) => {
-
             setmapRegion({
               latitude: e.nativeEvent.coordinate.latitude,
               longitude: e.nativeEvent.coordinate.longitude
             });
           }}
+          
         >
-          {/* <Marker
+          <Marker
             coordinate={mapRegion}
-            draggable={true} //마커 드래그 가능
-            onDragStart={(e) => { console.log("Drag start", e.nativeEvent.coordinate); }} //드래그 한 위도, 경도 나타냄
-            onDragEnd={(e) => {
-              setmapRegion({
-                latitude: e.nativeEvent.coordinate.latitude,
-                longitude: e.nativeEvent.coordinate.longitude
-              });
-            }} //드래그 한 곳으로 마커 이동
+            onPress={() => {
+              console.log(mapRegion)
+              onDetail(mapRegion.latitude, mapRegion.longitude)
+              
+            }}
           >
             <Callout>
               <Text>This is Callout</Text>
             </Callout>
-          </Marker> */}
+          </Marker>
 
-          {
+          {/* {
             users?.map((e, idx) => {
               if (e.id == "Station") {
                 return (
@@ -375,7 +372,7 @@ const Map = () => {
                 )
               }
             })
-          }
+          } */}
 
 
 
@@ -421,7 +418,6 @@ const Map = () => {
 }
 
 export default Map;
-
 
 const styles = StyleSheet.create({
   container: {
