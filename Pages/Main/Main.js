@@ -21,7 +21,7 @@ const wait = (timeout) => {
 }
 
 
-const Main = ({navigation}) => {
+const Main = () => {
     //날씨
     const [weather, setWeather] = useState("");
     const [address, setAddress] = useState("");
@@ -45,7 +45,6 @@ const Main = ({navigation}) => {
             const res = await response.json()
             console.log(res)
             setWeather(res)
-            await info()
         })();
     }, [])
 
@@ -53,24 +52,26 @@ const Main = ({navigation}) => {
 
     return (
         <View style={styles.container}>
+            
 
-            {/* 어플리케이션 설명 Touchable */}
+           
             <View style={styles.explainView}>
                 <TouchableOpacity
                     style={styles.explainUMS}
-                    onPress={() => consle.log("Dddd")}
+                    onPress={() => console.log("Dddd")}
                 >
-                    <View style={{ flexDirection: 'row' }}>
-                        <View style={{ padding: 10, alignItems: 'center', backgroundColor:'blue' }}>
-                            <Text style={styles.explainText}>UMStation 설명</Text>
+                    <View style={{ flexDirection: 'row', width:'100%' }}>
+                        <View style={{ padding: 10, alignItems: 'center', width:'88%'}}>
+                            <Text style={styles.explainText}>          UMStation 설명</Text>
                         </View>
                         <View style={styles.arrowicon}>
-                            <Image style={{ width: '20%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png` }} />
-
+                           
                         </View>
                     </View>
                 </TouchableOpacity>
+
             </View>
+                <Image style={{ width: '100%', }} source={require('../../assets/arrow_icon.png')} />
 
 
             <Text>hihihihihihihih</Text>
@@ -82,7 +83,7 @@ const Main = ({navigation}) => {
                       <Text style={{ color: 'gray' }}>     {address[0].district} </Text>
                       <Text style={{ fontSize: 20, fontStyle: 'bold', }}> {weather.main.temp.toFixed(0)}°C       </Text>
                     </View>
-                    {/* <Image style={{ width: '20%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png` }} /> */}
+                     <Image style={{ width: '100%', }} source={{ uri: `http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png` }} /> 
                     <Text>{weather.weather[0].main}</Text>
                   </>
                   :
@@ -99,12 +100,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
+        width:Dimensions.get('window').width,
+        height:Dimensions.get('window').height,
     },
     explainView:{
-        width : Dimensions.get('window').width,
-        height : Dimensions.get('window').height*0.1,
+        width : Dimensions.get('screen').width,
+        height : Dimensions.get('screen').height*0.1,
+        backgroundColor:'#F2F2F2',
         padding:10,
         justifyContent:'center',
         flexDirection:'row'
@@ -112,17 +114,18 @@ const styles = StyleSheet.create({
     explainUMS:{
         width:'100%',
         height:'100%',
-        backgroundColor:'#6699FF',
-        opacity:0.5,
+        backgroundColor:'#D9E5FF',
+   
         justifyContent:'center',
         alignContent:'center',
         borderRadius: 15,
     },
     explainText:{
         fontSize:20,
+        opacity:1
     },
     arrowicon:{
-        width:'20%',
-        height:'100%',
+        width:'12%',
+        padding:10,
     }
 });

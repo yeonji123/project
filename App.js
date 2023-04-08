@@ -24,7 +24,6 @@ export default function App() {
   return (
     <>
       <StatusBar style="auto" />
-
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Main2" component={Main2} />
