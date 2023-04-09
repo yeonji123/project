@@ -17,28 +17,18 @@ export default TitleName;
 
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-    },
     titleVIew: {
         width: Dimensions.get('window').width * 0.8,
         borderBottomColor: '#6699FF',
         borderBottomWidth: 3,
+        paddingBottom: 10,
     },
     titleText: {
+        fontSize: 25,
         marginTop: 8,
         marginLeft: 8,
         color: '#6699FF',
         fontWeight: 'bold',
-    },
-    textInput: {
-        padding: 10,
-        backgroundColor: 'white',
     },
 }
 );

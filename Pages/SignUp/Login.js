@@ -3,9 +3,6 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, TouchableOpacity} from 'react-native';
 
 
-const umColor = '(102,152, 255,50)'
-
-
 const Login = ({ navigation }) => {
 
     const [userId, setUserId] = useState("");
