@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, ScrollView, TouchableOpacity } from 'react-native';
 
-import USCheckInput from '../../Component/USCheckInput';
-import ButtonBig from '../../Component/ButtonBig';
-
 
 const Join = ({ navigation }) => {
   // 입력 내용

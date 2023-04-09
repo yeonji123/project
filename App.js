@@ -8,7 +8,7 @@ import Join from './Pages/SignUp/Join';
 import Login from './Pages/SignUp/Login';
 import Map from './Pages/Map/Map';
 import QRScanner from "./Pages/Scanner/QRScanner";
-
+// import ServiceList from "./Pages/Service/ServiceList";
 
 
 import { createStackNavigator } from '@react-navigation/stack';
@@ -32,6 +32,7 @@ export default function App() {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Map" component={Map} />
           <Stack.Screen name="QRScanner" component={QRScanner} />
+          {/* <Stack.Screen name="ServiceList" comport={ServiceList} /> */}
         </Stack.Navigator>
       </NavigationContainer>
     </>
