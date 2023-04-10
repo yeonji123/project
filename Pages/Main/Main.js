@@ -12,6 +12,10 @@ import { Dimensions } from 'react-native';
 
 import TitleName from '../../Component/TitleName'
 
+// firebase 연동
+import { db } from '../../firebaseConfig';
+import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { async } from '@firebase/util';
 
 //날씨 api키
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
@@ -21,13 +25,38 @@ const wait = (timeout) => {
 }
 
 
-const Main = () => {
+const Main = ({navigation}) => {
     //날씨
     const [weather, setWeather] = useState("");
     const [address, setAddress] = useState("");
 
+
+
+    const [users, setUsers] = useState();
+
+
     useEffect(() => {
         (async () => {
+            // firebase
+            try {
+                const data = await getDocs(collection(db, "User"))
+                setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+
+                
+                // 핸드폰 로컬에 저장되어 있는 사용자의 ID와 동일한지 확인
+                // users?.map((row, idx) => {
+                //     if (row.id == '1') {
+                //         console.log('row' + idx, row)
+                //     }
+                //     console.log('row' + idx, row)
+                // })
+
+            } catch (error) {
+                console.log('eerror', error.message)
+            }
+
+
+
 
             //위치 수집 허용하는지 물어보기
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -50,9 +79,12 @@ const Main = () => {
 
 
 
+
+
+
+
     return (
         <View style={styles.container}>
-
 
 
             <View style={styles.explainView}>
@@ -98,20 +130,29 @@ const Main = () => {
                     <View style={styles.userstate}>
                         <View style={{ flexDirection: 'row', height: '100%' }}>
                             <View style={{ width: '50%', alignItems: 'flex-end', padding: 15 }}>
-                                <Text style={{ fontSize: 20 }}>DB님은  </Text>
+                                {
+                                    users ?
+                                        <Text style={{ fontSize: 20 }}>{users[0].u_name}님은  </Text> : null
+                                }
                             </View>
                             <View style={{ width: '50%', padding: 10, justifyContent: 'center' }}>
                                 {
-                                    // DB.u_rent == true?
-                                    // <Text style={{fontSize:35, fontWeight:'bold'}}>대여 가능</Text>:
-                                    // <Text style={{fontSize:35, fontWeight:'bold'}}>대여중</Text>
+                                    users?
+                                    <>
+                                            {
+                                                users[0].u_rent ?
+                                                    <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 가능</Text> :
+                                                    <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 중</Text>
+                                            }
+                                    </>:
+                                    null
                                 }
-                                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>대여 가능</Text>
+                                
                             </View>
                         </View>
                     </View>
                     <View style={styles.donation}>
-                        <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    DB</Text>
+                        <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    3</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -121,18 +162,18 @@ const Main = () => {
 
             <View style={styles.mainfunctionView}>
                 <TouchableOpacity 
-                style={styles.mapbutton}
-                    onPress={() => console.log("Dddd")}
-                    >
-
+                    style={styles.mapbutton}
+                    onPress={() => navigation.navigate('Map')}
+                >
+                    <Image style={{ width: '100%', height: '100%', borderRadius: 15,}} source={require('../../assets/map_sample.png')}></Image>
 
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={styles.scanner}
-                    onPress={() => console.log("Dddd")}
+                    onPress={() => navigation.navigate('QRScanner')}
                 >
-
+                    <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={require('../../assets/qr_sample.png')}></Image>
 
                 </TouchableOpacity>
             </View>

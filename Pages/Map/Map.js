@@ -17,14 +17,14 @@ import { CameraScreen } from 'react-native-camera-kit';
 
 //fire store
 //npx expo install firebase
-// import { db } from './firebaseConfig';
-// import { addDoc, collection, getDocs } from 'firebase/firestore';
-// import { async } from '@firebase/util';
+import { db } from '../../firebaseConfig';
+import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { async } from '@firebase/util';
 
 //날씨 api키
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
 
-const Map = () => {
+const Map = ({navigation}) => {
 
   const [weather, setWeather] = React.useState("");
   const [address, setAddress] = React.useState("");
@@ -49,25 +49,22 @@ const Map = () => {
   const [scaned, setScaned] = useState(true);
   const ref = React.useRef(null);
 
-
   //firestor 연동
-  // const [users, setUsers] = useState();
-  // const readfromDB = async () => {
-  //   try {
-  //     const data = await getDocs(collection(db, "Station")) 
-  //     setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-  //     users?.map((row, idx) => {
-  //       console.log('row'+idx,row)
-  //     })
-  //     console.log('data', data.docs.map)
-  //   } catch (error) {
-  //     console.log('eerror', error.message)
-  //   }
-  // }
+  const [stations, setStations] = useState();
+
+
+
+
+
 
   //에니메이션으로 이동
   const mapRef = React.useRef(null);
-
+  const [region, setRegion] = React.useState();
+  // 드래그 해서 위치의 위도경도 가져오기
+  const mapRegionChangehandle = (region) => {
+      setRegion(region)
+    
+  };
   useEffect(() => {
     // 종료후 재시작을 했을때 초기화
     setScaned(true);
@@ -85,6 +82,19 @@ const Map = () => {
 
   useEffect(() => {
     (async () => {
+      try {
+        const data = await getDocs(collection(db, "Station"))
+        setStations(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+        stations?.map((row, idx) => {
+          console.log('row' + idx, row)
+        })
+        console.log('data', data.docs.data)
+      } catch (error) {
+        console.log('eerror', error.message)
+      }
+
+
+
 
       //위치 수집 허용하는지 물어보기
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -126,25 +136,10 @@ const Map = () => {
 
   
 
-  const pressButton = () => {
-    setWeatherModal(true)
 
-    readfromDB()
-    console.log('button 누름')
-  }
-
-  const pressQR = () => {
-    (async () => {
-      const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraStatus.status === 'granted');
-    })();
-    setPhotoModal(true)
-
-    console.log('QR 누름')
-  }
   
   //이동하기
-  const onDetail = (lat, lon) => { //병원 리스트 중 하나 클릭하면 해당 위도, 경도 가져옴....
+  const onDetail = (lat, lon, stationNum) => { // 반납 가능 우산 개수, 대여 가능 우산 개수 계산
     setmapRegion({ //현재 위치
       latitude: lat,
       longitude: lon,
@@ -156,7 +151,7 @@ const Map = () => {
       longitude: lon,
       latitudeDelta: 0.005,
       longitudeDelta: 0.005
-    }, 3 * 1000);
+    }, 1000);
   }
 
   return (
@@ -196,18 +191,7 @@ const Map = () => {
                     <Image source={{ uri: image }} style={{ resizeMode: "cover", height: '100%', width: '100%', borderWidth: 2, borderColor: '#EBE3D7' }} />
                   </View>
                   <Text>Ddddd</Text>
-                  {/* {
-                    users?.map((row, idx) => {
-                      return (
-                        <>
-                          <Text>user - {idx}</Text>
-                          <Text>{row.id}</Text>
-                          <Text>{row.age}</Text>
-                          <Text>{row.createA}</Text>
-                        </>
-                      )
-                    })
-                  } */}
+                  
                 </View>
 
               </TouchableWithoutFeedback>
@@ -230,85 +214,15 @@ const Map = () => {
         </Modal>
 
 
-
-
-
-        {/* 사진 찍기 모달 */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={photoModal}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setPhotoModal(!photoModal);
-          }}>
-
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Camera
-                ref={ref => setCamera(ref)}
-                style={{
-                  height: 400,
-                  width: 300,
-                }}
-                // style={styles.fixedRatio}
-                type={type}
-
-
-                //QR 코드 스캐너
-                zoomMode
-                focusMode
-                // Barcode Scanner Props
-                scanBarcode
-                showFrame={true}
-                laserColor="rgba(0, 0, 0, 0)"
-                frameColor="rgba(0, 0, 0, 0)"
-                surfaceColor="rgba(0, 0, 0, 0)"
-                onReadCode={onBarCodeRead}
-
-              />
-              <Text>  </Text>
-              <View style={{ width: 300, }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                  <View style={{ width: 50, }}></View>
-                  <Pressable
-                    onPress={() => {
-                      console.log("찰칵")
-                      takePicture()
-                    }} >
-                    <View style={styles.takeButton} ></View>
-                  </Pressable>
-                  <Pressable
-                    style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center', }}
-                    onPress={() => {
-                      setType(
-                        type === Camera.Constants.Type.back
-                          ? Camera.Constants.Type.front
-                          : Camera.Constants.Type.back
-                      )
-                    }} >
-                    <View style={{
-                      borderColor: "black",
-                      justifyContent: 'center',
-                      width: 40,
-                      height: 40,
-                    }} >
-
-                    </View>
-                  </Pressable>
-                </View>
-              </View>
-            </View>
-
-          </View>
-        </Modal>
-
-
-
-
-
-
       </View>
+
+
+
+
+
+
+
+
       <View style={styles.containerMap}>
         <MapView
           style={styles.map}
@@ -330,49 +244,64 @@ const Map = () => {
               longitude: e.nativeEvent.coordinate.longitude
             });
           }}
-          
+          onRegionChange={mapRegionChangehandle}
         >
-          <Marker
-            coordinate={mapRegion}
-            onPress={() => {
-              console.log(mapRegion)
-              onDetail(mapRegion.latitude, mapRegion.longitude)
-              
+          {/* <Marker
+            coordinate={{
+              latitude: parseFloat(region.latitude),
+              longitude: parseFloat(region.longitude),
             }}
           >
-            <Callout>
-              <Text>This is Callout</Text>
-            </Callout>
-          </Marker>
 
-          {/* {
-            users?.map((e, idx) => {
-              if (e.id == "Station") {
+
+          </Marker> */}
+
+          {
+            stations?.map((e, idx) => {
+              if (e.id=="Station"){
+                var rentalCount = 0
+                var returnCount = 0
+
+                e.s_count.map((e2, idx2) => {
+                  if (e2.u_state ) {
+                    rentalCount++;
+                  } else {
+                    returnCount++;
+                  }
+                })
+
                 return (
-                  <>
-                    <Marker
-                      key={idx}
-                      coordinate={{
-                        latitude: parseFloat(e.s_position_x),
-                        longitude: parseFloat(e.s_position_y),
-                      }}
-                      onPress={() => {
-                        //onDetail(e.s_position_x, e.s_position_y)
-                        
-                      }}
-                    >
-                      <Callout>
-                        <Text>station 위치</Text>
-                        <Text>{e.s_count}</Text>
-                        <Text>{e.s_num}</Text>
-                        <Text>{e.s_state}</Text>
+                  <Marker
+                    key={idx}
+                    coordinate={{ latitude: e.s_position_x, longitude: e.s_position_y }}
+                    onPress={() => {
+                      console.log(e)
+                      onDetail(e.s_position_x, e.s_position_y, e.s_num)
+                    }}
+                  >
+                    <Callout style={{ width:Dimensions.get('screen').width*0.6}}>
+
+                        <View style={{ justifyContent:'center', padding:5}}>
+                          <Text style={{ fontSize: 20, fontWeight: 'bold' , color:'#6699FF'}}>{e.s_num}</Text>
+                          <Text >충청남도 아산시 탕정면 선문로 221번길 70 </Text>
+                        </View>
+
+                        <View style={{ alignItems:'flex-end', marginTop:10}}>
+                          <Text style={{ fontSize: 13, fontWeight: 'bold',}}>대여 가능 우산 갯수 : {rentalCount}</Text>
+                          <Text style={{ fontSize: 13, fontWeight: 'bold',}}>반납 가능 우산 갯수 : {returnCount}</Text>
+                        </View>
+
+                        <View>
+
+
+                        </View>
                       </Callout>
-                    </Marker>
-                  </>
+                  </Marker>
                 )
               }
+              
             })
-          } */}
+          }
 
 
 
@@ -392,11 +321,10 @@ const Map = () => {
               justifyContent: 'center',
               borderRadius: 4,
               elevation: 3,
-              backgroundColor: '#F7931D',
-              width: '30%'
-            }} onPress={pressButton} >
-              <Text>지도 닫기</Text>
-
+              backgroundColor: 'white',
+              width: '40%'
+            }} onPress={()=> navigation.navigate('Main')} >
+              <Text style={{fontSize:20, fontWeight:'bold'}}>지도 닫기</Text>
             </Pressable>
             <Text>              </Text>
             <Pressable style={{
@@ -404,10 +332,12 @@ const Map = () => {
               justifyContent: 'center',
               borderRadius: 4,
               elevation: 3,
-              backgroundColor: '#F7931D',
-              width: '30%'
-            }} onPress={pressQR}>
-              <Text>QR코드</Text>
+              backgroundColor: '#5775D9',
+              width: '40%',
+              flexDirection:'row'
+            }} onPress={() => navigation.navigate('QRScanner')}>
+              <Image style={{width:'25%', height:'55%'}} source={require('../../assets/qr_icon.png')} />
+              <Text style={{fontSize:20, fontWeight:'bold', color:'white'}}>  대여하기</Text>
             </Pressable></>
         </View>
 
@@ -438,7 +368,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     padding: 5,
-    height: "8%",
+    height: "10%",
     flexDirection: 'row',
     widh: "100%",
     justifyContent: 'center',

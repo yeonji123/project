@@ -9,7 +9,7 @@ import Login from './Pages/SignUp/Login';
 import Map from './Pages/Map/Map';
 import QRScanner from "./Pages/Scanner/QRScanner";
 import CustMain from "./Pages/Service/CustMain";
-
+import UserInfo from "./Pages/Info/UserInfo";
 
 
 
@@ -36,6 +36,7 @@ export default function App() {
           <Stack.Screen name="Map" component={Map} />
           <Stack.Screen name="QRScanner" component={QRScanner} />
           <Stack.Screen name="CustMain" component={CustMain} />
+          <Stack.Screen name="UserInfo" component={UserInfo} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

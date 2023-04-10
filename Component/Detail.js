@@ -7,15 +7,22 @@ const Detail = (props) => {
             <View style={styles.detailText}>
                 <Text style={{ fontSize: 20, fontWeight:'bold'}}>{props.title}</Text>
             </View>
+{}
+
             <View style={styles.value}>
                 {
                     props.value != null ?
-                        <Text style={{ fontSize: 15, }}>{props.value}</Text> :
-                        null
+                        <Text style={{ fontSize: 15, }}>{props.value}</Text> 
+                        : null
                 }
             </View>
             <View style={styles.iconView}>
-                <Image style={{width:'100%', height:'100%'}} source={require('../assets/blue_arrow_icon.png')}></Image>
+                {
+                    props.icon == "true" ?
+                        <Image style={{ width: '100%', height: '100%' }} source={require('../assets/blue_arrow_icon.png')}></Image>
+                        : null
+                }
+
             </View>
         </View>
     );
@@ -38,11 +45,13 @@ const styles = StyleSheet.create({
         width:'25%',
         justifyContent:'center',
         alignItems:'center',
+        backgroundColor:'skyblue',
     },
     iconView:{
         width:'10%',
         height:'100%',
         padding:5,
+        backgroundColor:'pink'
     },
 });
 

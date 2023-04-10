@@ -13,9 +13,9 @@ const CustMain = () => {
             <View style={styles.titleView}>
                 <TitleName title="고객센터" />
             </View>
-            <Detail title="Station 고장 신고" value="check" />
-            <Detail title="대여/반납 신고"/>
-            <Detail title="나의 기부 내역 보기"/>
+            <Detail title="Station 고장 신고" value="check"  icon="true" />
+            <Detail title="대여/반납 신고" icon="true" />
+            <Detail title="나의 기부 내역 보기" icon="true" />
         </View>
     );
 };
