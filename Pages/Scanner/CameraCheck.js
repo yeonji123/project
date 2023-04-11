@@ -18,8 +18,6 @@ const CameraCheck = () => {
   useEffect(() => {
     (async () => {
 
-
-
       const cameraStatus = await Camera.requestPermissionsAsync();
       setHasCameraPermission(cameraStatus.status === 'granted');
     })();

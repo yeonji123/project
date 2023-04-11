@@ -10,7 +10,7 @@ import Map from './Pages/Map/Map';
 import QRScanner from "./Pages/Scanner/QRScanner";
 import CustMain from "./Pages/Service/CustMain";
 import UserInfo from "./Pages/Info/UserInfo";
-import CameraCheck from './Pages/Scanner/CameraCheck';
+// import CameraCheck from './Pages/Scanner/CameraCheck';
 
 
 
@@ -37,7 +37,7 @@ export default function App() {
           <Stack.Screen name="QRScanner" component={QRScanner} />
           <Stack.Screen name="CustMain" component={CustMain} />
           <Stack.Screen name="UserInfo" component={UserInfo} />
-          <Stack.Screen name="CameraCheck" component={CameraCheck} />
+          {/* <Stack.Screen name="CameraCheck" component={CameraCheck} /> */}
         </Stack.Navigator>
       </NavigationContainer>
       
