@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, initializeFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 
 
@@ -19,7 +19,8 @@ const firebaseConfig = {
   projectId: "check-83c37",
   storageBucket: "check-83c37.appspot.com",
   messagingSenderId: "227830654669",
-  appId: "1:227830654669:web:f8991b8bd395e6b0086b84"
+  appId: "1:227830654669:web:f8991b8bd395e6b0086b84",
+  
 };
 
 
@@ -41,6 +42,8 @@ const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
 });
 
-export { db }
+const storage = getStorage(app);
+
+export { db, storage }
 
 

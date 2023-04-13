@@ -10,7 +10,7 @@ const wait = (timeout) => {
 }
 
 
-const Main = ({navigation}) => {
+const Main2 = ({navigation}) => {
     //날씨
     const [weather, setWeather] = useState("");
     const [address, setAddress] = useState("");
@@ -46,15 +46,15 @@ const Main = ({navigation}) => {
             <Button title='Login' onPress={()=>(navigation.navigate("Login"))}></Button>
             <Button title='Main' onPress={()=>(navigation.navigate("Main"))}></Button>
             <Button title='Map' onPress={()=>(navigation.navigate("Map"))}></Button>
-            <Button title='QRScanner' onPress={()=>(navigation.navigate("QRScanner"))}></Button>
+            {/* <Button title='QRScanner2' onPress={()=>(navigation.navigate("QRScanner2"))}></Button> */}
             <Button title='CustMain' onPress={()=>(navigation.navigate("CustMain"))}></Button>
             <Button title='UserInfo' onPress={()=>(navigation.navigate("UserInfo"))}></Button>
-            {/* <Button title='Storage Test' onPress={()=>(navigation.navigate("CameraCheck"))}></Button> */}
+            <Button title='CameraCheck' onPress={()=>(navigation.navigate("CameraCheck"))}></Button>
         </View>
     );
 }
 
-export default Main;
+export default Main2;
 
 const styles = StyleSheet.create({
     container: {

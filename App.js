@@ -8,9 +8,10 @@ import Join from './Pages/SignUp/Join';
 import Login from './Pages/SignUp/Login';
 import Map from './Pages/Map/Map';
 import QRScanner from "./Pages/Scanner/QRScanner";
+// import QRScanner2 from './Pages/Scanner/QRScanner2';
 import CustMain from "./Pages/Service/CustMain";
 import UserInfo from "./Pages/Info/UserInfo";
-// import CameraCheck from './Pages/Scanner/CameraCheck';
+import CameraCheck from './Pages/Scanner/CameraCheck';
 
 
 
@@ -22,8 +23,6 @@ const Stack = createStackNavigator();
 // expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
 
 export default function App() {
-
-  const onPress = () => (console.log('hihi'))
   return (
     <>
       <StatusBar style="auto" />
@@ -34,10 +33,10 @@ export default function App() {
           <Stack.Screen name="Join" component={Join} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Map" component={Map} />
-          <Stack.Screen name="QRScanner" component={QRScanner} />
+          {/* <Stack.Screen name="QRScanner2" component={QRScanner2} /> */}
           <Stack.Screen name="CustMain" component={CustMain} />
           <Stack.Screen name="UserInfo" component={UserInfo} />
-          {/* <Stack.Screen name="CameraCheck" component={CameraCheck} /> */}
+          <Stack.Screen name="CameraCheck" component={CameraCheck} />
         </Stack.Navigator>
       </NavigationContainer>
       
