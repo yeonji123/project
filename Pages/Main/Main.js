@@ -15,7 +15,6 @@ import TitleName from '../../Component/TitleName'
 // firebase 연동
 import { db } from '../../firebaseConfig';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
-import { async } from '@firebase/util';
 
 //날씨 api키
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
@@ -41,7 +40,7 @@ const Main = ({navigation}) => {
             try {
                 const data = await getDocs(collection(db, "User"))
                 setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-
+                console.log('users', users)
                 
                 // 핸드폰 로컬에 저장되어 있는 사용자의 ID와 동일한지 확인
                 // users?.map((row, idx) => {

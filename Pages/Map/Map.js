@@ -1,5 +1,5 @@
 import React, { useEffect, useState,  useRef,} from 'react';
-import { Text, View, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TouchableOpacity, Keyboard, KeyboardAvoidingView, } from 'react-native';
 import MapView, { Marker, Circle, Callout } from 'react-native-maps';
 // npm i react-native-maps
 import * as Location from 'expo-location';
@@ -60,11 +60,16 @@ const Map = ({navigation}) => {
   //에니메이션으로 이동
   const mapRef = React.useRef(null);
   const [region, setRegion] = React.useState();
+
+
+
   // 드래그 해서 위치의 위도경도 가져오기
   const mapRegionChangehandle = (region) => {
       setRegion(region)
     
   };
+
+  
   useEffect(() => {
     // 종료후 재시작을 했을때 초기화
     setScaned(true);
@@ -85,10 +90,11 @@ const Map = ({navigation}) => {
       try {
         const data = await getDocs(collection(db, "Station"))
         setStations(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-        stations?.map((row, idx) => {
-          console.log('row' + idx, row)
-        })
-        console.log('data', data.docs.data)
+        
+        // stations?.map((row, idx) => {
+        //   console.log('row' + idx, row)
+        // })
+        console.log('data', data.docs)
       } catch (error) {
         console.log('eerror', error.message)
       }
@@ -310,32 +316,21 @@ const Map = ({navigation}) => {
         </MapView>
 
 
-        <View></View>
+        <View>
+          
+
+        </View>
 
         <View style={styles.buttons}>
           {/* 버튼 */}
           {/* 화면비율 맞추기 */}
           <>
-            <Pressable style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 4,
-              elevation: 3,
-              backgroundColor: 'white',
-              width: '40%'
-            }} onPress={()=> navigation.navigate('Main')} >
+            <Pressable style={styles.closemap} onPress={()=> navigation.navigate('Main')} >
               <Text style={{fontSize:20, fontWeight:'bold'}}>지도 닫기</Text>
             </Pressable>
             <Text>              </Text>
-            <Pressable style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 4,
-              elevation: 3,
-              backgroundColor: '#5775D9',
-              width: '40%',
-              flexDirection:'row'
-            }} onPress={() => navigation.navigate('QRScanner')}>
+
+            <Pressable style={styles.qrscanner} onPress={() => navigation.navigate('QRScanner')}>
               <Image style={{width:'25%', height:'55%'}} source={require('../../assets/qr_icon.png')} />
               <Text style={{fontSize:20, fontWeight:'bold', color:'white'}}>  대여하기</Text>
             </Pressable></>
@@ -423,4 +418,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#ff6600",
     borderRadius: 100
   },
+  closemap:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'white',
+    width: '40%'
+  },
+  qrscanner:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: '#5775D9',
+    width: '40%',
+    flexDirection:'row'
+  },
+  mylocation:{
+    backgroundColor:'white',
+    width:50,
+    height:50,
+  }
 });
