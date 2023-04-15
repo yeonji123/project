@@ -15,7 +15,12 @@ import CustMain from "./Pages/Service/CustMain";
 import BreakReport from "./Pages/Service/BreakReport";
 import MyDonation from "./Pages/Service/MyDonation";
 import RentalReturnReport from "./Pages/Service/RentalReturnReport";
-
+import FunctionList from "./Pages/MainFunction/FunctionList";
+import Rental from "./Pages/MainFunction/Rental";
+import RentalPage from "./Pages/MainFunction/RentalPage";
+import ExplainPage from "./Pages/MainFunction/ExplainPage";
+import StationWorking from "./Pages/MainFunction/StationWorking";
+import Return from "./Pages/MainFunction/Return";
 
 
 import { createStackNavigator } from '@react-navigation/stack';
@@ -24,6 +29,7 @@ const Stack = createStackNavigator();
 // expo install react-native-safe-area-context
 // npm install @react-navigation/native
 // expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
+
 
 export default function App() {
   return (
@@ -43,6 +49,12 @@ export default function App() {
           <Stack.Screen name="BreakReport" component={BreakReport} />
           <Stack.Screen name="MyDonation" component={MyDonation} />
           <Stack.Screen name="RentalReturnReport" component={RentalReturnReport} />
+          <Stack.Screen name="FunctionList" component={FunctionList} />
+          <Stack.Screen name="Rental" component={Rental} />
+          <Stack.Screen name="RentalPage" component={RentalPage} />
+          <Stack.Screen name="ExplainPage" component={ExplainPage} />
+          <Stack.Screen name="StationWorking" component={StationWorking} />
+          <Stack.Screen name="Return" component={Return} />
         </Stack.Navigator>
       </NavigationContainer>
       

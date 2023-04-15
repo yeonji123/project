@@ -53,7 +53,12 @@ const Main2 = ({navigation}) => {
             <Button title='BreakReport' onPress={()=>(navigation.navigate("BreakReport"))}></Button>
             <Button title='RentalReturnReport' onPress={()=>(navigation.navigate("RentalReturnReport"))}></Button>
             <Button title='MyDonation' onPress={()=>(navigation.navigate("MyDonation"))}></Button>
-
+            <Button title='FunctionList' onPress={()=>(navigation.navigate("FunctionList"))}></Button>
+            <Button title='Rental' onPress={()=>(navigation.navigate("Rental"))}></Button>
+            <Button title='RentalPage' onPress={()=>(navigation.navigate("RentalPage"))}></Button>
+            <Button title='ExplainPage' onPress={()=>(navigation.navigate("ExplainPage"))}></Button>
+            <Button title='StationWorking' onPress={()=>(navigation.navigate("StationWorking"))}></Button>
+            <Button title='Return' onPress={()=>(navigation.navigate("Return"))}></Button>
         </View>
     );
 }
