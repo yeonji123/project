@@ -9,9 +9,12 @@ import Login from './Pages/SignUp/Login';
 import Map from './Pages/Map/Map';
 import QRScanner from "./Pages/Scanner/QRScanner";
 // import QRScanner2 from './Pages/Scanner/QRScanner2';
-import CustMain from "./Pages/Service/CustMain";
 import UserInfo from "./Pages/Info/UserInfo";
 import CameraCheck from './Pages/Scanner/CameraCheck';
+import CustMain from "./Pages/Service/CustMain";
+import BreakReport from "./Pages/Service/BreakReport";
+import MyDonation from "./Pages/Service/MyDonation";
+import RentalReturnReport from "./Pages/Service/RentalReturnReport";
 
 
 
@@ -37,6 +40,9 @@ export default function App() {
           <Stack.Screen name="CustMain" component={CustMain} />
           <Stack.Screen name="UserInfo" component={UserInfo} />
           <Stack.Screen name="CameraCheck" component={CameraCheck} />
+          <Stack.Screen name="BreakReport" component={BreakReport} />
+          <Stack.Screen name="MyDonation" component={MyDonation} />
+          <Stack.Screen name="RentalReturnReport" component={RentalReturnReport} />
         </Stack.Navigator>
       </NavigationContainer>
       

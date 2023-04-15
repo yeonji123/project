@@ -50,6 +50,10 @@ const Main2 = ({navigation}) => {
             <Button title='CustMain' onPress={()=>(navigation.navigate("CustMain"))}></Button>
             <Button title='UserInfo' onPress={()=>(navigation.navigate("UserInfo"))}></Button>
             <Button title='CameraCheck' onPress={()=>(navigation.navigate("CameraCheck"))}></Button>
+            <Button title='BreakReport' onPress={()=>(navigation.navigate("BreakReport"))}></Button>
+            <Button title='RentalReturnReport' onPress={()=>(navigation.navigate("RentalReturnReport"))}></Button>
+            <Button title='MyDonation' onPress={()=>(navigation.navigate("MyDonation"))}></Button>
+
         </View>
     );
 }

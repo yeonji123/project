@@ -376,7 +376,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: '#F7931D',
   },
   centeredView: {
     flex: 1,
@@ -408,15 +407,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row'
-  },
-  takeButton: {
-    borderColor: "white",
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 50,
-    height: 50,
-    backgroundColor: "#ff6600",
-    borderRadius: 100
   },
   closemap:{
     alignItems: 'center',

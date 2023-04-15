@@ -7,15 +7,31 @@ import Detail from '../../Component/Detail';
 
 
 
-const CustMain = () => {
+const CustMain = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.titleView}>
                 <TitleName title="고객센터" />
             </View>
-            <Detail title="Station 고장 신고" value="check"  icon="true" />
-            <Detail title="대여/반납 신고" icon="true" />
-            <Detail title="나의 기부 내역 보기" icon="true" />
+
+            
+            <TouchableOpacity
+                onPress={() =>navigation.navigate("BreakReport")}
+            >
+                <Detail title="Station 고장 신고" icon="true" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                onPress={() =>navigation.navigate("RentalReturnReport")}
+            >
+                <Detail title="대여/반납 신고" icon="true" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                onPress={() =>navigation.navigate("DonationReport")}
+            >
+                <Detail title="나의 기부 내역 보기" icon="true" />
+            </TouchableOpacity>
         </View>
     );
 };
@@ -29,7 +45,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
-        paddingTop:50,
+        paddingTop:30,
         alignItems:'center',
     },
     titleView: {

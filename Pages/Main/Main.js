@@ -40,7 +40,7 @@ const Main = ({navigation}) => {
             try {
                 const data = await getDocs(collection(db, "User"))
                 setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-                console.log('users', users)
+                console.log('users--------', users)
                 
                 // 핸드폰 로컬에 저장되어 있는 사용자의 ID와 동일한지 확인
                 // users?.map((row, idx) => {
@@ -51,7 +51,7 @@ const Main = ({navigation}) => {
                 // })
 
             } catch (error) {
-                console.log('eerror', error.message)
+                console.log('eeerror', error.message)
             }
 
 
@@ -84,7 +84,7 @@ const Main = ({navigation}) => {
 
     return (
         <View style={styles.container}>
-
+ 
 
             <View style={styles.explainView}>
                 <TouchableOpacity
@@ -104,7 +104,10 @@ const Main = ({navigation}) => {
 
 
             <View style={styles.userinfoView}>
-                <TouchableOpacity style={styles.userinfo}>
+                <TouchableOpacity 
+                    style={styles.userinfo}
+                    onPress={() => navigation.navigate('UserInfo')}
+                >
                     <View style={styles.weather}>
                         {
                             weather != "" ?
@@ -127,26 +130,34 @@ const Main = ({navigation}) => {
                         }
                     </View>
                     <View style={styles.userstate}>
-                        <View style={{ flexDirection: 'row', height: '100%' }}>
-                            <View style={{ width: '50%', alignItems: 'flex-end', padding: 15 }}>
-                                {
-                                    users ?
-                                        <Text style={{ fontSize: 20 }}>{users[0].u_name}님은  </Text> : null
-                                }
-                            </View>
-                            <View style={{ width: '50%', padding: 10, justifyContent: 'center' }}>
-                                {
-                                    users?
+                        <View style={{ flexDirection: 'row', height: '100%', backgroundColor:'yellow'}}>
+                            {
+                                users ?
                                     <>
-                                            {
-                                                users[0].u_rent ?
-                                                    <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 가능</Text> :
-                                                    <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 중</Text>
-                                            }
-                                    </>:
-                                    null
-                                }
-                                
+                                        <View style={{ width: '65%', padding:3}}>
+                                            <View style={{ alignItems: 'flex-end', marginBottom:3 }}>
+                                                <Text style={{ fontSize: 20 }}>{users[0].u_name}님은</Text>
+                                            </View>
+                                            <View style={{ alignItems: 'center' }}>
+                                                {
+                                                    users[0].u_rent ?
+                                                        <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 가능</Text> :
+                                                        <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 중</Text>
+                                                }
+                                            </View>
+                                        </View>
+                                    </> :
+                                    <ActivityIndicator />
+                            }
+                            <View style={{ width: '35%', hieght:'100%', justifyContent: 'center', alignItems:'center', }}>
+                                {/* {
+                                    // 이미지 링크 넣기 user DB에 스토리지 링크 넣어서 가져오기
+                                    users[0].u_profile ? 
+                                    <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={{ uri: users[0].u_profile }}></Image> 
+                                    :
+                                    <Image style={{ width: '50%', height: '100%', borderRadius: 15, }} source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png' }}></Image>
+                                } */}
+                                <Image style={{ width: '50%', height: '100%', borderRadius: 15, }} source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png' }}></Image>
                             </View>
                         </View>
                     </View>
@@ -182,7 +193,7 @@ const Main = ({navigation}) => {
             <View style={styles.serviceView}>
                 <TouchableOpacity 
                     style={styles.service}
-                    onPress={() => console.log("Dddd")}
+                    onPress={() => navigation.navigate('CustMain')}
                 >
                     <View style={{ width: '20%', height: '100%', padding: 10, alignItems: 'center' }}>
                         <Image style={{ width: '80%', height: '100%' }} source={require('../../assets/service_icon.png')}></Image>
