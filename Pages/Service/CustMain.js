@@ -28,7 +28,7 @@ const CustMain = ({navigation}) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-                onPress={() =>navigation.navigate("DonationReport")}
+                onPress={() =>navigation.navigate("Donation")}
             >
                 <Detail title="나의 기부 내역 보기" icon="true" />
             </TouchableOpacity>

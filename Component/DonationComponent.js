@@ -9,15 +9,15 @@ const DonationComponent = (props) => {
             onPress={() => console.log('donation')}
         >
             <View style={styles.donationdate}>
-                <Text style={{fontSize:20, marginLeft:5}}>props.date</Text>
+                <Text style={{fontSize:20, marginLeft:5}}>{props.date}</Text>
             </View>
             <View style={styles.donationInfo}>
                 <View style={styles.stationInfo}>
-                    <Text style={{fontSize:23, fontWeight:'bold', marginLeft:5}}>props.stationnum</Text>
-                    <Text style={{fontSize:15, padding:5}}>props.statiodnadd</Text>
+                    <Text style={{fontSize:25, fontWeight:'bold', marginLeft:5}}>{props.stationnum}</Text>
+                    <Text style={{fontSize:15, padding:5}}>{props.statiodnadd}</Text>
                 </View>
                 <View style={styles.donaPickture}>
-                    <Image style={{ width: '100%', height: '100%', }} source={{uri:'https://cdn-icons-png.flaticon.com/512/4343/4343277.png'}} />
+                    <Image style={{ width: '85%', height: '100%', }} source={{uri:'https://cdn-icons-png.flaticon.com/512/4343/4343277.png'}} />
                 </View>
             </View>
         </TouchableOpacity>
@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     },
     stationInfo:{
         width:'70%',
+        padding:8
     },
     donaPickture:{
         width:'30%',

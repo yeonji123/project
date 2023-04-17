@@ -7,7 +7,6 @@ import * as Location from 'expo-location';
 import { Camera, Constants } from 'expo-camera';
 //npm i react-native-gesture-handler
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import 'expo-dev-client';
                                           
 //npm i -S react-native-qrcode-svg
 import QRCode from 'react-native-qrcode-svg';
@@ -19,7 +18,7 @@ import { CameraScreen } from 'react-native-camera-kit';
 //npx expo install firebase
 import { db } from '../../firebaseConfig';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
-import { async } from '@firebase/util';
+
 
 //날씨 api키
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
@@ -312,7 +311,7 @@ const Map = ({navigation}) => {
 
 
 
-          <Circle center={mapRegion} radius={100} />
+         
         </MapView>
 
 

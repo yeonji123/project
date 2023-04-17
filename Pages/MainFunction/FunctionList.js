@@ -23,7 +23,7 @@ const FunctionList = ({navigation}) => {
                     style={styles.buttonstyle}
                     onPress={() => navigation.navigate('Rental')}
                 >
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>대여하기</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color:'white' }}>대여하기</Text>
                 </TouchableOpacity>
             </View>
 
@@ -33,7 +33,7 @@ const FunctionList = ({navigation}) => {
                     style={styles.buttonstyle}
                     onPress={() => navigation.navigate('Return')}
                 >
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>반납하기</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color:'white' }}>반납하기</Text>
                 </TouchableOpacity>
             </View>
 
@@ -43,7 +43,7 @@ const FunctionList = ({navigation}) => {
                     style={styles.buttonstyle}
                     onPress={() => navigation.navigate('Donation')}
                 >
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>폐우산 기부하기</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color:'white' }}>폐우산 기부하기</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -64,8 +64,7 @@ const styles=StyleSheet.create({
     buttonView:{
         justifyContent: 'space-between', 
         height:Dimensions.get('window').height * 0.1, 
-        marginBottom:20,
-    
+        marginBottom:40,
     },
     buttonstyle: {
         width: '100%',

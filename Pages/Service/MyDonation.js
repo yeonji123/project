@@ -20,11 +20,11 @@ const MyDonation = ({ navigation }) => {
             <Text style={{ color: '#6699FF', fontWeight: 'bold', fontSize: 25, padding: 10 }}>나의 기부 내역</Text>
             <ScrollView>
                 <View style={{ padding: 10 }}>
-                    <DonationComponent />
+                    <DonationComponent date="2023.04.08" stationnum="station1" statiodnadd="충청남도 아산시 탕정면 선물로 221번길 70"/>
                 </View>
-                <View style={{ padding: 10 }}>
+                {/* <View style={{ padding: 10 }}>
                     <DonationComponent />
-                </View>
+                </View> */}
             </ScrollView>
             
         </View>

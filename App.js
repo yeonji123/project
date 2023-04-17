@@ -5,10 +5,10 @@ import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Im
 import Main from './Pages/Main/Main';
 import Main2 from './Pages/Main/Main2';
 import Join from './Pages/SignUp/Join';
+import SignUp from './Pages/SignUp/SignUp';
 import Login from './Pages/SignUp/Login';
 import Map from './Pages/Map/Map';
-import QRScanner from "./Pages/Scanner/QRScanner";
-// import QRScanner2 from './Pages/Scanner/QRScanner2';
+import QRCodeScanner from "./Pages/Scanner/QRCodeScanner";
 import UserInfo from "./Pages/Info/UserInfo";
 import CameraCheck from './Pages/Scanner/CameraCheck';
 import CustMain from "./Pages/Service/CustMain";
@@ -22,7 +22,7 @@ import ExplainPage from "./Pages/MainFunction/ExplainPage";
 import StationWorking from "./Pages/MainFunction/StationWorking";
 import Return from "./Pages/MainFunction/Return";
 
-
+import 'expo-dev-client';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 const Stack = createStackNavigator();
@@ -40,9 +40,10 @@ export default function App() {
           <Stack.Screen name="Main2" component={Main2} />
           <Stack.Screen name="Main" component={Main} />
           <Stack.Screen name="Join" component={Join} />
+          <Stack.Screen name='SignUp' component={SignUp} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Map" component={Map} />
-          {/* <Stack.Screen name="QRScanner2" component={QRScanner2} /> */}
+          <Stack.Screen name="QRCodeScanner" component={QRCodeScanner} />
           <Stack.Screen name="CustMain" component={CustMain} />
           <Stack.Screen name="UserInfo" component={UserInfo} />
           <Stack.Screen name="CameraCheck" component={CameraCheck} />

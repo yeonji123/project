@@ -4,6 +4,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import GraySmallButton from '../../Component/GraySmallButton';
 
+
 const BreakReport = () => {
     const [breakList, setBreakList] = useState([false, false, false, false]); // 고장 내용 입력 list
     const [sentence, setSentence] = useState(''); // 구체적인 고장 사유 입력

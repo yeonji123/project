@@ -45,13 +45,11 @@ const styles = StyleSheet.create({
         width:'25%',
         justifyContent:'center',
         alignItems:'center',
-        backgroundColor:'skyblue',
     },
     iconView:{
         width:'10%',
         height:'100%',
         padding:5,
-        backgroundColor:'pink'
     },
 });
 

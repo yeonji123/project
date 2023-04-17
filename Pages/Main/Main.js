@@ -1,13 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, StyleSheet, Image, ActivityIndicator, Button, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Image, ActivityIndicator, Button, TouchableOpacity, Dimensions } from 'react-native';
 import { useEffect, useState } from 'react'
 
 
 // Location API
 import * as Location from 'expo-location';
 
-// import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Dimensions } from 'react-native';
 
 
 import TitleName from '../../Component/TitleName'
@@ -27,6 +25,7 @@ const wait = (timeout) => {
 const Main = ({navigation}) => {
     //날씨
     const [weather, setWeather] = useState("");
+    const [icon, seticon] = useState("");
     const [address, setAddress] = useState("");
 
 
@@ -72,7 +71,10 @@ const Main = ({navigation}) => {
             const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude.toFixed(5)}&lon=${location.coords.longitude.toFixed(5)}&appid=${API_KEY}&units=metric`);
             const res = await response.json()
             // console.log('temp -> ',res)
+            console.log('res--', res)
             setWeather(res)
+            iconsplit = res.weather[0].icon.split('n')
+            seticon(iconsplit[0])
         })();
     }, [])
 
@@ -108,34 +110,36 @@ const Main = ({navigation}) => {
                     style={styles.userinfo}
                     onPress={() => navigation.navigate('UserInfo')}
                 >
-                    <View style={styles.weather}>
-                        {
-                            weather != "" ?
-                                <>
-                                    <View style={styles.location}>
-                                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{address}</Text>
-                                    </View>
-                                    <View style={styles.temperature}>
-                                        <View style={{ padding: 3, width: '50%', height: '100%', }}>
-                                            <Image style={{ width: '100%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png` }} />
+                    <View style={styles.weatherView}>
+                        <View style={styles.weather}>
+                            {
+                                weather != "" ?
+                                    <>
+                                        <View style={styles.temperature}>
+                                            <View style={{ width: '40%', height: '100%', backgroundColor:'white', borderRadius:50, marginRight:4}}>
+                                                <Image style={{ width: '100%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${icon}d.png` }} />
+                                            </View>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <Text style={{ fontSize: 30 }}>{weather.main.temp.toFixed(0)}</Text>
+                                                <Text style={{ fontSize: 20 }}>  °C </Text>
+                                            </View>
                                         </View>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                            <Text style={{ fontSize: 30 }}>{weather.main.temp.toFixed(0)}</Text>
-                                            <Text>  °C </Text>
+                                        <View style={styles.location}>
+                                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{address}</Text>
                                         </View>
-                                    </View>
-                                </>
-                                :
-                                <ActivityIndicator />
-                        }
+                                    </>
+                                    :
+                                    <ActivityIndicator />
+                            }
+                        </View>
                     </View>
                     <View style={styles.userstate}>
-                        <View style={{ flexDirection: 'row', height: '100%', backgroundColor:'yellow'}}>
+                        <View style={{ flexDirection: 'row', height: '100%', }}>
                             {
                                 users ?
                                     <>
-                                        <View style={{ width: '65%', padding:3}}>
-                                            <View style={{ alignItems: 'flex-end', marginBottom:3 }}>
+                                        <View style={{ width: '65%', padding:3 }}>
+                                            <View style={{ alignItems: 'center', marginBottom:3, paddingLeft:7 }}>
                                                 <Text style={{ fontSize: 20 }}>{users[0].u_name}님은</Text>
                                             </View>
                                             <View style={{ alignItems: 'center' }}>
@@ -203,7 +207,6 @@ const Main = ({navigation}) => {
                     </View>
                 </TouchableOpacity>
             </View>
-
         </View>
 
     );
@@ -241,7 +244,7 @@ const styles = StyleSheet.create({
     },
     userinfoView: { //사용자 정보 첫 레이아웃
         width: Dimensions.get('screen').width,
-        height: Dimensions.get('screen').height * 0.25,
+        height: Dimensions.get('screen').height * 0.28,
         padding: 15,
         justifyContent: 'center',
         alignContent: 'center',
@@ -251,30 +254,38 @@ const styles = StyleSheet.create({
         height: '100%',
         backgroundColor: '#F2F2F2',
         borderRadius: 15,
-        padding: 15
+        padding: 15,
+        alignItems:'center',
+    },
+    weatherView:{
+        width: '90%',
+        height: '35%',
+        borderBottomColor: '#848484',
+        borderBottomWidth: 2,
     },
     weather: {
         width: '100%',
-        height: '35%',
         flexDirection: 'row',
         justifyContent: 'center',
-    },
-    location: {
-        width: '50%',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'flex-end',
+        alignItems:'center',
     },
     temperature: {
         flexDirection: 'row',
         width: '50%',
         height: '100%',
         justifyContent: 'flex-end',
-        paddingRight: 15,
+        padding: 5,
+    },
+    location: {
+        width: '50%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     userstate: {
         width: '100%',
         height: '45%',
+        paddingTop: 15,
     },
     donation: {
         width: '100%',

@@ -43,10 +43,11 @@ const Main2 = ({navigation}) => {
     return (
         <View style={styles.container}>
             <Button title='Join' onPress={()=>(navigation.navigate("Join"))}></Button>
+            <Button title='SignUp' onPress={()=>(navigation.navigate("SignUp"))}></Button>
             <Button title='Login' onPress={()=>(navigation.navigate("Login"))}></Button>
             <Button title='Main' onPress={()=>(navigation.navigate("Main"))}></Button>
             <Button title='Map' onPress={()=>(navigation.navigate("Map"))}></Button>
-            {/* <Button title='QRScanner2' onPress={()=>(navigation.navigate("QRScanner2"))}></Button> */}
+            <Button title='QRCodeScanner' onPress={()=>(navigation.navigate("QRCodeScanner"))}></Button>
             <Button title='CustMain' onPress={()=>(navigation.navigate("CustMain"))}></Button>
             <Button title='UserInfo' onPress={()=>(navigation.navigate("UserInfo"))}></Button>
             <Button title='CameraCheck' onPress={()=>(navigation.navigate("CameraCheck"))}></Button>
