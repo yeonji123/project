@@ -60,6 +60,7 @@ const QRCodeScanner = ({ navigation }) => {
       data.docs.map((doc, idx) => {
         console.log(idx, '=', doc.data())
         if (doc.data().s_num == stationNum) {
+          console.log(doc.data())
           setStationData(doc.data())
           checkresult=true //stationNum이랑 같은 게 있으면 true
         }
@@ -107,7 +108,7 @@ const QRCodeScanner = ({ navigation }) => {
                   onPress={() => {
                     setScanned(false)
                     setModalVisible(!modalVisible)
-                    navigation.navigate("FunctionList",{data:stationData})
+                    navigation.navigate("FunctionList", { data: stationData })
                   }}>
                   <Text style={styles.textStyle}>예</Text>
                 </Pressable>

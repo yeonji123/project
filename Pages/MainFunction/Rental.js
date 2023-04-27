@@ -3,10 +3,10 @@ import {View, Text, StyleSheet, TouchableOpacity, Dimensions} from 'react-native
 
 import TitleName from '../../Component/TitleName';
 
-const Rental = ({ navigation, props }) => {
+const Rental = ({ navigation, data }) => {
 
     useEffect(() => {
-        console.log(props.params)
+        console.log(data)
 
 
         // (async () => {
