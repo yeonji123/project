@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, Image, ScrollView } from 'react-native';
 import { Camera, FlashMode } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
 
 // firestorage
@@ -15,7 +15,7 @@ export default function Play(navigation) {
   const [image, setImage] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [firebaseImage, setFirebaseImage] = useState(null);
-
+  const [scanned, setScanned] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -99,6 +99,13 @@ export default function Play(navigation) {
     }
   }
 
+  const handleBarCodeScanned = ({ type, data }) => {
+    setScanned(true);
+    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+
+  };
+
+
   return (
     <View style={{ flex: 1, padding:30 }}>
       <View style={styles.cameraContainer}>
@@ -108,7 +115,7 @@ export default function Play(navigation) {
           type={type}
           ratio={'1:1'}
           flashMode={FlashMode.on}
-          
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         />
       </View>
       <Button

@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Modal, Image, Dimensions,TouchableOpacity, Pressable  } from 'react-native';
+import { Text, View, StyleSheet, Modal, Image, Dimensions, TouchableOpacity, Pressable, TextInput } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Camera, FlashMode } from 'expo-camera';
-
+import { Camera } from 'expo-camera';
+//fire store
+//npx expo install firebase
+import { db } from '../../firebaseConfig';
+import { addDoc, collection, getDocs } from 'firebase/firestore';
 
 var isFirstGet = true;
 //default는 App.js에서만 사용해야 하는 듯 
-const QRCodeScanner = ({navigation}) => {
+const QRCodeScanner = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
+  // 카메라
   const [scanned, setScanned] = useState(false);
+  const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
   // 모달
   const [modalVisible, setModalVisible] = useState(false);
+  const [numModalVisible, setNumModalVisible] = useState(true);
+  const [stationNum, setStationNum] = useState('');
+  // station Data
+  const [stationData, setStationData] = useState({});
 
+
+
+  // 카메라 핸들러 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -20,11 +32,11 @@ const QRCodeScanner = ({navigation}) => {
     getBarCodeScannerPermissions();
   }, []);
 
+  // barcode인식하면 나오는 함수
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     setModalVisible(true)
-
   };
 
   if (hasPermission === null) {
@@ -37,43 +49,136 @@ const QRCodeScanner = ({navigation}) => {
 
 
 
+
+  const checkStation = async() =>{
+    // DB 확인하기
+    console.log('DB 확인하기')
+    try {
+      let checkresult=false // 동일한 stationNum이 있는 지 확인하는 변수
+
+      const data = await getDocs(collection(db, "Station"))
+      data.docs.map((doc, idx) => {
+        console.log(idx, '=', doc.data())
+        if (doc.data().s_num == stationNum) {
+          setStationData(doc.data())
+          checkresult=true //stationNum이랑 같은 게 있으면 true
+        }
+      })
+
+
+      if (checkresult){
+        setNumModalVisible(!numModalVisible) // 번호 입력 모달창 닫기
+        setModalVisible(!modalVisible) // 스캔 모달창 열기
+      }
+      else{
+        alert('동일한 stationNum이 없습니다.')
+      }
+    
+    } catch (error) {
+      console.log('eerror', error.message)
+    }
+  }
+
+
   return (
     <View style={styles.container}>
+        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}>
+            <View style={styles.modalView}>
+              <View style={styles.modalTop}>
+                <Text style={{ fontSize: 20, textAlign: 'center' }}>Scan 완료!</Text>
+              </View>
+
+              <View style={styles.modalMid}>
+                <Text style={{ fontSize: 25, }}>stationnum을 </Text>
+                <Text style={{ fontSize: 25, }}>사용하시겠습니까? </Text>
+              </View>
+
+              <View style={styles.modalbot}>
+                <Pressable
+                  style={{ width: '50%' }}
+                  onPress={() => {
+                    setScanned(false)
+                    setModalVisible(!modalVisible)
+                    navigation.navigate("FunctionList",{data:stationData})
+                  }}>
+                  <Text style={styles.textStyle}>예</Text>
+                </Pressable>
+                <Pressable
+                  style={{ width: '50%' }}
+                  onPress={() => {
+                    setScanned(false)
+                    setModalVisible(!modalVisible)
+                  }}>
+                  <Text style={styles.textStyle}>아니오</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
 
 
 
 
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={numModalVisible}
+            onRequestClose={() => {
+              setNumModalVisible(!numModalVisible);
+            }}>
+
+            <View style={styles.modalView}>
+              <View style={styles.modalTop}>
+                <Text style={{ fontSize: 20, textAlign: 'center' }}>Station 번호 입력하기</Text>
+              </View>
+
+              <View style={styles.modalMid}>
+                <TextInput
+                  style={{ width: '50%', height: 50, fontSize: 20, textAlign: 'center' }}
+                  value={stationNum}
+                  onChangeText={(e) => setStationNum(e)}
+                  placeholder="StationNum (8자)"
+                  maxLength={8}
+                  numeric
+                  keyboardType={'numeric'}
+                />
+              </View>
+
+              <View style={styles.modalbot}>
+                <Pressable
+                  style={{ width: '50%' }}
+                  onPress={() => {
+                    // station 유무 확인 함수
+                    checkStation()
+                  }}>
+                  <Text style={styles.textStyle}>확인</Text>
+                </Pressable>
+                <Pressable
+                  style={{ width: '50%' }}
+                  onPress={() => setNumModalVisible(!numModalVisible)}>
+                  <Text style={styles.textStyle}>취소</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+        </View>
 
 
-      <BarCodeScanner
+
+
+      <Camera
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={[StyleSheet.absoluteFillObject, styles.container]}
         barCodeTypes={BarCodeScanner.type}
-
+        flashMode={flash}
       >
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>Hide Modal</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-
-
-
         <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 20 }}>Scan your QR code</Text>
         <Image
           style={styles.qr}
@@ -82,12 +187,24 @@ const QRCodeScanner = ({navigation}) => {
 
         <View style={styles.qrassiView}>
           <View style={{ flexDirection: 'row', height: '50%', width: '90%', justifyContent: 'space-between' }}>
-            <View style={styles.assi}>
+            <TouchableOpacity
+              style={styles.assi}
+              onPress={() => setNumModalVisible(true)}
+            >
               <Image style={{ width: '100%', height: '100%' }} source={require('../../assets/keypad.png')} />
-            </View>
-            <View style={styles.assi}>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.assi}
+              onPress={() => {
+                console.log('flash')
+                setFlash(
+                flash === Camera.Constants.FlashMode.off
+                  ? Camera.Constants.FlashMode.torch
+                  : Camera.Constants.FlashMode.off);
+                }}
+            >
               <Image style={{ width: '100%', height: '100%' }} source={require('../../assets/flashlight.png')} />
-            </View>
+            </TouchableOpacity>
           </View>
 
 
@@ -102,7 +219,7 @@ const QRCodeScanner = ({navigation}) => {
 
 
         </View>
-      </BarCodeScanner>
+      </Camera>
     </View>
   );
 }
@@ -114,29 +231,78 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    alignContent: 'center'
   },
-  qr:{
-    marginTop:20,
-    width:Dimensions.get('window').width*0.7,
-    height:Dimensions.get('window').width*0.7,
+  qr: {
+    marginTop: 20,
+    width: Dimensions.get('window').width * 0.7,
+    height: Dimensions.get('window').width * 0.7,
   },
-  qrassiView:{
-    width:Dimensions.get('window').width*0.7,
-    height:Dimensions.get('window').height*0.2,
-    justifyContent:'center',
-    alignItems:'center',
-    padding:20, 
+  qrassiView: {
+    width: Dimensions.get('window').width * 0.7,
+    height: Dimensions.get('window').height * 0.2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
-  assi:{
-    backgroundColor:'white',
-    width:'30%',
-    height:'100%',
-    borderRadius:50,
-    justifyContent:'center',
-    alignItems:'center',
-    padding:15,
+  assi: {
+    backgroundColor: 'white',
+    width: '30%',
+    height: '100%',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
   },
-
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTop: {
+    width: '100%',
+    justifyContent: 'center',
+    textAlign: 'center',
+    padding: 10,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+  },
+  modalMid: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+  },
+  modalbot: {
+    width: '100%',
+    backgroundColor: '#B2CCFF',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    borderTopWidth: 1,
+    borderColor: 'gray',
+    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: 10,
+  },
+  modalbutton: {
+    width: '20%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 30,
+    borderRadius: 10,
+  },
+  textStyle: {
+    fontSize: 20,
+    textAlign: 'center',
+    padding: 10,
+  },
 });
 
