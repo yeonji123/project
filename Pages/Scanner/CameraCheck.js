@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, Image, ScrollView } from 'react-native';
-import { Camera } from 'expo-camera';
+import { Camera, FlashMode } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 
 
@@ -90,7 +90,14 @@ export default function Play(navigation) {
     return <Text>No access to camera</Text>;
   }
 
-
+  const isflash = () => {
+    if (Camera.Constans.flashMode == Camera.Constants.FlashMode.off) {
+      Camera.COnstans.flashMode = Camera.Constants.FlashMode.on
+    }
+    else {
+      Camera.Constants.FlashMode.off
+    }
+  }
 
   return (
     <View style={{ flex: 1, padding:30 }}>
@@ -99,7 +106,10 @@ export default function Play(navigation) {
           ref={ref => setCamera(ref)}
           style={styles.fixedRatio}
           type={type}
-          ratio={'1:1'} />
+          ratio={'1:1'}
+          flashMode={FlashMode.on}
+          
+        />
       </View>
       <Button
         title="Flip Image"
@@ -111,6 +121,7 @@ export default function Play(navigation) {
           );
         }}>
       </Button>
+      <Button title='flash' onPress={() => isflash()}/>
       <Button title="Take Picture" onPress={() => takePicture()} />
       <Button title='앨범' onPress={_handlePhotoBtnPress} />
 

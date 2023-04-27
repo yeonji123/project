@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, StyleSheet, Image, ActivityIndicator, Button } from 'react-native';
+import { Text, View, StyleSheet, Image, ScrollView, Button } from 'react-native';
 import { useEffect, useState } from 'react'
 
 //날씨 api키
@@ -42,24 +42,26 @@ const Main2 = ({navigation}) => {
 
     return (
         <View style={styles.container}>
-            <Button title='Join' onPress={()=>(navigation.navigate("Join"))}></Button>
-            <Button title='SignUp' onPress={()=>(navigation.navigate("SignUp"))}></Button>
-            <Button title='Login' onPress={()=>(navigation.navigate("Login"))}></Button>
-            <Button title='Main' onPress={()=>(navigation.navigate("Main"))}></Button>
-            <Button title='Map' onPress={()=>(navigation.navigate("Map"))}></Button>
-            <Button title='QRCodeScanner' onPress={()=>(navigation.navigate("QRCodeScanner"))}></Button>
-            <Button title='CustMain' onPress={()=>(navigation.navigate("CustMain"))}></Button>
-            <Button title='UserInfo' onPress={()=>(navigation.navigate("UserInfo"))}></Button>
-            <Button title='CameraCheck' onPress={()=>(navigation.navigate("CameraCheck"))}></Button>
-            <Button title='BreakReport' onPress={()=>(navigation.navigate("BreakReport"))}></Button>
-            <Button title='RentalReturnReport' onPress={()=>(navigation.navigate("RentalReturnReport"))}></Button>
-            <Button title='MyDonation' onPress={()=>(navigation.navigate("MyDonation"))}></Button>
-            <Button title='FunctionList' onPress={()=>(navigation.navigate("FunctionList"))}></Button>
-            <Button title='Rental' onPress={()=>(navigation.navigate("Rental"))}></Button>
-            <Button title='RentalPage' onPress={()=>(navigation.navigate("RentalPage"))}></Button>
-            <Button title='ExplainPage' onPress={()=>(navigation.navigate("ExplainPage"))}></Button>
-            <Button title='StationWorking' onPress={()=>(navigation.navigate("StationWorking"))}></Button>
-            <Button title='Return' onPress={()=>(navigation.navigate("Return"))}></Button>
+            <ScrollView>
+                <Button title='Join' onPress={() => (navigation.navigate("Join"))}></Button>
+                <Button title='SignUp' onPress={() => (navigation.navigate("SignUp"))}></Button>
+                <Button title='Login' onPress={() => (navigation.navigate("Login"))}></Button>
+                <Button title='Main' onPress={() => (navigation.navigate("Main"))}></Button>
+                <Button title='Map' onPress={() => (navigation.navigate("Map"))}></Button>
+                <Button title='QRCodeScanner' onPress={() => (navigation.navigate("QRCodeScanner"))}></Button>
+                <Button title='CustMain' onPress={() => (navigation.navigate("CustMain"))}></Button>
+                <Button title='UserInfo' onPress={() => (navigation.navigate("UserInfo"))}></Button>
+                <Button title='CameraCheck' onPress={() => (navigation.navigate("CameraCheck"))}></Button>
+                <Button title='BreakReport' onPress={() => (navigation.navigate("BreakReport"))}></Button>
+                <Button title='RentalReturnReport' onPress={() => (navigation.navigate("RentalReturnReport"))}></Button>
+                <Button title='MyDonation' onPress={() => (navigation.navigate("MyDonation"))}></Button>
+                <Button title='FunctionList' onPress={() => (navigation.navigate("FunctionList"))}></Button>
+                <Button title='Rental' onPress={() => (navigation.navigate("Rental"))}></Button>
+                <Button title='RentalPage' onPress={() => (navigation.navigate("RentalPage"))}></Button>
+                <Button title='ExplainPage' onPress={() => (navigation.navigate("ExplainPage"))}></Button>
+                <Button title='StationWorking' onPress={() => (navigation.navigate("StationWorking"))}></Button>
+                <Button title='Return' onPress={() => (navigation.navigate("Return"))}></Button>
+            </ScrollView>
         </View>
     );
 }

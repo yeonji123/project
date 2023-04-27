@@ -1,4 +1,4 @@
-/*
+
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState, useRef, } from 'react';
 import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
@@ -74,11 +74,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-*/
 
 
 
 
+/*
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, PermissionsAndroid, Button } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
@@ -88,7 +88,7 @@ import { addDoc, collection, getDocs } from 'firebase/firestore';
 import base64 from 'react-native-base64';
 
 const App = () => {
-  const [manager] = useState(new BleManager());
+  const [manager, setManager] = useState(new BleManager());
   const [devices, setDevices] = useState([]); //Scan devices
   const [test, setTest] = useState();
   const [user, setUsers] = useState();
@@ -98,6 +98,9 @@ const App = () => {
     const subscription = manager.onStateChange(state => {
       if (state === 'PoweredOn') scanAndConnect();
     }, true);
+
+    setManager(new BleManager());
+
   }, []);
 
   const dbTest = async () => {
@@ -207,3 +210,4 @@ const App = () => {
 };
 
 export default App;
+*/
