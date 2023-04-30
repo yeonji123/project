@@ -5,7 +5,7 @@ import { Camera } from 'expo-camera';
 //fire store
 //npx expo install firebase
 import { db } from '../../firebaseConfig';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
 var isFirstGet = true;
 //default는 App.js에서만 사용해야 하는 듯 
@@ -17,10 +17,10 @@ const QRCodeScanner = ({ navigation }) => {
   // 모달
   const [modalVisible, setModalVisible] = useState(false);
   const [numModalVisible, setNumModalVisible] = useState(true);
-  const [stationNum, setStationNum] = useState('');
+  const [stationNum, setStationNum] = useState(); //입력한 stationnum
   // station Data
-  const [stationData, setStationData] = useState({});
-
+  const [stationData, setStationData] = useState();
+  const [stationName, setStationName] = useState('');
 
 
   // 카메라 핸들러 
@@ -60,8 +60,9 @@ const QRCodeScanner = ({ navigation }) => {
       data.docs.map((doc, idx) => {
         console.log(idx, '=', doc.data())
         if (doc.data().s_num == stationNum) {
-          console.log(doc.data())
+          console.log('checkresult',doc.data())
           setStationData(doc.data())
+          setStationName(doc.data().s_name)
           checkresult=true //stationNum이랑 같은 게 있으면 true
         }
       })
@@ -98,7 +99,7 @@ const QRCodeScanner = ({ navigation }) => {
               </View>
 
               <View style={styles.modalMid}>
-                <Text style={{ fontSize: 25, }}>stationnum을 </Text>
+                <Text style={{ fontSize: 25, }}>{stationName}을 </Text>
                 <Text style={{ fontSize: 25, }}>사용하시겠습니까? </Text>
               </View>
 
@@ -108,7 +109,9 @@ const QRCodeScanner = ({ navigation }) => {
                   onPress={() => {
                     setScanned(false)
                     setModalVisible(!modalVisible)
-                    navigation.navigate("FunctionList", { data: stationData })
+                    navigation.navigate("FunctionList", { 
+                      data: stationData 
+                    })
                   }}>
                   <Text style={styles.textStyle}>예</Text>
                 </Pressable>
