@@ -59,8 +59,8 @@ const Main2 = ({navigation}) => {
                 <Button title='Rental' onPress={() => (navigation.navigate("Rental"))}></Button>
                 <Button title='RentalPage' onPress={() => (navigation.navigate("RentalPage"))}></Button>
                 <Button title='ExplainPage' onPress={() => (navigation.navigate("ExplainPage"))}></Button>
-                <Button title='StationWorking' onPress={() => (navigation.navigate("StationWorking"))}></Button>
-                <Button title='Return' onPress={() => (navigation.navigate("Return"))}></Button>
+                <Button title='DonationPage' onPress={() => (navigation.navigate("DonationPage"))}></Button>
+                <Button title='ReturnPage' onPress={() => (navigation.navigate("ReturnPage"))}></Button>
             </ScrollView>
         </View>
     );

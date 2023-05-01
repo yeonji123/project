@@ -20,8 +20,9 @@ import FunctionList from "./Pages/MainFunction/FunctionList";
 import Rental from "./Pages/MainFunction/Rental";
 import RentalPage from "./Pages/MainFunction/RentalPage";
 import ExplainPage from "./Pages/MainFunction/ExplainPage";
-import StationWorking from "./Pages/MainFunction/StationWorking";
-import Return from "./Pages/MainFunction/Return";
+import DonationPage from "./Pages/MainFunction/DonationPage";
+import ReturnPage from "./Pages/MainFunction/ReturnPage";
+
 
 import 'expo-dev-client';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -56,8 +57,8 @@ export default function App() {
           <Stack.Screen name="Rental" component={Rental} />
           <Stack.Screen name="RentalPage" component={RentalPage} />
           <Stack.Screen name="ExplainPage" component={ExplainPage} />
-          <Stack.Screen name="StationWorking" component={StationWorking} />
-          <Stack.Screen name="Return" component={Return} />
+          <Stack.Screen name="DonationPage" component={DonationPage} />
+          <Stack.Screen name="ReturnPage" component={ReturnPage} />
         </Stack.Navigator>
       </NavigationContainer>
       

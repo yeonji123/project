@@ -18,7 +18,7 @@ export default TitleName;
 
 const styles = StyleSheet.create({
     titleVIew: {
-        width: Dimensions.get('window').width * 0.8,
+        width: Dimensions.get('window').width * 0.9,
         borderBottomColor: '#6699FF',
         borderBottomWidth: 3,
         paddingBottom: 10,
