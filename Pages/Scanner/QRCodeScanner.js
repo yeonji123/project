@@ -86,13 +86,14 @@ const QRCodeScanner = ({ navigation }) => {
     <View style={styles.container}>
         <View style={{ justifyContent: 'center', alignItems: 'center', }}>
 
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
-            }}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <View style={styles.modalTop}>
                 <Text style={{ fontSize: 20, textAlign: 'center' }}>Scan 완료!</Text>
@@ -109,8 +110,8 @@ const QRCodeScanner = ({ navigation }) => {
                   onPress={() => {
                     setScanned(false)
                     setModalVisible(!modalVisible)
-                    navigation.navigate("FunctionList", { 
-                      data: stationData 
+                    navigation.navigate("FunctionList", {
+                      data: stationData
                     })
                   }}>
                   <Text style={styles.textStyle}>예</Text>
@@ -125,7 +126,8 @@ const QRCodeScanner = ({ navigation }) => {
                 </Pressable>
               </View>
             </View>
-          </Modal>
+          </View>
+        </Modal>
 
 
 
@@ -256,6 +258,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 15,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
   },
   modalView: {
     margin: 20,

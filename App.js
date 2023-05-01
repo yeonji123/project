@@ -22,7 +22,7 @@ import RentalPage from "./Pages/MainFunction/RentalPage";
 import ExplainPage from "./Pages/MainFunction/ExplainPage";
 import DonationPage from "./Pages/MainFunction/DonationPage";
 import ReturnPage from "./Pages/MainFunction/ReturnPage";
-
+import ScanStation from './Pages/Service/ScanStation';  
 
 import 'expo-dev-client';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -59,6 +59,7 @@ export default function App() {
           <Stack.Screen name="ExplainPage" component={ExplainPage} />
           <Stack.Screen name="DonationPage" component={DonationPage} />
           <Stack.Screen name="ReturnPage" component={ReturnPage} />
+          <Stack.Screen name="ScanStation" component={ScanStation} />
         </Stack.Navigator>
       </NavigationContainer>
       

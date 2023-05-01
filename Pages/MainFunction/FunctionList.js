@@ -17,31 +17,32 @@ const FunctionList = ({ navigation, route }) => {
         var ishaveum = []
         var countrental = 0
         var countreturn = 0
-        setStationNum(route.params.data.s_num)
-        route.params.data.s_count.map((item, idx) => {
-            if (item.u_state) {
-                countreturn += 1;
-                // true이면 우산이 있는 것
-                return ishaveum[idx] = true
+        if (route.params != undefined) {
+            setStationNum(route.params.data.s_num)
+            route.params.data.s_count.map((item, idx) => {
+                if (item.u_state) {
+                    countreturn += 1;
+                    // true이면 우산이 있는 것
+                    return ishaveum[idx] = true
+                }
+                else {
+                    countrental += 1;
+                    // false이면 우산이 없는 것
+                    return ishaveum[idx] = false
+                }
+            })
+
+            
+            if (ishaveum.length == countrental) { // 우산이 없어 대여 불가능 경우
+                console.log('대여 불가능')
+                setRentalButton(!retalButton)
             }
-            else {
-                countrental += 1;
-                // false이면 우산이 없는 것
-                return ishaveum[idx] = false
+            if (ishaveum.length == countreturn) { // 우산이 모두 꽉차 있어 반납 불가능한 경우
+                console.log('반납 불가능')
+                setReturnButton(!returnButton)
             }
-        })
-        if (ishaveum.length == countrental) { // 우산이 없어 대여 불가능 경우
-            console.log('대여 불가능')
-            setRentalButton(!retalButton)
         }
-        if (ishaveum.length == countreturn) { // 우산이 모두 꽉차 있어 반납 불가능한 경우
-            console.log('반납 불가능')
-            setReturnButton(!returnButton)
-        }
-
-
-
-
+        
 
     }, []);
 
@@ -61,7 +62,7 @@ const FunctionList = ({ navigation, route }) => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={retalButton ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
-                    onPress={() => navigation.navigate('Return')}
+                    onPress={() => navigation.navigate('ReturnPage')}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>반납하기</Text>
                 </TouchableOpacity>
@@ -71,7 +72,7 @@ const FunctionList = ({ navigation, route }) => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={styles.buttonstyle}
-                    onPress={() => navigation.navigate('Donation')}
+                    onPress={() => navigation.navigate('DonationPage')}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>폐우산 기부하기</Text>
                 </TouchableOpacity>
