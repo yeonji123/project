@@ -125,15 +125,7 @@ const Map = ({navigation}) => {
     })();
   }, []);
 
-  const takePicture = async () => {
-    if (camera) {
-      console.log('tackPicture')
-      const data = await camera.takePictureAsync(null)
-      setImage(data.uri);
-      console.log('data', data.uri);
-      setPhotoModal(false)
-    }
-  }
+
 
   if (hasCameraPermission === false) {
     return <Text>No access to camera</Text>;
@@ -161,73 +153,6 @@ const Map = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ alignContent: 'center', justifyContent: 'center' }}>
-        {/* 사진 찍은 후 확인 모달 */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={weatherModal}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setWeatherModal(!weatherModal);
-          }}>
-
-          <View style={styles.centeredView}>
-            <View style={styles.weathertab}>
-              {
-                weather != "" ?
-                  <>
-                    <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                      {/* <Text style={{ color: 'gray' }}>     {address[0].district} </Text> */}
-                      <Text style={{ fontSize: 20, }}> {weather.main.temp.toFixed(0)}°C       </Text>
-                    </View>
-                    <Image style={{ width: '20%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png` }} />
-                    <Text>{weather.weather[0].main}</Text>
-                  </>
-                  :
-                  null
-              }
-            </View>
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.modalView}>
-
-              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={{ padding: 10 }}>
-                  <View style={{ backgroundColor: 'yellow', alignItems: 'center', justifyContent: 'center', height: 320, width: 280 }}>
-                    <Image source={{ uri: image }} style={{ resizeMode: "cover", height: '100%', width: '100%', borderWidth: 2, borderColor: '#EBE3D7' }} />
-                  </View>
-                  <Text>Ddddd</Text>
-                  
-                </View>
-
-              </TouchableWithoutFeedback>
-
-
-
-              <View style={{ flexDirection: 'row', padding: 10 }}>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => {
-
-                    setWeatherModal(!weatherModal)
-
-                  }}>
-                  <Text style={styles.textStyle}>확인</Text>
-                </Pressable>
-              </View>
-            </KeyboardAvoidingView>
-          </View>
-        </Modal>
-
-
-      </View>
-
-
-
-
-
-
-
-
       <View style={styles.containerMap}>
         <MapView
           style={styles.map}
@@ -263,55 +188,46 @@ const Map = ({navigation}) => {
 
           {
             stations?.map((e, idx) => {
-              if (e.id=="Station"){
-                var rentalCount = 0
-                var returnCount = 0
+              var rentalCount = 0
+              var returnCount = 0
+              // e.um_count_state.map((e2, idx2) => {
+              //   if (e2.state) {
+              //     rentalCount++;
+              //   } else {
+              //     returnCount++;
+              //   }
+              // })
 
-                e.s_count.map((e2, idx2) => {
-                  if (e2.u_state ) {
-                    rentalCount++;
-                  } else {
-                    returnCount++;
-                  }
-                })
+              return (
+                <Marker
+                  key={idx}
+                  coordinate={{ latitude: e.s_position_x, longitude: e.s_position_y }}
+                  onPress={() => {
+                    console.log(e)
+                    onDetail(e.s_position_x, e.s_position_y, e.s_num)
+                  }}
+                >
+                  <Callout style={{ width: Dimensions.get('screen').width * 0.6 }}>
 
-                return (
-                  <Marker
-                    key={idx}
-                    coordinate={{ latitude: e.s_position_x, longitude: e.s_position_y }}
-                    onPress={() => {
-                      console.log(e)
-                      onDetail(e.s_position_x, e.s_position_y, e.s_num)
-                    }}
-                  >
-                    <Callout style={{ width:Dimensions.get('screen').width*0.6}}>
+                    <View style={{ justifyContent: 'center', padding: 5 }}>
+                      <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#6699FF' }}>{e.s_num}</Text>
+                      <Text >충청남도 아산시 탕정면 선문로 221번길 70 </Text>
+                    </View>
 
-                        <View style={{ justifyContent:'center', padding:5}}>
-                          <Text style={{ fontSize: 20, fontWeight: 'bold' , color:'#6699FF'}}>{e.s_num}</Text>
-                          <Text >충청남도 아산시 탕정면 선문로 221번길 70 </Text>
-                        </View>
+                    <View style={{ alignItems: 'flex-end', marginTop: 10 }}>
+                      <Text style={{ fontSize: 13, fontWeight: 'bold', }}>대여 가능 우산 갯수 : {rentalCount}</Text>
+                      <Text style={{ fontSize: 13, fontWeight: 'bold', }}>반납 가능 우산 갯수 : {returnCount}</Text>
+                    </View>
 
-                        <View style={{ alignItems:'flex-end', marginTop:10}}>
-                          <Text style={{ fontSize: 13, fontWeight: 'bold',}}>대여 가능 우산 갯수 : {rentalCount}</Text>
-                          <Text style={{ fontSize: 13, fontWeight: 'bold',}}>반납 가능 우산 갯수 : {returnCount}</Text>
-                        </View>
-
-                        <View>
+                    <View>
 
 
-                        </View>
-                      </Callout>
-                  </Marker>
-                )
-              }
-              
+                    </View>
+                  </Callout>
+                </Marker>
+              )
             })
-          }
-
-
-
-
-         
+          }        
         </MapView>
 
 
