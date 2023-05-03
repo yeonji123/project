@@ -10,11 +10,11 @@ import { collection, getDocs } from 'firebase/firestore';
 
 
 const Rental = ({ navigation, route }) => {
-    const [stationData, setStationData] = useState();
-    const [umbrellaData, setUmbrellaData] = useState();
-
+    const [stationData, setStationData] = useState(); // Station 전체 데이터
+    const [umbrellaData, setUmbrellaData] = useState(); // Station에 있는 우산 데이터
+    const [umNumber, setUmNumber] = useState(); // Station에 있는 우산 번호
     // 모달
-    const [checkModal, setCheckModal] = useState(false);
+    const [checkModal, setCheckModal] = useState(false); // 모달창
 
 
     useEffect(() => {
@@ -23,11 +23,11 @@ const Rental = ({ navigation, route }) => {
         (async () => {
             try {
                 const data = await getDocs(collection(db, "Station"))
-                data.docs.map(doc => {
+                data.docs.map(doc => { // DB에 있는 데이터 읽기
                     if (doc.data().s_num == route.params.data) {
-                        console.log('Rental page params', doc.data().s_count)
-                        setStationData(doc.data())
-                        setUmbrellaData(doc.data().s_count)
+                        console.log('Rental page params', doc.data().s_count) // s_count는 우산 개수 확인
+                        setStationData(doc.data()) // 해당되는 station 데이터 저장
+                        setUmbrellaData(doc.data().s_count) // 해당되는 station에 있는 우산들 데이터 저장
                     }
                 })
 
@@ -43,7 +43,7 @@ const Rental = ({ navigation, route }) => {
     const handleModal = (idx) => {
         //몇 번째 값인지 확인
         console.log('handleModal', idx)
-
+        setUmNumber(idx)
 
 
 
@@ -64,29 +64,36 @@ const Rental = ({ navigation, route }) => {
                     onRequestClose={() => {
                         setCheckModal(!checkModal);
                     }}>
-
-                    <View style={styles.modalView}>
-                        <View style={styles.modalTop}>
-                            <Text style={{ fontSize: 20, textAlign: 'center' }}>Station 번호 입력하기</Text>
-                        </View>
-                        <View style={styles.modalMid}>
-                            <Text style={{ fontSize: 25, }}>5 번 우산을 </Text>
-                            <Text style={{ fontSize: 25, }}>대여하시겠습니까? </Text>
-                        </View>
-                        <View style={styles.modalbot}>
-                            <Pressable
-                                style={{ width: '50%' }}
-                                onPress={() => {
-                                    // station 유무 확인 함수
-                                    console.log('station 작동')
-                                }}>
-                                <Text style={styles.textStyle}>확인</Text>
-                            </Pressable>
-                            <Pressable
-                                style={{ width: '50%' }}
-                                onPress={() => setCheckModal(!checkModal)}>
-                                <Text style={styles.textStyle}>취소</Text>
-                            </Pressable>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <View style={styles.modalTop}>
+                                <Text style={{ fontSize: 20, textAlign: 'center' }}>Station 번호 입력하기</Text>
+                            </View>
+                            <View style={styles.modalMid}>
+                                {
+                                    umNumber ?
+                                        <>
+                                            <Text style={{ fontSize: 25, }}>{ } 번 우산을 </Text>
+                                            <Text style={{ fontSize: 25, }}>대여하시겠습니까? </Text>
+                                        </>
+                                        : null
+                                }
+                            </View>
+                            <View style={styles.modalbot}>
+                                <Pressable
+                                    style={{ width: '50%' }}
+                                    onPress={() => {
+                                        // station 유무 확인 함수
+                                        console.log('station 작동')
+                                    }}>
+                                    <Text style={styles.textStyle}>확인</Text>
+                                </Pressable>
+                                <Pressable
+                                    style={{ width: '50%' }}
+                                    onPress={() => setCheckModal(!checkModal)}>
+                                    <Text style={styles.textStyle}>취소</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     </View>
                 </Modal>
@@ -195,4 +202,10 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         padding: 10,
     },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+      },
 });

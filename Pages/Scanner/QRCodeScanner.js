@@ -50,32 +50,32 @@ const QRCodeScanner = ({ navigation }) => {
 
 
 
-  const checkStation = async() =>{
+  const checkStation = async () => {
     // DB 확인하기
     console.log('DB 확인하기')
     try {
-      let checkresult=false // 동일한 stationNum이 있는 지 확인하는 변수
+      let checkresult = false // 동일한 stationNum이 있는 지 확인하는 변수
 
       const data = await getDocs(collection(db, "Station"))
       data.docs.map((doc, idx) => {
         console.log(idx, '=', doc.data())
         if (doc.data().s_num == stationNum) {
-          console.log('checkresult',doc.data())
+          console.log('checkresult', doc.data())
           setStationData(doc.data())
           setStationName(doc.data().s_name)
-          checkresult=true //stationNum이랑 같은 게 있으면 true
+          checkresult = true //stationNum이랑 같은 게 있으면 true
         }
       })
 
 
-      if (checkresult){
+      if (checkresult) {
         setNumModalVisible(!numModalVisible) // 번호 입력 모달창 닫기
         setModalVisible(!modalVisible) // 스캔 모달창 열기
       }
-      else{
+      else {
         alert('동일한 stationNum이 없습니다.')
       }
-    
+
     } catch (error) {
       console.log('eerror', error.message)
     }
@@ -84,7 +84,7 @@ const QRCodeScanner = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+      <View style={{ justifyContent: 'center', alignItems: 'center', }}>
 
         <Modal
           animationType="slide"
@@ -132,14 +132,14 @@ const QRCodeScanner = ({ navigation }) => {
 
 
 
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={numModalVisible}
-            onRequestClose={() => {
-              setNumModalVisible(!numModalVisible);
-            }}>
-
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={numModalVisible}
+          onRequestClose={() => {
+            setNumModalVisible(!numModalVisible);
+          }}>
+          <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <View style={styles.modalTop}>
                 <Text style={{ fontSize: 20, textAlign: 'center' }}>Station 번호 입력하기</Text>
@@ -173,8 +173,9 @@ const QRCodeScanner = ({ navigation }) => {
                 </Pressable>
               </View>
             </View>
-          </Modal>
-        </View>
+          </View>
+        </Modal>
+      </View>
 
 
 
@@ -204,10 +205,10 @@ const QRCodeScanner = ({ navigation }) => {
               onPress={() => {
                 console.log('flash')
                 setFlash(
-                flash === Camera.Constants.FlashMode.off
-                  ? Camera.Constants.FlashMode.torch
-                  : Camera.Constants.FlashMode.off);
-                }}
+                  flash === Camera.Constants.FlashMode.off
+                    ? Camera.Constants.FlashMode.torch
+                    : Camera.Constants.FlashMode.off);
+              }}
             >
               <Image style={{ width: '100%', height: '100%' }} source={require('../../assets/flashlight.png')} />
             </TouchableOpacity>
