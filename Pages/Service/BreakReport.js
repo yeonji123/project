@@ -15,7 +15,11 @@ const BreakReport = ({ navigation, route }) => {
         setBreakList(temp);
     }
 
-    
+    const submit = () => {
+
+
+
+    }
 
 
 
@@ -73,7 +77,10 @@ const BreakReport = ({ navigation, route }) => {
             <View style={styles.submitView}>
                 <TouchableOpacity
                     style={styles.submit}
-                    onPress={() => { console.log('DB에 저장 ') }}
+                    onPress={() => { 
+                        console.log('DB에 저장 ') 
+                        submit()
+                    }}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>제출하기</Text>
                 </TouchableOpacity>

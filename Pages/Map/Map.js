@@ -24,38 +24,12 @@ import { addDoc, collection, getDocs } from 'firebase/firestore';
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
 
 const Map = ({navigation}) => {
-
-  const [weather, setWeather] = React.useState("");
-  const [address, setAddress] = React.useState("");
-
-  // 사진찍기
-  const [hasCameraPermission, setHasCameraPermission] = useState(null);
-  const [camera, setCamera] = useState(null);
-  const [image, setImage] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-
-  //모달
-  const [photoModal, setPhotoModal] = React.useState(false); //사진찍는 모달
-  const [weatherModal, setWeatherModal] = React.useState(false); // 산책 완료 모달
-
-
   const [mapRegion, setmapRegion] = useState({ //나의 위치 usestate
     latitude: 36.7987869, //위도
     longitude: 127.0757584, //경도
   });
-
-  //QR코드 스캐너
-  const [scaned, setScaned] = useState(true);
-  const ref = React.useRef(null);
-
   //firestor 연동
   const [stations, setStations] = useState();
-
-
-
-
-
-
   //에니메이션으로 이동
   const mapRef = React.useRef(null);
   const [region, setRegion] = React.useState();
@@ -74,21 +48,13 @@ const Map = ({navigation}) => {
     setScaned(true);
   }, []);
 
-  const onBarCodeRead = (event) => {
-    if (!scaned) return;
-    setScaned(false);
-    Vibration.vibrate();
-    Alert.alert("QR Code", event.nativeEvent.codeStringValue, [
-      { text: "OK", onPress: () => setScaned(true) },
-    ]);
-  };
 
 
   useEffect(() => {
     (async () => {
       try {
-        const data = await getDocs(collection(db, "Station"))
-        setStations(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+        const data = await getDocs(collection(db, "Station")) // Station이라는 테이블 명
+        setStations(data.docs.map(doc => ({ ...doc.data(), id: doc.id }))) // map을 돌려서 데이터를 복사하여 붙여놓고, id를 추가해줌
         
         // stations?.map((row, idx) => {
         //   console.log('row' + idx, row)
@@ -99,8 +65,6 @@ const Map = ({navigation}) => {
       }
 
 
-
-
       //위치 수집 허용하는지 물어보기
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -108,16 +72,9 @@ const Map = ({navigation}) => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      let address = await Location.reverseGeocodeAsync(location.coords);
-      const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude.toFixed(5)}&lon=${location.coords.longitude.toFixed(5)}&appid=${API_KEY}&units=metric`);
-      const res = await response.json()
-      console.log('address -> ', address)
-      console.log(address[0].district)
-      console.log(res)
-      setWeather(res)
+      let location = await Location.getCurrentPositionAsync({}); //현재 위치 가져오기
 
-      setmapRegion({ //현재 위치
+      setmapRegion({ //현재 위치 set
         latitude: location.coords.latitude,
         longitude: location.coords.longitude
       })
@@ -136,7 +93,7 @@ const Map = ({navigation}) => {
 
   
   //이동하기
-  const onDetail = (lat, lon, stationNum) => { // 반납 가능 우산 개수, 대여 가능 우산 개수 계산
+  const onDetail = (lat, lon) => { // 반납 가능 우산 개수, 대여 가능 우산 개수 계산
     setmapRegion({ //현재 위치
       latitude: lat,
       longitude: lon,
@@ -176,42 +133,33 @@ const Map = ({navigation}) => {
           }}
           onRegionChange={mapRegionChangehandle}
         >
-          {/* <Marker
-            coordinate={{
-              latitude: parseFloat(region.latitude),
-              longitude: parseFloat(region.longitude),
-            }}
-          >
-
-
-          </Marker> */}
 
           {
             stations?.map((e, idx) => {
               var rentalCount = 0
               var returnCount = 0
-              // e.um_count_state.map((e2, idx2) => {
-              //   if (e2.state) {
-              //     rentalCount++;
-              //   } else {
-              //     returnCount++;
-              //   }
-              // })
+              e.um_count_state.map((e2, idx2) => {
+                if (e2.state) {
+                  rentalCount++;
+                } else {
+                  returnCount++;
+                }
+              })
 
               return (
                 <Marker
                   key={idx}
-                  coordinate={{ latitude: e.s_position_x, longitude: e.s_position_y }}
+                  coordinate={{ latitude: e.st_p_x, longitude: e.st_p_y }}
                   onPress={() => {
                     console.log(e)
-                    onDetail(e.s_position_x, e.s_position_y, e.s_num)
+                    onDetail(e.st_p_x, e.st_p_y)
                   }}
                 >
                   <Callout style={{ width: Dimensions.get('screen').width * 0.6 }}>
 
                     <View style={{ justifyContent: 'center', padding: 5 }}>
-                      <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#6699FF' }}>{e.s_num}</Text>
-                      <Text >충청남도 아산시 탕정면 선문로 221번길 70 </Text>
+                      <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#6699FF' }}>{e.st_id}</Text>
+                      <Text >{e.st_address}</Text>
                     </View>
 
                     <View style={{ alignItems: 'flex-end', marginTop: 10 }}>
