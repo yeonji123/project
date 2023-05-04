@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+// firebase 데이터 추가
+import { db } from '../../firebaseConfig';
+import { addDoc, collection } from 'firebase/firestore';
 
 import GraySmallButton from '../../Component/GraySmallButton';
 
@@ -43,6 +46,7 @@ const BreakReport = ({ navigation, route }) => {
 
                 <View style={styles.breakInfo}>
                     <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>고장 내용</Text>
+                    <Text>* 해당되는 문제를 클릭하여주세요(복수 선택 가능)</Text>
                     <View style={styles.breakselect}>
                         <View style={{ justifyContent: 'space-around', width: '50%', marginRight: 5 }}>
                             <GraySmallButton title="여닫이 작동 안함" func={() => breakListFunc(0)} />

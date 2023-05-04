@@ -17,11 +17,9 @@ import { CameraScreen } from 'react-native-camera-kit';
 //fire store
 //npx expo install firebase
 import { db } from '../../firebaseConfig';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
 
-//날씨 api키
-const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
 
 const Map = ({navigation}) => {
   const [mapRegion, setmapRegion] = useState({ //나의 위치 usestate
@@ -35,18 +33,10 @@ const Map = ({navigation}) => {
   const [region, setRegion] = React.useState();
 
 
-
   // 드래그 해서 위치의 위도경도 가져오기
   const mapRegionChangehandle = (region) => {
       setRegion(region)
-    
   };
-
-  
-  useEffect(() => {
-    // 종료후 재시작을 했을때 초기화
-    setScaned(true);
-  }, []);
 
 
 
@@ -56,14 +46,15 @@ const Map = ({navigation}) => {
         const data = await getDocs(collection(db, "Station")) // Station이라는 테이블 명
         setStations(data.docs.map(doc => ({ ...doc.data(), id: doc.id }))) // map을 돌려서 데이터를 복사하여 붙여놓고, id를 추가해줌
         
-        // stations?.map((row, idx) => {
-        //   console.log('row' + idx, row)
-        // })
-        console.log('data', data.docs)
       } catch (error) {
         console.log('eerror', error.message)
       }
+    })();
+  }, []);
 
+
+  useEffect(() => {
+    (async () => {
 
       //위치 수집 허용하는지 물어보기
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -78,20 +69,16 @@ const Map = ({navigation}) => {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude
       })
-      
     })();
   }, []);
 
 
 
-  if (hasCameraPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
-  
 
 
-  
+
+
+
   //이동하기
   const onDetail = (lat, lon) => { // 반납 가능 우산 개수, 대여 가능 우산 개수 계산
     setmapRegion({ //현재 위치
@@ -138,13 +125,17 @@ const Map = ({navigation}) => {
             stations?.map((e, idx) => {
               var rentalCount = 0
               var returnCount = 0
-              e.um_count_state.map((e2, idx2) => {
-                if (e2.state) {
-                  rentalCount++;
+              // DB에 있는 데이터 값
+              // {"1": {"angle": 0, "state": true}, "2": {"angle": 90, "state": false}, ...}
+
+              for (var i=0; i<Object.keys(e.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
+                // key값이 string이라서 변환 후 state읽기
+                if (e.um_count_state[String(i+1)].state) { // true이면 대여 가능
+                  rentalCount++; 
                 } else {
                   returnCount++;
                 }
-              })
+              }
 
               return (
                 <Marker
@@ -193,7 +184,8 @@ const Map = ({navigation}) => {
             </Pressable>
             <Text>              </Text>
 
-            <Pressable style={styles.qrscanner} onPress={() => navigation.navigate('QRCodeScanner')}>
+            {/* <Pressable style={styles.qrscanner} onPress={() => navigation.navigate('QRCodeScanner')}> */}
+            <Pressable style={styles.qrscanner} onPress={() => console.log('ddddd')}>
               <Image style={{width:'25%', height:'55%'}} source={require('../../assets/qr_icon.png')} />
               <Text style={{fontSize:20, fontWeight:'bold', color:'white'}}>  대여하기</Text>
             </Pressable></>
