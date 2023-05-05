@@ -1,44 +1,66 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, ScrollView, TouchableOpacity } from 'react-native';
+import { useState, useEffect } from 'react';
+import {
+  View, Text, StyleSheet, Dimensions, ScrollView, TextInput, Keyboard, KeyboardAvoidingView,
+  Image, TouchableOpacity, NativeModules,
+} from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+
+// firebase 데이터 추가
+import { db } from '../../firebaseConfig';
+import { getDocs, collection, setDoc, doc } from 'firebase/firestore';
+
+
+// 키보드가 가리는 문제 때문에 아마 아이폰에만 있을 듯?
+const { StatusBarManager } = NativeModules
 
 
 const Join = ({ navigation }) => {
   // 입력 내용
-  const [id, setId] = useState("id");
+  const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [nickName, setNickName] = useState("");
-
+  const [mail, setMail] = useState("");
 
   //회원가입 버튼 활설화
   const [okId, setOkId] = useState(false);
   const [okPw, setOkPw] = useState(false);
   const [okPwEq, setOkPwEq] = useState(false);
   const [okName, setOkName] = useState(false);
-  const [okNickname, setOkNickname] = useState(false);
   const [okPhone, setOkPhone] = useState(false);
   const [okMail, setOkMail] = useState(false);
 
 
   //정규식 메시지 check
-  const [errorMessage, setErrorMessage] = useState(""); //id
+  const [errorMessageid, setErrorMessageID] = useState(""); //id
   const [errorMessagePw, setErrorMessagePw] = useState(""); // pw
   const [errorMessagePwEq, setErrorMessageEq] = useState(""); // pwEq
   const [errorMessageName, setErrorMessageName] = useState(""); // name
-  const [errorMessageNickname, setErrorMessageNickname] = useState(""); // nickname 
+  const [errorMessageMail, setErrorMessageMail] = useState(""); // nickname 
   const [errorMessagePhone, setErrorMessagePhone] = useState(""); // phone
 
+  const [statusBarHeight, setStatusBarHeight] = useState(0);
+
+  useEffect(() => {
+    Platform.OS == 'ios' ? StatusBarManager.getHeight((statusBarFrameData) => {
+      setStatusBarHeight(statusBarFrameData.height)
+    }) : null
+  }, []);
 
 
+
+
+
+
+  // 버튼 활성화 Sign Up
   const regiButton = () => {
-    if (okId & okPw & okPwEq & okName & okNickname & okPhone == true) {
-
+    if (okId & okPw & okPwEq & okName & okName & okPhone & okMail == true) {
       return false;
     }
     return true;
   }
+
 
   //아이디 정규식
   const validateId = id => {
@@ -64,20 +86,16 @@ const Join = ({ navigation }) => {
     return regex.test(name);
   }
 
-  //닉네임 정규식
-  const validateNickname = nickname => {
-    const regex = /^[가-힣a-zA-Z0-9]{2,20}$/;
-    return regex.test(nickname);
-  }
-
   //전화번호 정규식
   const validatePhone = phone => {
     const regex = /^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$/;
     return regex.test(phone);
   }
-  const validateDetail = detail_Address => {
-    if (detail_Address !== "") { return true; }
-    else { return false; }
+
+  // 이메일 정규식
+  const validateMail = mail => {
+    const regex = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*$/;
+    return regex.test(mail);
   }
 
   //띄어쓰기 고로시
@@ -94,8 +112,11 @@ const Join = ({ navigation }) => {
 
   //아이디 핸들러
   const handleIdChange = (id) => {
-    //DB 아이디 중복체크
-
+    const changeID = removespace(id)
+    setId(changeID)
+    setErrorMessageID(
+      validateId(changeID) ? "올바른 ID 형식입니다." : "영문으로 4~12자리"
+    );
 
   };
 
@@ -128,19 +149,9 @@ const Join = ({ navigation }) => {
     setOkName(validateName(changedName));
   }
 
-  //닉네임 핸들러
-  const handleNicknameChange = (nickname) => {
-    const changedNickname = removespace(nickname);
-    setNickname(changedNickname);
-    setErrorMessageNickname(
-      validateNickname(changedNickname) ? "올바른 닉네임 형식입니다." : "2~20자리 특수문자 제외"
-    );
-    setOkNickname(false);
-  }
-
   //전화번호 핸들러
-  const handlePhoneChange = (콜) => {
-    const changedPhone = autoHyphen(콜);
+  const handlePhoneChange = (call) => {
+    const changedPhone = autoHyphen(call);
     setPhone(changedPhone);
     setErrorMessagePhone(
       validatePhone(changedPhone) ? "올바른 휴대전화 번호입니다" : "올바른 휴대전화 번호가 아닙니다."
@@ -148,126 +159,186 @@ const Join = ({ navigation }) => {
     setOkPhone(validatePhone(changedPhone));
   }
 
+  const handleMailChange = (mail) => {
+    const changedMail = removespace(mail);
+    setMail(changedMail)
+    setErrorMessageMail(
+      validateMail(changedMail) ? '올바른 이메일 형식입니다.' : '올바른 이메일 형식이 아닙니다.'
+    )
+    setOkMail(validateMail(changedMail))
+  }
+
+
+  // 아이디 중복 확인
+  const checkID = (id) => {
+    //DB 아이디 중복체크
+    // 중복이면 false
+    (async () => {
+      try {
+
+          const data = await getDocs(collection(db, "User")) // Station이라는 테이블 명
+          var total = 0; // 전체 사용자 수
+          var check = 0; // id가 중복되지 않은 사용자 수 
+
+          data.docs.map(doc => {
+            total += 1; // 전체
+            if (doc.data().u_id === id) {
+              Alert('중복된 아이디입니다.')
+              setUsercheck(false)
+              setOkId(false)
+            } else {
+              check += 1 // 중복 확인 
+            }
+          })
+
+          if (total != check) { // 사용자가 중복 확인을 했는지 여부 확인하기 위해 
+            // total과 check가 다르면 중복확인을 클릭, 중복된 아이디가 없다는 뜻
+            setUsercheck(true)
+          }
+      } catch (error) {
+        console.log('eerror', error.message)
+      }
+    })();
+
+  }
 
 
 
 
-
-
-
-
-  const JoinButton = () => {
+  const SignUpButton = () => {
     // 회원가입 DB 넣기
     console.log(id)
+      (async () => {
+
+        const docRef = await setDoc(doc(db, "StationNotification", dbid), {
+          no_additional: sentence,
+          no_date: today,
+          no_num: notifyN + 1,
+          no_type: breakList,
+          st_id: 'station1',
+          u_id: 'user1'
+        });
+        console.log("Document written with ID: ", docRef.id);
+
+      })();
+
 
   }
 
 
   return (
-
     <View style={styles.container}>
+
       {/* 회원가입 */}
       <View style={styles.title}>
-        <Text style={{ fontSize: 25 }}>회원가입</Text>
+        <Image style={{ width: '100%', height: '100%' }} source={require('../../assets/Logo.png')} />
       </View>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={"padding"}
+        keyboardVerticalOffset={statusBarHeight + 44}
+      >
+        <ScrollView>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            {/* 사용자 필수정보 */}
+            <View style={styles.importInfo}>
+              <View style={{ width: '80%' }}>
+                <Text style={styles.titleText}>ID</Text>
+                <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'center' }}>
+                  <TextInput
+                    style={styles.idloginputText}
+                    value={id}
+                    placeholder="ID"
+                    onChangeText={handleIdChange}
+                    
+                    maxLength={15}
+                  ></TextInput>
 
+                  <TouchableOpacity
+                    style={styles.overlapButton}
+                    disabled={!validateId(id)}
+                    onPress={() => { checkID(id) }}
+                  >
+                    <Text style={{ fontSize: 15 }}>
+                      중복확인
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <Text>{errorMessageid}</Text>
 
-      {/* 사용자 필수정보 */}
-      <ScrollView style={styles.scrollviewstyle}>
-        <View style={styles.importInfo}>
-          <View style={styles.textInputView}>
-            <Text style={styles.titleText}>아이디</Text>
-            <View style={{ flexDirection: 'row', width: '100%', }}>
-              <TextInput
-                style={styles.textInput}
-                value={id}
-                placeholder="아이디를 입력해주세요."
-                onChangeText={handleIdChange}
-                maxLength={15}
-              ></TextInput>
-              <TouchableOpacity
-                style={styles.overlapButton}
-                disabled={!validateId(id)}
-                onPress={() => { handleIdChange(id) }}
-              >
-                <Text style={styles.overlapButtonText}>
-                  중복확인
-                </Text>
-              </TouchableOpacity>
+                <Text style={styles.titleText}>PW</Text>
+                <TextInput
+                  style={styles.loginputText}
+                  value={password}
+                  placeholder="Password"
+                  onChangeText={handlePwChange}
+                />
+                <Text>{errorMessagePw}</Text>
+
+                <Text style={styles.titleText}>Check PW</Text>
+                <TextInput
+                  style={styles.loginputText}
+                  value={passwordCheck}
+                  placeholder="Check Password"
+                  onChangeText={handlePwEqChange}
+                ></TextInput>
+                <Text>{errorMessagePwEq}</Text>
+
+                <Text style={styles.titleText}>Name</Text>
+                <TextInput
+                  style={styles.loginputText}
+                  value={name}
+                  placeholder="Name"
+                  onChangeText={handleNameChange}
+                ></TextInput>
+                <Text>{errorMessageName}</Text>
+
+                <Text style={styles.titleText}>Phone</Text>
+                <TextInput
+                  style={styles.loginputText}
+                  value={phone}
+                  placeholder="Phone Number"
+                  onChangeText={handlePhoneChange}
+                  maxLength={13}
+                  numeric
+                  keyboardType={'numeric'}
+                ></TextInput>
+                <Text>{errorMessagePhone}</Text>
+
+                <Text style={styles.titleText}>E-mail</Text>
+                <TextInput
+                  style={styles.loginputText}
+                  value={mail}
+                  placeholder="E-mail"
+                  onChangeText={handleMailChange}
+                ></TextInput>
+                <Text>{errorMessageMail}</Text>
+              </View>
             </View>
-
-          </View>
-          <Text>{errorMessage}</Text>
-          <View style={styles.textInputView}>
-            <Text style={styles.titleText}>비밀번호</Text>
-            <TextInput
-              style={styles.textInput}
-              value={password}
-              placeholder="비밀번호를 입력해주세요."
-              onChangeText={handlePwChange}
-            ></TextInput>
-          </View>
-
-          <View style={styles.textInputView}>
-            <Text style={styles.titleText}>비밀번호 확인</Text>
-            <TextInput
-              style={styles.textInput}
-              value={passwordCheck}
-              placeholder="비밀번호를 입력해주세요."
-              onChangeText={handlePwEqChange}
-            ></TextInput>
-          </View>
-        </View>
-
-        {/* 사용자 개인정보 */}
-        <View style={styles.userinfo}>
-          <View style={styles.textInputView}>
-            <Text style={styles.titleText}>닉네임</Text>
-            <TextInput
-              style={styles.textInput}
-              value={nickName}
-              placeholder="닉네임를 입력해주세요."
-              onChangeText={handleNicknameChange}
-            ></TextInput>
-          </View>
-          <View style={styles.textInputView}>
-            <Text style={styles.titleText}>전화번호</Text>
-            <TextInput
-              style={styles.textInput}
-              value={phone}
-              placeholder="전화번호를 입력해주세요."
-              onChangeText={handlePhoneChange}
-            ></TextInput>
-          </View>
-          <View style={styles.textInputView}>
-            <Text style={styles.titleText}>이름</Text>
-            <TextInput
-              style={styles.textInput}
-              value={name}
-              placeholder="이름를 입력해주세요."
-              onChangeText={handleNameChange}
-            ></TextInput>
-          </View>
-        </View>
-      </ScrollView>
+          </TouchableWithoutFeedback>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
 
-
-      {/* 회원가입 버튼 */}
-      <View style={styles.SignUpButton}>
+      <View style={{ paddingBottom: 50 }}>
         <TouchableOpacity
-          style={[styles.loginBtn, { opacity: 0.5 }]}
+          style={styles.loginBTN}
           disabled={regiButton}
-          onPress={() => JoinButton()}
+          onPress={() => { SignUpButton }}
         >
-          <Text style={styles.loginText}>가입하기</Text>
+          <Text style={styles.loginText}>Sign Up</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.loginBTN}
+          onPress={() => {
+            props.navigation.navigate("Login")
+          }}
+        >
+          <Text style={styles.loginText}>Login</Text>
+        </TouchableOpacity>
+
       </View>
-
-
-
     </View>
-
   );
 };
 
@@ -285,48 +356,74 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
   },
   title: {
-    padding: 25,
+    width: Dimensions.get('window').width * 0.5,
+    height: Dimensions.get('window').height * 0.2,
   },
   importInfo: { // 회원가입 필수정보
     width: Dimensions.get('window').width * 0.8,
-    height: Dimensions.get('window').height * 0.3,
+    height: Dimensions.get('window').height * 0.5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  userinfo: { // 사용자 개인정보
+  submitbutton: {
     width: Dimensions.get('window').width * 0.8,
-    height: Dimensions.get('window').height * 0.35,
+    height: Dimensions.get('window').height * 0.1,
   },
-  textInputView: { // TextInput css
-    width: '100%',
-    borderBottomColor: '#6699FF',
-    borderBottomWidth: 3,
+  //로그인 화면 인풋텍스트
+  idloginputText: {
+    width: '73%',
+    height: 35,
+    fontSize: 18,
+    color: 'black',
+    backgroundColor: '#EDEDED',
+    borderRadius: 3,
+    alignItems: 'center',
     padding: 5,
-    paddingBottom: 0,
   },
+  loginputText: {
+    width: '100%',
+    height: 35,
+    fontSize: 18,
+    color: 'black',
+    backgroundColor: '#EDEDED',
+    borderRadius: 3,
+    alignItems: 'center',
+    padding: 5,
+  },
+
   titleText: {
     marginTop: 8,
     marginLeft: 8,
     color: '#6699FF',
     fontWeight: 'bold',
   },
-  textInput: {
-    padding: 10,
-    backgroundColor: 'white',
-    width: '80%'
-  },
-  SignUpButton: {
-    justifyContent: 'space-between',
-    paddingBottom: 20,
-  },
+
   overlapButton: {
     backgroundColor: '#6699FF',
     opacity: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '20%',
+    height: 35,
+    width: '25%',
     borderRadius: 5,
+    marginLeft: 5,
   },
-  overlapButtonText: {
-    fontSize: 15
-  }
-}
-);
+  loginBTN: {
+    backgroundColor: '#D9E5FF',
+    width: 100,
+    height: 30,
+    marginTop: 5,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  //로그인 화면 버튼 텍스트
+  loginText: {
+    fontSize: 15,
+    color: 'black',
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontWeight: 'bold'
+  },
+});
