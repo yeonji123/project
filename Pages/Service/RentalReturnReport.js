@@ -10,6 +10,18 @@ const RentalReturnReposrt = () => {
     const [sentence, setSentence] = useState(''); // 구체적인 고장 사유 입력
     const [checked, setChecked] = useState('first');
 
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await getDocs(collection(db, "StationNotification")) // Station이라는 테이블 명
+                setNotifiData(data.docs.map(doc => ({ ...doc.data(), id: doc.id }))) // map을 돌려서 데이터를 복사하여 붙여놓고, id를 추가해줌
+
+            } catch (error) {
+                console.log('eerror', error.message)
+            }
+        })();
+    }, []);
+
 
     const breakListFunc = (index) => {
         const temp = breakList;
@@ -18,7 +30,34 @@ const RentalReturnReposrt = () => {
 
     }
 
+    const submit = () => {
+        (async () => {
+            console.log('notifi', notifiData)
+            var notifyN=0;
+            notifiData.map((item) => {
+                if (item.id.split('_')[0]=='RR' && item.id.split('_')[1] == 'station1'){ // scan한 station id와 동일하고
+                    if (item.id.split('_')[2]>=notifyN){ // station관련 신고의 번호와 달라야하니까 
+                        notifyN = parseInt(item.id.split('_')[2])
+                    }
+                }
+            })
+            let todayData = new Date(); 
+            let today = todayData.toLocaleDateString()
 
+            let dbid = "RR_"+'station1'+"_"+(notifyN+1)
+            console.log(dbid) // data id
+
+            // const docRef = await setDoc(doc(db, "StationNotification", dbid), {
+            //     no_additional : sentence,
+            //     no_date : today,
+            //     no_num : notifyN+1,
+            //     no_type : breakList,
+            //     st_id : 'station1',
+            //     u_id : 'user1'
+            // });
+            // console.log("Document written with ID: ", docRef.id);
+        })();
+    }
 
 
 

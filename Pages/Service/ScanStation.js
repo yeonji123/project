@@ -63,7 +63,7 @@ const ScanStation = ({ navigation }) => {
                     console.log('checkresult', doc.data())
                     setStationData(doc.data())
                     setStationName(doc.data().s_name)
-                    checkresult = true //stationNum이랑 같은 게 있으면 true
+                    checkresult = true // stationNum이랑 같은 게 있으면 true
                 }
             })
 
