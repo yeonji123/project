@@ -35,8 +35,11 @@ const QRCodeScanner = ({ navigation }) => {
   // barcode인식하면 나오는 함수
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    setModalVisible(true)
+    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    console.log(data)
+
+    scanqr(data.st_id)
+
   };
 
   if (hasPermission === null) {
@@ -46,7 +49,29 @@ const QRCodeScanner = ({ navigation }) => {
     return <Text>No access to camera</Text>;
   }
 
+  const scanqr = async (id) => {
+    try{
+      const data = await getDocs(collection(db, "Station"))
 
+      data.docs.map((doc, idx) => {
+        console.log(idx, '=', doc.data())
+        if (doc.data().st_id == id) {
+          console.log('checkresult', doc.data())
+
+          setStationData(doc.data())
+          setStationName(doc.data().st_id)
+
+          checkresult = true //stationNum이랑 같은 게 있으면 true
+          setModalVisible(true)
+
+        }
+      })
+
+
+    }catch(error){
+      console.log('error', error.message)
+    }
+  }
 
 
 
@@ -62,7 +87,7 @@ const QRCodeScanner = ({ navigation }) => {
         if (doc.data().s_num == stationNum) {
           console.log('checkresult', doc.data())
           setStationData(doc.data())
-          setStationName(doc.data().s_name)
+          setStationName(doc.data().st_id)
           checkresult = true //stationNum이랑 같은 게 있으면 true
         }
       })
