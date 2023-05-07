@@ -16,7 +16,7 @@ const QRCodeScanner = ({ navigation }) => {
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
   // 모달
   const [modalVisible, setModalVisible] = useState(false);
-  const [numModalVisible, setNumModalVisible] = useState(true);
+  const [numModalVisible, setNumModalVisible] = useState(false);
   const [stationNum, setStationNum] = useState(); //입력한 stationnum
   // station Data
   const [stationData, setStationData] = useState();

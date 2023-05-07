@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TextInput, TouchableOpacity, 
     Keyboard, Alert } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+
 // firebase 데이터 추가
 import { db } from '../../firebaseConfig';
 import { addDoc, getDocs, collection, setDoc, doc } from 'firebase/firestore';
