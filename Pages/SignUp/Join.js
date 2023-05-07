@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, Dimensions, ScrollView, TextInput, Keyboard, KeyboardAvoidingView,
-  Image, TouchableOpacity, NativeModules,
+  Image, TouchableOpacity, NativeModules, Button, Platform, Alert
 } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
@@ -15,6 +15,9 @@ const { StatusBarManager } = NativeModules
 
 
 const Join = ({ navigation }) => {
+  // DB에 저장된 사용자들의 정보
+  const [users, setUsers] = useState();
+
   // 입력 내용
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +25,7 @@ const Join = ({ navigation }) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [mail, setMail] = useState("");
+const [birth, setBirth] = useState("");
 
   //회원가입 버튼 활설화
   const [okId, setOkId] = useState(false);
@@ -30,7 +34,7 @@ const Join = ({ navigation }) => {
   const [okName, setOkName] = useState(false);
   const [okPhone, setOkPhone] = useState(false);
   const [okMail, setOkMail] = useState(false);
-
+  const [okBirth, setOkBirth] = useState(false);
 
   //정규식 메시지 check
   const [errorMessageid, setErrorMessageID] = useState(""); //id
@@ -39,8 +43,10 @@ const Join = ({ navigation }) => {
   const [errorMessageName, setErrorMessageName] = useState(""); // name
   const [errorMessageMail, setErrorMessageMail] = useState(""); // nickname 
   const [errorMessagePhone, setErrorMessagePhone] = useState(""); // phone
+  const [errorMessageBirth, setErrorMessageBirth] = useState(""); // birth
 
   const [statusBarHeight, setStatusBarHeight] = useState(0);
+
 
   useEffect(() => {
     Platform.OS == 'ios' ? StatusBarManager.getHeight((statusBarFrameData) => {
@@ -48,6 +54,19 @@ const Join = ({ navigation }) => {
     }) : null
   }, []);
 
+  useEffect(() => {
+    // DB에서 사용자의 데이터를 가져옴
+    (async () => {
+      try {
+        const data = await getDocs(collection(db, "User")) // User 데이터 불러옴
+        setUsers(data.docs.map(doc => doc.data())) // 데이터를 배열로 저장
+        
+      } catch (error) {
+        console.log('eerror', error.message)
+      }
+    })();
+
+  }, [])
 
 
 
@@ -55,7 +74,7 @@ const Join = ({ navigation }) => {
 
   // 버튼 활성화 Sign Up
   const regiButton = () => {
-    if (okId & okPw & okPwEq & okName & okName & okPhone & okMail == true) {
+    if (okId & okPw & okPwEq & okName & okPhone & okMail & okBirth == true) {
       return false;
     }
     return true;
@@ -64,25 +83,25 @@ const Join = ({ navigation }) => {
 
   //아이디 정규식
   const validateId = id => {
-    const regex = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-    return regex.test(id) && id.length > 4;
+    const regex = /^[a-zA-Z]+[a-zA-Z0-9]{3,12}$/;
+    return regex.test(id) && id.length >= 4;
   }
 
   //패스워드 정규식
   const validatePw = pw => {
-    const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    const regex = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z]{8,16}$/;
     return regex.test(pw);
   }
 
   //패드워드 같은지
   const validateEq = eq => {
-    if (eq === pw) { return true; }
+    if (eq === password) { return true; }
     else { return false; }
   }
 
   //이름 정규식
   const validateName = name => {
-    const regex = /^[가-힣]{2,20}$/;
+    const regex = /^[a-zA-Zㄱ-힣]{1,20}$/;
     return regex.test(name);
   }
 
@@ -94,19 +113,30 @@ const Join = ({ navigation }) => {
 
   // 이메일 정규식
   const validateMail = mail => {
-    const regex = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*$/;
+    const regex = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
     return regex.test(mail);
   }
 
-  //띄어쓰기 고로시
+  // 생년월일 정규식
+  const validateBirth = birth => {
+    const regex = /^(19[0-9][0-9]|20\d{2})-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/
+    return regex.test(birth) && birth.length == 10;
+  }
+
+  // 띄어쓰기 고로시
   const removespace = text => {
     const regex = /\s/g;
     return text.replace(regex, '');
   }
 
-  //자동 하이픈 생성
+  // 자동 하이픈 생성
   const autoHyphen = (target) => {
     return target.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
+  }
+
+  // 자동 하이픈 생성 생년월일
+   const autoHyphenBirth = (target) => {
+    return target.replace(/[^0-9]/g, '').replace(/^(\d{0,4})(\d{0,2})(\d{0,2})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
   }
 
 
@@ -115,7 +145,7 @@ const Join = ({ navigation }) => {
     const changeID = removespace(id)
     setId(changeID)
     setErrorMessageID(
-      validateId(changeID) ? "올바른 ID 형식입니다." : "영문으로 4~12자리"
+      validateId(changeID) ? "올바른 ID 형식입니다." : "영문로 시작하는 영문자 또는 숫자 4~12자리"
     );
 
   };
@@ -125,7 +155,7 @@ const Join = ({ navigation }) => {
     const changedPw = removespace(pw);
     setPassword(changedPw);
     setErrorMessagePw(
-      validatePw(changedPw) ? "올바른 비밀번호 형식입니다." : "영어 한개이상 숫자 한개 이상 특수문자 한개이상 8자리 이상."
+      validatePw(changedPw) ? "올바른 비밀번호 형식입니다." : "영문, 숫자 조합 8~16자리"
     );
     setOkPw(validatePw(changedPw));
   }
@@ -159,6 +189,7 @@ const Join = ({ navigation }) => {
     setOkPhone(validatePhone(changedPhone));
   }
 
+  // 이메일 핸들러
   const handleMailChange = (mail) => {
     const changedMail = removespace(mail);
     setMail(changedMail)
@@ -168,59 +199,66 @@ const Join = ({ navigation }) => {
     setOkMail(validateMail(changedMail))
   }
 
+  // 생년월일 핸들러
+  const handleBirthChange = (birth) => {
+    const changeDate = autoHyphenBirth(birth)
+    setBirth(changeDate)
+    setErrorMessageBirth(
+      validateBirth(changeDate) ? '올바른 생년월일 형식입니다.' : '올바른 생년월일 형식이 아닙니다.'
+    )
+    setOkBirth(validateBirth(changeDate))
+  }
+
 
   // 아이디 중복 확인
   const checkID = (id) => {
+    console.log('checkID')
+    var total = users.length // 전체 유저 수
+    var count = users.length // 확인 유저 수
     //DB 아이디 중복체크
-    // 중복이면 false
-    (async () => {
-      try {
-
-          const data = await getDocs(collection(db, "User")) // Station이라는 테이블 명
-          var total = 0; // 전체 사용자 수
-          var check = 0; // id가 중복되지 않은 사용자 수 
-
-          data.docs.map(doc => {
-            total += 1; // 전체
-            if (doc.data().u_id === id) {
-              Alert('중복된 아이디입니다.')
-              setUsercheck(false)
-              setOkId(false)
-            } else {
-              check += 1 // 중복 확인 
-            }
-          })
-
-          if (total != check) { // 사용자가 중복 확인을 했는지 여부 확인하기 위해 
-            // total과 check가 다르면 중복확인을 클릭, 중복된 아이디가 없다는 뜻
-            setUsercheck(true)
-          }
-      } catch (error) {
-        console.log('eerror', error.message)
-      }
-    })();
-
+    users.map((user) => {
+      if (user.u_id == id) {
+        count-=1
+        Alert.alert('중복된 아이디입니다.')
+        setId('')
+        setErrorMessageID('')
+      } 
+    })
+    if (total == count){ // 중복된 아이디가 없으면
+      console.log('중복된 id없음')
+      Alert.alert('사용 가능한 아이디입니다.')
+      setOkId(true)
+    }else{
+      Alert.alert('중복된 아이디입니다.')
+    }
+    console.log('regibutton', regiButton())
   }
 
 
 
 
   const SignUpButton = () => {
+    
     // 회원가입 DB 넣기
-    console.log(id)
-      (async () => {
+    (async () => {
+      // 가입 날짜
+      let todayData = new Date(); 
+      let today = todayData.toLocaleDateString()
 
-        const docRef = await setDoc(doc(db, "StationNotification", dbid), {
-          no_additional: sentence,
-          no_date: today,
-          no_num: notifyN + 1,
-          no_type: breakList,
-          st_id: 'station1',
-          u_id: 'user1'
-        });
-        console.log("Document written with ID: ", docRef.id);
+      // DB 넣기
+      const docRef = await setDoc(doc(db, "User", id), {
+        u_date : today,
+        u_email : mail,
+        u_id : id,
+        u_name: name,
+        u_phone : phone,
+        u_profile: '',
+        u_pw : password,
+        u_rent : false,
+      });
+      console.log("Document written with ID: ", docRef.id);
 
-      })();
+    })();
 
 
   }
@@ -239,36 +277,39 @@ const Join = ({ navigation }) => {
         keyboardVerticalOffset={statusBarHeight + 44}
       >
         <ScrollView>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            {/* 사용자 필수정보 */}
-            <View style={styles.importInfo}>
-              <View style={{ width: '80%' }}>
-                <Text style={styles.titleText}>ID</Text>
-                <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'center' }}>
-                  <TextInput
-                    style={styles.idloginputText}
-                    value={id}
-                    placeholder="ID"
-                    onChangeText={handleIdChange}
-                    
-                    maxLength={15}
-                  ></TextInput>
+          {/* 사용자 필수정보 */}
+          <View style={styles.importInfo}>
+            <View style={{ width: '80%' }}>
+              
+              <Text style={styles.titleText}>ID</Text>
+              <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'center' }}>
+                <TextInput
+                  style={styles.idloginputText}
+                  value={id}
+                  placeholder="ID"
+                  onChangeText={handleIdChange}
+                  maxLength={15}
+                ></TextInput>
 
-                  <TouchableOpacity
-                    style={styles.overlapButton}
-                    disabled={!validateId(id)}
-                    onPress={() => { checkID(id) }}
-                  >
-                    <Text style={{ fontSize: 15 }}>
-                      중복확인
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <Text>{errorMessageid}</Text>
+                <TouchableOpacity
+                  style={validateId(id) ? styles.overlapButton : [styles.overlapButton, { opacity: 0.4 }]}
+                  disabled={!validateId(id)}
+                  onPress={() => { checkID(id) }}
+                >
+                  <Text style={{ fontSize: 15 }}>
+                    중복확인
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <Text>{errorMessageid}</Text>
 
+
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              
                 <Text style={styles.titleText}>PW</Text>
                 <TextInput
                   style={styles.loginputText}
+                  secureTextEntry={true}
                   value={password}
                   placeholder="Password"
                   onChangeText={handlePwChange}
@@ -278,6 +319,7 @@ const Join = ({ navigation }) => {
                 <Text style={styles.titleText}>Check PW</Text>
                 <TextInput
                   style={styles.loginputText}
+                  secureTextEntry={true}
                   value={passwordCheck}
                   placeholder="Check Password"
                   onChangeText={handlePwEqChange}
@@ -310,12 +352,24 @@ const Join = ({ navigation }) => {
                   style={styles.loginputText}
                   value={mail}
                   placeholder="E-mail"
+                  keyboardType='email-address'
                   onChangeText={handleMailChange}
                 ></TextInput>
                 <Text>{errorMessageMail}</Text>
-              </View>
+
+                <Text style={styles.titleText}>BirthDay</Text>
+                <TextInput
+                  style={styles.loginputText}
+                  value={birth}
+                  placeholder="BirthDay"
+                  maxLength={10}
+                  keyboardType={'numeric'}
+                  onChangeText={handleBirthChange}
+                ></TextInput>
+                <Text>{errorMessageBirth}</Text>
+              </TouchableWithoutFeedback>
             </View>
-          </TouchableWithoutFeedback>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -323,15 +377,18 @@ const Join = ({ navigation }) => {
       <View style={{ paddingBottom: 50 }}>
         <TouchableOpacity
           style={styles.loginBTN}
-          disabled={regiButton}
-          onPress={() => { SignUpButton }}
+          disabled={regiButton()}
+          onPress={() => { 
+            console.log('sign up')
+            SignUpButton() 
+          }}
         >
-          <Text style={styles.loginText}>Sign Up</Text>
+          <Text style={regiButton ? styles.loginText : [styles.loginText, { opacity: 0.3 }]}>Sign Up</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.loginBTN}
           onPress={() => {
-            props.navigation.navigate("Login")
+            navigation.navigate("Login")
           }}
         >
           <Text style={styles.loginText}>Login</Text>
@@ -356,12 +413,12 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
   },
   title: {
-    width: Dimensions.get('window').width * 0.5,
-    height: Dimensions.get('window').height * 0.2,
+    width: Dimensions.get('window').width * 0.4,
+    height: Dimensions.get('window').height * 0.15,
   },
   importInfo: { // 회원가입 필수정보
     width: Dimensions.get('window').width * 0.8,
-    height: Dimensions.get('window').height * 0.5,
+    height: Dimensions.get('window').height * 0.6,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -390,17 +447,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 5,
   },
-
   titleText: {
     marginTop: 8,
     marginLeft: 8,
     color: '#6699FF',
     fontWeight: 'bold',
   },
-
   overlapButton: {
     backgroundColor: '#6699FF',
-    opacity: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
     height: 35,
