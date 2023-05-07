@@ -54,6 +54,7 @@ const [birth, setBirth] = useState("");
     }) : null
   }, []);
 
+  
   useEffect(() => {
     // DB에서 사용자의 데이터를 가져옴
     (async () => {
