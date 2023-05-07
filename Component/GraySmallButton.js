@@ -9,7 +9,7 @@ const GraySmallButton = (props) => {
         <TouchableOpacity
             style={color ? [styles.smallbutton, { backgroundColor: '#6699FF' }] : styles.smallbutton}
             onPress={() => {
-                props.func
+                props.func()
                 setColor(!color)
             }}
         >

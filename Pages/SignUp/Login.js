@@ -7,6 +7,10 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { db } from '../../firebaseConfig';
 import { getDocs, collection } from 'firebase/firestore';
 
+// device에 데이터 저장
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 /* LoginScreen - 관리자 로그인 화면 DB를 통해 회원 식별, 회원가입 선택 가능 */
 const Login = ({ navigation }) => {
     const [users, setUsers] = useState() //불러온 회원 정보
@@ -30,26 +34,42 @@ const Login = ({ navigation }) => {
 
 
     const login = () => {
-        console.log('login')
-        const total = users.lenght
-        const count = 0
-        // 입력받은 id와 password가 DB에 저장된 회원정보와 일치하는지 확인
-        users.map((user) => {
-            if (user.u_id == idTextInput && user.u_pw == pwTextInput) {
-                navigation.navigate("Main")
-            } else {
-                count += 1
+        (async () => {
+            try {
+                console.log('login')
+                var total = users.length
+                var count = 0
+                // 입력받은 id와 password가 DB에 저장된 회원정보와 일치하는지 확인
+                users.map((user) => {
+                    if (user.u_id == idTextInput && user.u_pw == pwTextInput) {
+                        console.log('login success')
+                    } else {
+                        count += 1
+                    }
+                })
+                
+                if (total == count) {
+                    // 동일한 회원정보가 없음
+                    Alert.alert("일치한 회원 정보가 없습니다.")
+                } else {
+                    await AsyncStorage.setItem('id', idTextInput)
+                    Alert.alert('로그인 성공')
+                    navigation.navigate("Main")
+                }
             }
-        })
-        if (total == count) {
-            // 동일한 회원정보가 없음
-            Alert.alert("일치한 회원 정보가 없습니다.")
-        }
+            catch (error) {
+                console.log('error', error.message)
+            }
+        })();
     }
+
+
+
 
     const idChangeInput = (event) => {
         setIdTextinput(event)
     }
+
     const pwChangeInput = (event) => {
         setPwTextinput(event)
     }
@@ -91,7 +111,12 @@ const Login = ({ navigation }) => {
                     }}>
                     <Text style={styles.loginText}>SignUp</Text>
                 </TouchableOpacity>
-
+                <View style={{ flexDirection: 'row' }}>
+                    <Text >아이디 찾기</Text>
+                    <Text >비밀번호 찾기 </Text>
+                </View>
+                
+                
             </View>
         </ImageBackground>
     )

@@ -1,20 +1,31 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, TouchableOpacity, ScrollView } from 'react-native';
 
 import TitleName from '../../Component/TitleName';
 import Detail from '../../Component/Detail';
 
-const UserInfo = () => {
+const UserInfo = (props) => {
+    const [data, setData] = useState(props.route.params.users);
+
+    useEffect(() => {
+        console.log('UserInfo')
+        console.log(props.route.params)
+        
+    }, [])
+
+
+
+
     return (
         <View style={styles.container}>
             <ScrollView style={styles.scrollview}>
                 <View style={styles.titleView}>
                     <TitleName title="프로필"></TitleName>
-                    <Detail title="닉네임" value="user" icon="true" />
-                    <Detail title="ID" value="user" />
-                    <Detail title="PW" value="*****" icon="true" />
-                    <Detail title="번호" value="010-1234-1234" />
-                    <Detail title="이메일" value="aaaaaaa@gmail.com" />
+                    <Detail title="닉네임" value={data.u_name} icon="false"/>
+                    <Detail title="ID" value={data.u_id}  icon="false"/>
+                    <Detail title="PW" value="*****"  icon="false"/>
+                    <Detail title="번호" value={data.u_phone} icon="false" />
+                    <Detail title="이메일" value={data.u_email}  icon="false"/>
                 </View>
 
 

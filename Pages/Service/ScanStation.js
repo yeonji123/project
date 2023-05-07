@@ -59,10 +59,10 @@ const ScanStation = ({ navigation }) => {
             const data = await getDocs(collection(db, "Station"))
             data.docs.map((doc, idx) => {
                 console.log(idx, '=', doc.data())
-                if (doc.data().s_num == stationNum) {
-                    console.log('checkresult', doc.data())
+                if (doc.data().st_num == stationNum) {
                     setStationData(doc.data())
-                    setStationName(doc.data().s_name)
+                    setStationName(doc.data().st_id)
+                    setStationNum("")
                     checkresult = true // stationNum이랑 같은 게 있으면 true
                 }
             })
@@ -84,7 +84,7 @@ const ScanStation = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <View>
+            <View style={{ justifyContent: 'center', alignItems: 'center', }}>
 
                 <Modal
                     animationType="slide"
@@ -136,38 +136,39 @@ const ScanStation = ({ navigation }) => {
                     onRequestClose={() => {
                         setNumModalVisible(!numModalVisible);
                     }}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <View style={styles.modalTop}>
+                                <Text style={{ fontSize: 20, textAlign: 'center' }}>Station 번호 입력하기</Text>
+                            </View>
 
-                    <View style={styles.modalView}>
-                        <View style={styles.modalTop}>
-                            <Text style={{ fontSize: 20, textAlign: 'center' }}>Station 번호 입력하기</Text>
-                        </View>
+                            <View style={styles.modalMid}>
+                                <TextInput
+                                    style={{ width: '50%', height: 50, fontSize: 20, textAlign: 'center' }}
+                                    value={stationNum}
+                                    onChangeText={(e) => setStationNum(e)}
+                                    placeholder="StationNum (8자)"
+                                    maxLength={8}
+                                    numeric
+                                    keyboardType={'numeric'}
+                                />
+                            </View>
 
-                        <View style={styles.modalMid}>
-                            <TextInput
-                                style={{ width: '50%', height: 50, fontSize: 20, textAlign: 'center' }}
-                                value={stationNum}
-                                onChangeText={(e) => setStationNum(e)}
-                                placeholder="StationNum (8자)"
-                                maxLength={8}
-                                numeric
-                                keyboardType={'numeric'}
-                            />
-                        </View>
-
-                        <View style={styles.modalbot}>
-                            <Pressable
-                                style={{ width: '50%' }}
-                                onPress={() => {
-                                    // station 유무 확인 함수
-                                    checkStation()
-                                }}>
-                                <Text style={styles.textStyle}>확인</Text>
-                            </Pressable>
-                            <Pressable
-                                style={{ width: '50%' }}
-                                onPress={() => setNumModalVisible(!numModalVisible)}>
-                                <Text style={styles.textStyle}>취소</Text>
-                            </Pressable>
+                            <View style={styles.modalbot}>
+                                <Pressable
+                                    style={{ width: '50%' }}
+                                    onPress={() => {
+                                        // station 유무 확인 함수
+                                        checkStation()
+                                    }}>
+                                    <Text style={styles.textStyle}>확인</Text>
+                                </Pressable>
+                                <Pressable
+                                    style={{ width: '50%' }}
+                                    onPress={() => setNumModalVisible(!numModalVisible)}>
+                                    <Text style={styles.textStyle}>취소</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     </View>
                 </Modal>

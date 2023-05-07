@@ -7,12 +7,15 @@ import { useEffect, useState } from 'react'
 import * as Location from 'expo-location';
 
 
-
 import TitleName from '../../Component/TitleName'
 
 // firebase 연동
 import { db } from '../../firebaseConfig';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
+// device에 데이터 저장
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 //날씨 api키
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
@@ -29,25 +32,29 @@ const Main = ({navigation}) => {
     const [address, setAddress] = useState("");
 
 
-
     const [users, setUsers] = useState();
-
+    const [donation, setDonation] = useState(); // 폐우산 기부 계산
 
     useEffect(() => {
         (async () => {
             // firebase
             try {
                 const data = await getDocs(collection(db, "User"))
-                setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-                console.log('users--------', users)
-                
-                // 핸드폰 로컬에 저장되어 있는 사용자의 ID와 동일한지 확인
-                // users?.map((row, idx) => {
-                //     if (row.id == '1') {
-                //         console.log('row' + idx, row)
-                //     }
-                //     console.log('row' + idx, row)
-                // })
+                var id = await AsyncStorage.getItem('id')
+
+                data.docs.map(doc => {
+                    if(doc.data().u_id == id){
+                        setUsers(doc.data())
+                        console.log('data', doc.data())
+                    }
+                })
+
+                const donation = await getDocs(collection(db, "Donation"))
+                donation.docs.map(doc => {
+                    if(doc.data().u_id == id){
+                        setDonation(doc.data())
+                    }
+                })
 
             } catch (error) {
                 console.log('eeerror', error.message)
@@ -65,13 +72,11 @@ const Main = ({navigation}) => {
 
             let location = await Location.getCurrentPositionAsync({});
             let addresscheck = await Location.reverseGeocodeAsync(location.coords);
-            console.log('main address-> ', addresscheck)
             var addresstotal = addresscheck[0].region + ' ' + addresscheck[0].city // 충청남도 아산시    
             setAddress(addresstotal)
             const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude.toFixed(5)}&lon=${location.coords.longitude.toFixed(5)}&appid=${API_KEY}&units=metric`);
             const res = await response.json()
             // console.log('temp -> ',res)
-            console.log('res--', res)
             setWeather(res)
             iconsplit = res.weather[0].icon.split('n')
             seticon(iconsplit[0])
@@ -108,7 +113,7 @@ const Main = ({navigation}) => {
             <View style={styles.userinfoView}>
                 <TouchableOpacity 
                     style={styles.userinfo}
-                    onPress={() => navigation.navigate('UserInfo')}
+                    onPress={() => navigation.navigate('UserInfo', {users: users})}
                 >
                     <View style={styles.weatherView}>
                         <View style={styles.weather}>
@@ -140,33 +145,38 @@ const Main = ({navigation}) => {
                                     <>
                                         <View style={{ width: '65%', padding:3 }}>
                                             <View style={{ alignItems: 'center', marginBottom:3, paddingLeft:7 }}>
-                                                <Text style={{ fontSize: 20 }}>{users[0].u_name}님은</Text>
+                                                <Text style={{ fontSize: 20 }}>{users.u_name}님은</Text>
                                             </View>
                                             <View style={{ alignItems: 'center' }}>
                                                 {
-                                                    users[0].u_rent ?
-                                                        <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 가능</Text> :
-                                                        <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 중</Text>
+                                                    users.u_rent ?
+                                                        <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 중</Text> :
+                                                        <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 가능</Text>
                                                 }
                                             </View>
                                         </View>
                                     </> :
                                     <ActivityIndicator />
                             }
-                            <View style={{ width: '35%', hieght:'100%', justifyContent: 'center', alignItems:'center', }}>
-                                {/* {
+                            <View style={{ width: '35%', hieght: '100%', justifyContent: 'center', alignItems: 'center', }}>
+                                {
                                     // 이미지 링크 넣기 user DB에 스토리지 링크 넣어서 가져오기
-                                    users[0].u_profile ? 
-                                    <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={{ uri: users[0].u_profile }}></Image> 
-                                    :
-                                    <Image style={{ width: '50%', height: '100%', borderRadius: 15, }} source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png' }}></Image>
-                                } */}
-                                <Image style={{ width: '50%', height: '100%', borderRadius: 15, }} source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png' }}></Image>
+                                    users && users.u_profile ?
+                                        <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={{ uri: users.u_profile }}></Image>
+                                        :
+                                        <Image style={{ width: '50%', height: '100%', borderRadius: 15, }} source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png' }}></Image>
+                                }
                             </View>
                         </View>
                     </View>
                     <View style={styles.donation}>
-                        <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    3</Text>
+                        {
+                            donation ?
+                                <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    {donation.length}</Text>
+                                :
+                                <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    0</Text>
+                        }
+                        
                     </View>
                 </TouchableOpacity>
             </View>
