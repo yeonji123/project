@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Im
 
 import TitleName from '../../Component/TitleName';
 import Detail from '../../Component/Detail';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserInfo = (props) => {
     const [data, setData] = useState(props.route.params.users);
@@ -13,6 +14,31 @@ const UserInfo = (props) => {
         
     }, [])
 
+    const logoutButton = () => {
+        (async () => {
+            try {
+                Alert.alert('LogOut', '정말 로그아웃하시겠습니까?', [
+                    {
+                      text: '취소',
+                      onPress: () => console.log('Cancel Pressed'),
+                      style: 'cancel',
+                    },
+                    {
+                        text: '확인',
+                        onPress: () => {
+                            AsyncStorage.removeItem('id')
+                            
+                            props.navigation.reset('Main')
+                        }
+                    },
+                ]);
+
+            } catch (error) {
+                console.log('eerror', error.message)
+            }
+        })();
+
+    }
 
 
 
@@ -37,9 +63,12 @@ const UserInfo = (props) => {
                 </View>
 
                 <View style={{ padding: 10 }}>
-                    <View style={styles.logoutView}>
+                    <TouchableOpacity 
+                    style={styles.logoutView}
+                        onPress={() => { logoutButton() }}
+                    >
                         <Text style={{ fontSize: 20, }}>로그아웃</Text>
-                    </View>
+                    </TouchableOpacity>
                 </View>
 
 

@@ -11,7 +11,7 @@ import { collection, getDocs } from 'firebase/firestore';
 
 const Rental = ({ navigation, route }) => {
     const [stationData, setStationData] = useState(); // Station 전체 데이터
-    const [umbrellaData, setUmbrellaData] = useState(); // Station에 있는 우산 데이터
+    const [umbrellaData, setUmbrellaData] = useState([]); // Station에 있는 우산 데이터
     const [umNumber, setUmNumber] = useState(); // Station에 있는 우산 번호
     // 모달
     const [checkModal, setCheckModal] = useState(false); // 모달창
@@ -22,15 +22,26 @@ const Rental = ({ navigation, route }) => {
         // props로 받은 station 번호로 데이터 요청
         (async () => {
             try {
-                const data = await getDocs(collection(db, "Station"))
-                data.docs.map(doc => { // DB에 있는 데이터 읽기
-                    if (doc.data().s_num == route.params.data) {
-                        console.log('Rental page params', doc.data().s_count) // s_count는 우산 개수 확인
-                        setStationData(doc.data()) // 해당되는 station 데이터 저장
-                        setUmbrellaData(doc.data().s_count) // 해당되는 station에 있는 우산들 데이터 저장
-                    }
-                })
+                console.log('route',route.params.data) //station의 정보를 route로 받음
+                const umlist = new Array()
+                const umDataOj = new Object(); // 우산 데이터를 담을 배열
 
+                for (var i = 0; i < Object.keys(route.params.data.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
+                    // scan한 station의 정보를 읽어서 map으로 돌리기 위해 변환함
+                    // json 형식으로 만들어서 key값도 바꿔서 만들고
+                    // umbrellaData에 넣어줌
+                    // Object type으로 값을 넣어줌
+                    var key = "st_"+String(i+1) // key값 : st_1, st_2, ... 가 됨
+                    
+                    var value = new Object();
+                    value['angle'] = route.params.data.um_count_state[String(i + 1)].angle
+                    value['state'] = route.params.data.um_count_state[String(i + 1)].state
+                    // Object type
+                    umDataOj[key] = value
+                }
+                // um_count data 저장
+                setUmbrellaData(umlist.push(umDataOj))
+                console.log('umlist', umlist)
 
             } catch (error) {
                 console.log('eerror', error.message)
@@ -73,7 +84,7 @@ const Rental = ({ navigation, route }) => {
                                 {
                                     umNumber ?
                                         <>
-                                            <Text style={{ fontSize: 25, }}>{ } 번 우산을 </Text>
+                                            <Text style={{ fontSize: 25, }}>{umNumber} 번 우산을 </Text>
                                             <Text style={{ fontSize: 25, }}>대여하시겠습니까? </Text>
                                         </>
                                         : null
@@ -103,13 +114,17 @@ const Rental = ({ navigation, route }) => {
 
 
             <ScrollView style={{ width: '100%', height: '100%', padding: 10 }}>
-                {
-                    umbrellaData && umbrellaData.map((row, idx) => {
+                <Text>{umbrellaData}</Text>
+                {/* {
+                    umbrellaData?.map((row, idx) => {
+                        console.log('row', row)
+                        
+
                         return (
                             <View style={{ padding: 5 }}>
                                 <TouchableOpacity
                                     key={idx}
-                                    style={row.u_state ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.3 }]}
+                                    style={row.state ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.3 }]}
                                     onPress={() => {
                                         console.log('TouchableOpacity')
                                         handleModal(idx)
@@ -122,7 +137,7 @@ const Rental = ({ navigation, route }) => {
                             </View>
                         )
                     })
-                }
+                } */}
             </ScrollView>
         </View>
     );

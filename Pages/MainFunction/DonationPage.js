@@ -7,7 +7,7 @@ import { Camera, Constants } from 'expo-camera';
 // firestorage
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-const DonationPage = ({ navigation }) => {
+const DonationPage = ({ navigation, route }) => {
     const [workcomplete, setWorkcomplete] = useState(false);
     const [isphoto, setIsphoto] = useState(false); // 사진 찍기 여부
 

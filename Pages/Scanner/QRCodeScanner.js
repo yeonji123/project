@@ -35,10 +35,10 @@ const QRCodeScanner = ({ navigation }) => {
   // barcode인식하면 나오는 함수
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     console.log(data)
 
-    scanqr(data.st_id)
+    checkStation(data.st_id)
 
   };
 
@@ -49,33 +49,8 @@ const QRCodeScanner = ({ navigation }) => {
     return <Text>No access to camera</Text>;
   }
 
-  const scanqr = async (id) => {
-    try{
-      const data = await getDocs(collection(db, "Station"))
 
-      data.docs.map((doc, idx) => {
-        console.log(idx, '=', doc.data())
-        if (doc.data().st_id == id) {
-          console.log('checkresult', doc.data())
-
-          setStationData(doc.data())
-          setStationName(doc.data().st_id)
-
-          checkresult = true //stationNum이랑 같은 게 있으면 true
-          setModalVisible(true)
-
-        }
-      })
-
-
-    }catch(error){
-      console.log('error', error.message)
-    }
-  }
-
-
-
-  const checkStation = async () => {
+  const checkStation = async (station) => {
     // DB 확인하기
     console.log('DB 확인하기')
     try {
@@ -84,7 +59,7 @@ const QRCodeScanner = ({ navigation }) => {
       const data = await getDocs(collection(db, "Station"))
       data.docs.map((doc, idx) => {
         console.log(idx, '=', doc.data())
-        if (doc.data().s_num == stationNum) {
+        if (doc.data().s_num == station) {
           console.log('checkresult', doc.data())
           setStationData(doc.data())
           setStationName(doc.data().st_id)
@@ -94,7 +69,7 @@ const QRCodeScanner = ({ navigation }) => {
 
 
       if (checkresult) {
-        setNumModalVisible(!numModalVisible) // 번호 입력 모달창 닫기
+        setNumModalVisible(false) // 번호 입력 모달창 닫기
         setModalVisible(!modalVisible) // 스캔 모달창 열기
       }
       else {
@@ -110,7 +85,6 @@ const QRCodeScanner = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-
         <Modal
           animationType="slide"
           transparent={true}
@@ -187,7 +161,7 @@ const QRCodeScanner = ({ navigation }) => {
                   style={{ width: '50%' }}
                   onPress={() => {
                     // station 유무 확인 함수
-                    checkStation()
+                    checkStation(stationNum)
                   }}>
                   <Text style={styles.textStyle}>확인</Text>
                 </Pressable>

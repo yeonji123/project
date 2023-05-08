@@ -171,7 +171,7 @@ const Main = ({navigation}) => {
                     </View>
                     <View style={styles.donation}>
                         {
-                            donation ?
+                            donation!=null ?
                                 <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    {donation.length}</Text>
                                 :
                                 <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    0</Text>

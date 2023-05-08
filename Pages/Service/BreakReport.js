@@ -37,7 +37,7 @@ const BreakReport = ({ navigation, route }) => {
                 console.log('breakreport')
                 const data = await getDocs(collection(db, "StationNotification")) // Station이라는 테이블 명
                 setNotifiData(data.docs.map(doc => ({ ...doc.data(), id: doc.id }))) // map을 돌려서 데이터를 복사하여 붙여놓고, id를 추가해줌
-
+                data.docs.map(doc => (console.log(doc.data())))
             } catch (error) {
                 console.log('eerror', error.message)
             }

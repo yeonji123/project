@@ -14,31 +14,36 @@ const FunctionList = ({ navigation, route }) => {
         // 2. 사용자 상태 확인(대여 / 반납 / 폐우산 기부 버튼 활성화)
         // 3. station에 우산(대여 가능)이 있는 지 확인하기
         // 4. station에 우산(반납 가능)이 있는 지 확인하기
-        var ishaveum = []
-        var countrental = 0
-        var countreturn = 0
+        console.log(route.params)
+
         if (route.params != undefined) {
-            setStationNum(route.params.data.s_num)
-            route.params.data.s_count.map((item, idx) => {
-                if (item.u_state) {
-                    countreturn += 1;
-                    // true이면 우산이 있는 것
-                    return ishaveum[idx] = true
+            setStationNum(route.params.data)
+
+            var rentalCount = 0
+            var returnCount = 0
+
+            for (var i = 0; i < Object.keys(route.params.data.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
+                // key값이 string이라서 변환 후 state읽기
+                if (route.params.data.um_count_state[String(i + 1)].state) { // true이면 대여 가능
+                    rentalCount++; // 대여 가능한 우산 개수
+                } else {
+                    returnCount++; // 반납 가능한 우산 개수 false이면 우산 없음
                 }
-                else {
-                    countrental += 1;
-                    // false이면 우산이 없는 것
-                    return ishaveum[idx] = false
-                }
-            })
+            }
+
+
 
             
-            if (ishaveum.length == countrental) { // 우산이 없어 대여 불가능 경우
-                console.log('대여 불가능')
+            if (Object.keys(route.params.data.um_count_state).length == rentalCount) {
+                // 전체 우산 개수와 대여 가능한 우산이 같으면
+                // 남은 공간이 없음 -> 반납할 수 없음
+                console.log('반납 불가능')
                 setRentalButton(!retalButton)
             }
-            if (ishaveum.length == countreturn) { // 우산이 모두 꽉차 있어 반납 불가능한 경우
-                console.log('반납 불가능')
+            if (Object.keys(route.params.data.um_count_state).length == returnCount) { 
+                // 전체 우산 넣는 부분과 반납 가능한 우산 개수가 같으면
+                // 대여 가능한 우산이 없음 -> 대여할 수 없음
+                console.log('대여 불가능')
                 setReturnButton(!returnButton)
             }
         }
