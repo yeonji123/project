@@ -39,9 +39,11 @@ const Main = ({navigation}) => {
         (async () => {
             // firebase
             try {
+                // 사용자 DB 데이터 가져오기
                 const data = await getDocs(collection(db, "User"))
                 var id = await AsyncStorage.getItem('id')
 
+                // DB에서 디바이스 사용자 아이디와 동일한 데이터만 set하기
                 data.docs.map(doc => {
                     if(doc.data().u_id == id){
                         setUsers(doc.data())
@@ -49,6 +51,8 @@ const Main = ({navigation}) => {
                     }
                 })
 
+                // 기부 DB 데이터 가져오기
+                // 사용자가 기분한 내역을 확인하기 위해 (폐우산 기부 횟수)
                 const donation = await getDocs(collection(db, "Donation"))
                 donation.docs.map(doc => {
                     if(doc.data().u_id == id){
@@ -69,7 +73,8 @@ const Main = ({navigation}) => {
                 setErrorMsg('Permission to access location was denied');
                 return;
             }
-
+            
+            // 사용자의 위치에 맞는 날씨 정보 가져오기
             let location = await Location.getCurrentPositionAsync({});
             let addresscheck = await Location.reverseGeocodeAsync(location.coords);
             var addresstotal = addresscheck[0].region + ' ' + addresscheck[0].city // 충청남도 아산시    
@@ -195,7 +200,7 @@ const Main = ({navigation}) => {
 
                 <TouchableOpacity
                     style={styles.scanner}
-                    onPress={() => navigation.navigate('QRScanner')}
+                    onPress={() => navigation.navigate('QRCodeScanner')}
                 >
                     <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={require('../../assets/qr_sample.png')}></Image>
 

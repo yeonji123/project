@@ -14,7 +14,7 @@ const FunctionList = ({ navigation, route }) => {
         // 2. 사용자 상태 확인(대여 / 반납 / 폐우산 기부 버튼 활성화)
         // 3. station에 우산(대여 가능)이 있는 지 확인하기
         // 4. station에 우산(반납 가능)이 있는 지 확인하기
-        console.log(route.params)
+        console.log('funcionlist', route.params.data.st_id)
 
         if (route.params != undefined) {
             setStationNum(route.params.data)
@@ -77,7 +77,7 @@ const FunctionList = ({ navigation, route }) => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={styles.buttonstyle}
-                    onPress={() => navigation.navigate('DonationPage')}
+                    onPress={() => navigation.navigate('DonationPage', { stationdata: route.params.data.st_id })}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>폐우산 기부하기</Text>
                 </TouchableOpacity>
