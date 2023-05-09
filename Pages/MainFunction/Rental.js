@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Dimensions, ScrollView, Pressable, } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, Dimensions, ScrollView, Pressable, Button} from 'react-native';
 
 import TitleName from '../../Component/TitleName';
 
@@ -23,25 +23,31 @@ const Rental = ({ navigation, route }) => {
         (async () => {
             try {
                 console.log('route',route.params.data) //station의 정보를 route로 받음
-                const umlist = new Array()
-                const umDataOj = new Object(); // 우산 데이터를 담을 배열
-
+                const umlist = new Array() // set할 우산 데이터 배열
+                
+                // scan한 station의 정보를 읽어서 map으로 돌리기 위해 변환함
                 for (var i = 0; i < Object.keys(route.params.data.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
-                    // scan한 station의 정보를 읽어서 map으로 돌리기 위해 변환함
-                    // json 형식으로 만들어서 key값도 바꿔서 만들고
+                    
+                    // json 형식으로 만들어서 key값도 바꿔서 만들고 (키 값이 숫자로 되어 있어서 string으로 바꿔줌)
                     // umbrellaData에 넣어줌
                     // Object type으로 값을 넣어줌
+                    var umDataOj = new Object(); // 우산 데이터를 담을 Object
+
                     var key = "st_"+String(i+1) // key값 : st_1, st_2, ... 가 됨
                     
-                    var value = new Object();
+                    var value = new Object(); // 새로운 Object 생성
                     value['angle'] = route.params.data.um_count_state[String(i + 1)].angle
                     value['state'] = route.params.data.um_count_state[String(i + 1)].state
+                    // {"action_check": false, "값" : value , ...} 이런 형식으로 만들어짐
+                    // [{ " key " : [{ " angle " : 값 , " state " : 값 }], ... }]
+                    
                     // Object type
                     umDataOj[key] = value
+                    umlist.push(umDataOj) // umlist에 넣기
+                    // console.log('umlist', umlist) // check
                 }
-                // um_count data 저장
-                setUmbrellaData(umlist.push(umDataOj))
-                console.log('umlist', umlist)
+                // 우산 데이터가 들어있는 배열을 set
+                setUmbrellaData(umlist)
 
             } catch (error) {
                 console.log('eerror', error.message)
@@ -49,16 +55,6 @@ const Rental = ({ navigation, route }) => {
         })();
     }, []);
 
-
-
-    const handleModal = (idx) => {
-        //몇 번째 값인지 확인
-        console.log('handleModal', idx)
-        setUmNumber(idx)
-
-
-
-    }
 
 
 
@@ -114,30 +110,29 @@ const Rental = ({ navigation, route }) => {
 
 
             <ScrollView style={{ width: '100%', height: '100%', padding: 10 }}>
-                <Text>{umbrellaData}</Text>
-                {/* {
+                {
                     umbrellaData?.map((row, idx) => {
-                        console.log('row', row)
-                        
-
+                        // row 값 확인하기
+                        // console.log('angle',row[`st_${idx+1}`].angle)
                         return (
                             <View style={{ padding: 5 }}>
                                 <TouchableOpacity
                                     key={idx}
-                                    style={row.state ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.3 }]}
+                                    style={row[`st_${idx+1}`].state ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.3 }]} 
+                                    // 우산이 있으면 버튼을 누를 수 있게 하고, 없으면 누를 수 없게 함
                                     onPress={() => {
                                         console.log('TouchableOpacity')
-                                        handleModal(idx)
+                                        setUmNumber(idx+1)
                                         setCheckModal(!checkModal)
                                     }}
-                                    disabled={!row.u_state}
+                                    disabled={!row[`st_${idx+1}`].state}
                                 >
                                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>{idx + 1}</Text>
                                 </TouchableOpacity>
                             </View>
                         )
                     })
-                } */}
+                }
             </ScrollView>
         </View>
     );

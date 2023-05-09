@@ -59,7 +59,7 @@ const QRCodeScanner = ({ navigation }) => {
       const data = await getDocs(collection(db, "Station"))
       data.docs.map((doc, idx) => {
         console.log(idx, '=', doc.data())
-        if (doc.data().s_num == station) {
+        if (doc.data().st_num == station) {
           console.log('checkresult', doc.data())
           setStationData(doc.data())
           setStationName(doc.data().st_id)
