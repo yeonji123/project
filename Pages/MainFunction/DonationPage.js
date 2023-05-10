@@ -132,7 +132,7 @@ const DonationPage = ({ navigation, route }) => {
         // 작동 후 우산이 들어가면 ? 로직 다시 짜기 !!!!!!!!!!!
     }
     
-    
+    // 입력한 이미지 URL 
     const checkimageURL = () => {
         var dbnum = 0 // DB에서 기부 횟수가 몇번째인지 확인하는 방법
         const id = AsyncStorage.getItem('id') 
@@ -269,7 +269,6 @@ const DonationPage = ({ navigation, route }) => {
                         <View style={styles.explainView}>
                             <Text style={styles.text}>안쓰는</Text>
                             <Text style={styles.text}>우산 기부하기</Text>
-                            <Button title='check' onPress={() => { checkimageURL() }} />
                         </View>
 
 
@@ -280,7 +279,6 @@ const DonationPage = ({ navigation, route }) => {
                         </View>
 
                         <View style={styles.buttonView}>
-
                             {
                                 isphoto ?
                                     <TouchableOpacity

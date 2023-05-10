@@ -3,16 +3,7 @@ import { Text, View, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Im
 import MapView, { Marker, Circle, Callout } from 'react-native-maps';
 // npm i react-native-maps
 import * as Location from 'expo-location';
-//npm i expo-camera
-import { Camera, Constants } from 'expo-camera';
-//npm i react-native-gesture-handler
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-                                          
-//npm i -S react-native-qrcode-svg
-import QRCode from 'react-native-qrcode-svg';
 
-//npm install react-native-camera-kit --save
-import { CameraScreen } from 'react-native-camera-kit';
 
 //fire store
 //npx expo install firebase

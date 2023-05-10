@@ -54,28 +54,33 @@ const QRCodeScanner = ({ navigation }) => {
     // DB 확인하기
     console.log('DB 확인하기')
     try {
-      let checkresult = false // 동일한 stationNum이 있는 지 확인하는 변수
+      if (stationNum != null) {
 
-      const data = await getDocs(collection(db, "Station"))
-      data.docs.map((doc, idx) => {
-        console.log(idx, '=', doc.data())
-        if (doc.data().st_num == station) {
-          console.log('checkresult', doc.data())
-          setStationData(doc.data())
-          setStationName(doc.data().st_id)
-          checkresult = true //stationNum이랑 같은 게 있으면 true
+        let checkresult = false // 동일한 stationNum이 있는 지 확인하는 변수
+
+        const data = await getDocs(collection(db, "Station"))
+        data.docs.map((doc, idx) => {
+          console.log(idx, '=', doc.data())
+          if (doc.data().st_num == station) {
+            console.log('checkresult', doc.data())
+            setStationData(doc.data())
+            setStationName(doc.data().st_id)
+            checkresult = true //stationNum이랑 같은 게 있으면 true
+          }
+        })
+
+
+        if (checkresult) {
+          setNumModalVisible(false) // 번호 입력 모달창 닫기
+          setModalVisible(!modalVisible) // 스캔 모달창 열기
         }
-      })
+        else {
+          alert('동일한 stationNum이 없습니다.')
+        }
 
-
-      if (checkresult) {
-        setNumModalVisible(false) // 번호 입력 모달창 닫기
-        setModalVisible(!modalVisible) // 스캔 모달창 열기
+      }else{
+        alert('stationNum을 입력해주세요')
       }
-      else {
-        alert('동일한 stationNum이 없습니다.')
-      }
-
     } catch (error) {
       console.log('eerror', error.message)
     }
