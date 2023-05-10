@@ -64,7 +64,7 @@ const DonationPage = ({ navigation, route }) => {
                 setDonationData(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
             
                 // 사용할 station의 id
-                setStationID(route.params.stationdata)
+                setStationID(route.params.stationdata.st_id)
                 // 카메라 허용 받기
                 const cameraStatus = await Camera.requestCameraPermissionsAsync();
                 setHasCameraPermission(cameraStatus.status === 'granted');
@@ -107,9 +107,9 @@ const DonationPage = ({ navigation, route }) => {
         const storage = getStorage(); // firebase storage 가져오기
         const id = await AsyncStorage.getItem('id'); // 디바이스에 저장된 id 가져오기
         // DB에 저장되어 있는 데이터 값 확인하기
-        checkimageURL()
 
-        console.log('donationNum', number)
+        // return 해서 number에 저장
+        const number = checkimageURL() 
 
         // 링크 명 설정 : 사용자 ID_기부할 station의 ID_기부번호
         var imageid = `images/${id}_${stationID}_${number}.jpg`
@@ -149,8 +149,10 @@ const DonationPage = ({ navigation, route }) => {
 
         if(dbnum==0){ // 기부한 적이 없다면 1로 설정
             console.log('첫 기부입니다')
+            console.log(dbnum)
             setNumber(dbnum + 1) 
         }
+        return dbnum+1
     }
 
 
@@ -285,8 +287,19 @@ const DonationPage = ({ navigation, route }) => {
                                         style={styles.buttonstyle}
                                         onPress={() => {
                                             console.log('기부 완료!')
-                                            Alert.alert('기부가 완료되었습니다')
-                                            navigation.navigate('FunctionList')
+                                            Alert.alert(
+                                                '기부가 완료 되었습니다. 확인을 클릭하시면 기부가 완료됩니다.',
+                                                [
+                                                    {
+                                                        text: "확인",
+                                                        onPress: () => {
+                                                            updateDB(firebaseImage)
+                                                            navigation.navigate('FunctionList', { data: route.params.stationdata })
+                                                        }
+                                                    }
+                                                ]
+                                            )
+                                            
                                         }}
 
                                     >

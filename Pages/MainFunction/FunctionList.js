@@ -1,12 +1,16 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Button } from 'react-native';
 
+import { db } from '../../firebaseConfig';
+import { addDoc, getDocs, collection, setDoc, doc } from 'firebase/firestore';
 
 const FunctionList = ({ navigation, route }) => {
     const [retalButton, setRentalButton] = useState(true)
     const [returnButton, setReturnButton] = useState(true)
-    const [donationButton, setDonationButton] = useState(true)
+    const [userstate, setUserState] = useState(true)
     const [stationNum, setStationNum] = useState('')
+    const [id, setId] = useState(AsyncStorage.getItem('id'))
 
     useEffect(() => {
         // 로직
@@ -46,17 +50,40 @@ const FunctionList = ({ navigation, route }) => {
                 console.log('대여 불가능')
                 setReturnButton(!returnButton)
             }
+            console.log('userstate', userstate)
         }
         
 
     }, []);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                // DB에 있는 User 데이터 가져오기
+                const data = await getDocs(collection(db, "User"));
+                data.docs.map(doc => { 
+                    if (doc.data().u_id == id && doc.data().u_rent) { //사용자의 아이디와 같고 대여한 상태
+                        // u_rent == false : 우산 대여 가능 -> 대여 버튼 활성화, 반납 버튼 비활성화
+                        setUserState(false)
+                    }
+                 })
+            } catch (error) {
+                console.log('eerror', error.message)
+            }
+        })();
+    
+    }, []);
+
+    
+
+
 
 
     return (
         <View style={styles.container}>
             <View style={styles.buttonView}>
                 <TouchableOpacity
-                    style={retalButton? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
+                    style={retalButton || userstate ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
                     onPress={() => navigation.navigate('Rental', { data: stationNum })}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>대여하기</Text>
@@ -66,7 +93,7 @@ const FunctionList = ({ navigation, route }) => {
 
             <View style={styles.buttonView}>
                 <TouchableOpacity
-                    style={retalButton ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
+                    style={retalButton || userstate ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
                     onPress={() => navigation.navigate('ReturnPage')}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>반납하기</Text>
@@ -77,7 +104,7 @@ const FunctionList = ({ navigation, route }) => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={styles.buttonstyle}
-                    onPress={() => navigation.navigate('DonationPage', { stationdata: route.params.data.st_id })}
+                    onPress={() => navigation.navigate('DonationPage', { stationdata: route.params.data })}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>폐우산 기부하기</Text>
                 </TouchableOpacity>
