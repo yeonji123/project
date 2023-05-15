@@ -1,6 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Button } from 'react-native';
+import {
+    View, Text,
+    StyleSheet, TouchableOpacity,
+    Dimensions, Button
+} from 'react-native';
 
 import { db } from '../../firebaseConfig';
 import { addDoc, getDocs, collection, setDoc, doc } from 'firebase/firestore';

@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Modal, Image, Dimensions, TouchableOpacity, Pressable, TextInput } from 'react-native';
+import {
+  Text, View,
+  StyleSheet, Modal,
+  Image, Dimensions,
+  TouchableOpacity, Pressable, TextInput
+} from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Camera } from 'expo-camera';
 //fire store
 //npx expo install firebase
-import { db } from '../../firebaseConfig';
+import { db } from '../../firebaseConfig';3
 import { collection, getDocs } from 'firebase/firestore';
 
 var isFirstGet = true;

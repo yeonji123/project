@@ -1,5 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, StyleSheet, Image, ScrollView, Button } from 'react-native';
+import {
+    Text,
+    View,
+    StyleSheet, 
+    Image, 
+    ScrollView, 
+    Button
+} from 'react-native';
 import { useEffect, useState } from 'react'
 
 //날씨 api키
