@@ -91,6 +91,7 @@ const Rental = ({ navigation, route }) => {
                                     style={{ width: '50%' }}
                                     onPress={() => {
                                         // station 유무 확인 함수
+                                        
                                         console.log('station 작동')
                                     }}>
                                     <Text style={styles.textStyle}>확인</Text>

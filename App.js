@@ -39,7 +39,7 @@ export default function App() {
     <>
       <StatusBar style="auto" />
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName="Main">
           <Stack.Screen name="Main2" component={Main2} />
           <Stack.Screen name="Main" component={Main} />
           <Stack.Screen name="Join" component={Join} />
