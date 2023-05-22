@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Dimensions, ScrollView, Pressable, Button} from 'react-native';
+import { 
+    View, Text, StyleSheet, Modal, 
+    TouchableOpacity, Dimensions, 
+    ScrollView, Pressable, Button, 
+} from 'react-native';
 
 import TitleName from '../../Component/TitleName';
 
@@ -74,7 +78,7 @@ const Rental = ({ navigation, route }) => {
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <View style={styles.modalTop}>
-                                <Text style={{ fontSize: 20, textAlign: 'center' }}>Station 번호 입력하기</Text>
+                                <Text style={{ fontSize: 20, textAlign: 'center' }}>대여하기</Text>
                             </View>
                             <View style={styles.modalMid}>
                                 {

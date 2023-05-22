@@ -57,9 +57,8 @@ const UserInfo = (props) => {
 
                 <View style={styles.titleView}>
                     <TitleName title="이용 내역"></TitleName>
-                    <Detail title="폐우산 기부 정보" icon="true" />
-                    <Detail title="고객센터" icon="true" />
-                    <Detail title="신고 및 접수" icon="true" />
+                    <Detail title="폐우산 기부 정보" icon="true" changePage="MyDonation"/>
+                    <Detail title="신고 및 접수" icon="true" changePage="CustMain"/>
                 </View>
 
                 <View style={{ padding: 10 }}>

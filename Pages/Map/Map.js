@@ -176,7 +176,7 @@ const Map = ({navigation}) => {
             <Text>              </Text>
 
             {/* <Pressable style={styles.qrscanner} onPress={() => navigation.navigate('QRCodeScanner')}> */}
-            <Pressable style={styles.qrscanner} onPress={() => console.log('ddddd')}>
+            <Pressable style={styles.qrscanner} onPress={() => navigation.navigate("QRCodeScanner")}>
               <Image style={{width:'25%', height:'55%'}} source={require('../../assets/qr_icon.png')} />
               <Text style={{fontSize:20, fontWeight:'bold', color:'white'}}>  대여하기</Text>
             </Pressable></>

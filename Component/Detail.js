@@ -1,9 +1,18 @@
 import React from 'react';
+import { Touchable } from 'react-native';
 import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 
 const Detail = (props) => {
     return (
-        <View style={styles.detailView}>
+        <TouchableOpacity 
+            style={styles.detailView}
+            onPress={() => {
+                console.log(props.changePage)
+                console.log(typeof(props.changePage))
+                pagename = props.changePage
+                props.navigation.navigate(pagename)}
+            }
+        >
             <View style={styles.detailText}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{props.title}</Text>
             </View>
@@ -34,7 +43,7 @@ const Detail = (props) => {
                         </View>
                     </>
             }
-        </View>
+        </TouchableOpacity>
 
     );
 };

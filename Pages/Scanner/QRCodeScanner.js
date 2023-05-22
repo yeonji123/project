@@ -9,7 +9,7 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Camera } from 'expo-camera';
 //fire store
 //npx expo install firebase
-import { db } from '../../firebaseConfig';3
+import { db } from '../../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 
 var isFirstGet = true;
@@ -171,6 +171,7 @@ const QRCodeScanner = ({ navigation }) => {
                   style={{ width: '50%' }}
                   onPress={() => {
                     // station 유무 확인 함수
+                    setStationNum()
                     checkStation(stationNum)
                   }}>
                   <Text style={styles.textStyle}>확인</Text>
@@ -262,8 +263,8 @@ const styles = StyleSheet.create({
   },
   assi: {
     backgroundColor: 'white',
-    width: '30%',
-    height: '100%',
+    width: 70,
+    height: 70,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
