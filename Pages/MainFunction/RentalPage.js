@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, } from 'react-native';
+import { 
+    View, Text, StyleSheet, 
+    TouchableOpacity, Dimensions, 
+} from 'react-native';
 
 
 const RentalPage = ({navigation}) => {

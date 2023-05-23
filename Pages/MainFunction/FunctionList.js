@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import {
     View, Text,
     StyleSheet, TouchableOpacity,
-    Dimensions, Button
+    Dimensions, 
 } from 'react-native';
 
 import { db } from '../../firebaseConfig';
@@ -98,7 +98,7 @@ const FunctionList = ({ navigation, route }) => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={retalButton || userstate ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
-                    onPress={() => navigation.navigate('ReturnPage')}
+                    onPress={() => navigation.navigate('ReturnPage', { data: stationNum })}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>반납하기</Text>
                 </TouchableOpacity>

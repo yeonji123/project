@@ -151,7 +151,7 @@ const QRCodeScanner = ({ navigation }) => {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <View style={styles.modalTop}>
-                <Text style={{ fontSize: 20, textAlign: 'center' }}>Station 번호 입력하기</Text>
+                <Text style={{ fontSize: 20, textAlign: 'center',  }}>Station 번호 입력하기</Text>
               </View>
 
               <View style={styles.modalMid}>
@@ -160,6 +160,7 @@ const QRCodeScanner = ({ navigation }) => {
                   value={stationNum}
                   onChangeText={(e) => setStationNum(e)}
                   placeholder="StationNum (8자)"
+                  placeholderTextColor="#E7E7E7"
                   maxLength={8}
                   numeric
                   keyboardType={'numeric'}

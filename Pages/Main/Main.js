@@ -1,5 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, StyleSheet, Image, ActivityIndicator, Button, TouchableOpacity, Dimensions } from 'react-native';
+import {
+    Text, View, StyleSheet,
+    Image, ActivityIndicator,
+    Modal, TouchableOpacity, Dimensions
+} from 'react-native';
 import { useEffect, useState } from 'react'
 
 
@@ -25,7 +29,7 @@ const wait = (timeout) => {
 }
 
 
-const Main = ({navigation}) => {
+const Main = ({ navigation }) => {
     //날씨
     const [weather, setWeather] = useState("");
     const [icon, seticon] = useState("");
@@ -34,6 +38,8 @@ const Main = ({navigation}) => {
 
     const [users, setUsers] = useState();
     const [donation, setDonation] = useState(); // 폐우산 기부 계산
+
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -45,7 +51,7 @@ const Main = ({navigation}) => {
 
                 // DB에서 디바이스 사용자 아이디와 동일한 데이터만 set하기
                 data.docs.map(doc => {
-                    if(doc.data().u_id == id){
+                    if (doc.data().u_id == id) {
                         setUsers(doc.data())
                         console.log('data', doc.data())
                     }
@@ -55,7 +61,7 @@ const Main = ({navigation}) => {
                 // 사용자가 기분한 내역을 확인하기 위해 (폐우산 기부 횟수)
                 const donation = await getDocs(collection(db, "Donation"))
                 donation.docs.map(doc => {
-                    if(doc.data().u_id == id){
+                    if (doc.data().u_id == id) {
                         setDonation(doc.data())
                     }
                 })
@@ -73,7 +79,7 @@ const Main = ({navigation}) => {
                 setErrorMsg('Permission to access location was denied');
                 return;
             }
-            
+
             // 사용자의 위치에 맞는 날씨 정보 가져오기
             let location = await Location.getCurrentPositionAsync({});
             let addresscheck = await Location.reverseGeocodeAsync(location.coords);
@@ -96,12 +102,49 @@ const Main = ({navigation}) => {
 
     return (
         <View style={styles.container}>
- 
+            <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <View style={styles.modalTop}>
+                                <Text style={{ fontSize: 20, textAlign: 'center', }}>UMStation은?</Text>
+                            </View>
+
+                            <View style={styles.modalMid}>
+                                <Text style={{ fontSize: 20, textAlign: 'center', }}>Station 번호</Text>
+                            </View>
+                            <View style={styles.modalbot}>
+                                <TouchableOpacity
+                                    style={styles.modalbutton}
+                                    onPress={() => {
+                                        // station 유무 확인 함수
+                                        setModalVisible(!modalVisible)
+                                    }}>
+                                    <Text style={{fontSize:20, color:'#E7E7E7', fontWeight:'bold'}}>확인</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+            </View>
+
+
+
+
 
             <View style={styles.explainView}>
                 <TouchableOpacity
                     style={styles.explainUMS}
-                    onPress={() => console.log("Dddd")}
+                    onPress={() => {
+                        setModalVisible(true)
+                        console.log("Dddd")
+                    }}
                 >
                     <View style={{ flexDirection: 'row', width: '100%' }}>
                         <View style={{ padding: 10, alignItems: 'center', width: '88%' }}>
@@ -116,9 +159,9 @@ const Main = ({navigation}) => {
 
 
             <View style={styles.userinfoView}>
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.userinfo}
-                    onPress={() => navigation.navigate('UserInfo', {users: users})}
+                    onPress={() => navigation.navigate('UserInfo', { users: users })}
                 >
                     <View style={styles.weatherView}>
                         <View style={styles.weather}>
@@ -126,7 +169,7 @@ const Main = ({navigation}) => {
                                 weather != "" ?
                                     <>
                                         <View style={styles.temperature}>
-                                            <View style={{ width: '40%', height: '100%', backgroundColor:'white', borderRadius:50, marginRight:4}}>
+                                            <View style={{ width: '40%', height: '100%', backgroundColor: 'white', borderRadius: 50, marginRight: 4 }}>
                                                 <Image style={{ width: '100%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${icon}d.png` }} />
                                             </View>
                                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -148,8 +191,8 @@ const Main = ({navigation}) => {
                             {
                                 users ?
                                     <>
-                                        <View style={{ width: '65%', padding:3 }}>
-                                            <View style={{ alignItems: 'center', marginBottom:3, paddingLeft:7 }}>
+                                        <View style={{ width: '65%', padding: 3 }}>
+                                            <View style={{ alignItems: 'center', marginBottom: 3, paddingLeft: 7 }}>
                                                 <Text style={{ fontSize: 20 }}>{users.u_name}님은</Text>
                                             </View>
                                             <View style={{ alignItems: 'center' }}>
@@ -176,12 +219,12 @@ const Main = ({navigation}) => {
                     </View>
                     <View style={styles.donation}>
                         {
-                            donation!=null ?
+                            donation != null ?
                                 <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    {donation.length}</Text>
                                 :
                                 <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    0</Text>
                         }
-                        
+
                     </View>
                 </TouchableOpacity>
             </View>
@@ -190,11 +233,11 @@ const Main = ({navigation}) => {
 
 
             <View style={styles.mainfunctionView}>
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.mapbutton}
                     onPress={() => navigation.navigate('Map')}
                 >
-                    <Image style={{ width: '100%', height: '100%', borderRadius: 15,}} source={require('../../assets/map_sample.png')}></Image>
+                    <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={require('../../assets/map_sample.png')}></Image>
 
                 </TouchableOpacity>
 
@@ -210,7 +253,7 @@ const Main = ({navigation}) => {
 
 
             <View style={styles.serviceView}>
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.service}
                     onPress={() => navigation.navigate('CustMain')}
                 >
@@ -235,6 +278,61 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
+    modalView: {
+        width:Dimensions.get('screen').width*0.85,
+        height:Dimensions.get('screen').height*0.7,
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalTop: {
+        width: '100%',
+        height: '15%',
+        justifyContent: 'center',
+        textAlign: 'center',
+        padding: 10,
+        borderTopRightRadius: 10,
+        borderTopLeftRadius: 10,
+    },
+    modalMid: {
+        width: '100%',
+        height: '70%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+    },
+    modalbot: {
+        width: '100%',
+        height:'15%',
+        justifyContent:'center',
+        alignItems:'center',
+        padding:10,
+    },
+    modalbutton:{
+        width:'30%',
+        height:'80%',
+        backgroundColor:"#B2CCFF",
+        borderRadius:10,
+        justifyContent:'center',
+        textAlign:'center',
+        alignItems:'center',
     },
     explainView: {
         width: Dimensions.get('screen').width,
@@ -270,9 +368,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#F2F2F2',
         borderRadius: 15,
         padding: 15,
-        alignItems:'center',
+        alignItems: 'center',
     },
-    weatherView:{
+    weatherView: {
         width: '90%',
         height: '35%',
         borderBottomColor: '#848484',
@@ -282,7 +380,7 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems:'center',
+        alignItems: 'center',
     },
     temperature: {
         flexDirection: 'row',

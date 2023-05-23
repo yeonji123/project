@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, TouchableOpacity, ScrollView } from 'react-native';
+import { 
+    View, Text, StyleSheet, Dimensions, 
+    Alert, TouchableOpacity, ScrollView 
+} from 'react-native';
 
 import TitleName from '../../Component/TitleName';
 import Detail from '../../Component/Detail';
@@ -57,13 +60,23 @@ const UserInfo = (props) => {
 
                 <View style={styles.titleView}>
                     <TitleName title="이용 내역"></TitleName>
-                    <Detail title="폐우산 기부 정보" icon="true" changePage="MyDonation"/>
-                    <Detail title="신고 및 접수" icon="true" changePage="CustMain"/>
+                    <TouchableOpacity
+                        onPress={() => {
+                            props.navigation.navigate("MyDonation")
+                        }}>
+                        <Detail title="폐우산 기부 정보" icon="true" changePage="MyDonation" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            props.navigation.navigate("CustMain")
+                        }}>
+                        <Detail title="신고 및 접수" icon="true" changePage="CustMain" />
+                    </TouchableOpacity>
                 </View>
 
                 <View style={{ padding: 10 }}>
-                    <TouchableOpacity 
-                    style={styles.logoutView}
+                    <TouchableOpacity
+                        style={styles.logoutView}
                         onPress={() => { logoutButton() }}
                     >
                         <Text style={{ fontSize: 20, }}>로그아웃</Text>

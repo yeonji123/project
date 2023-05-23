@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { 
     View, Text, StyleSheet, Modal, 
     TouchableOpacity, Dimensions, 
-    ScrollView, Pressable, Button, 
+    ScrollView, Pressable, 
 } from 'react-native';
 
 import TitleName from '../../Component/TitleName';
@@ -120,7 +120,10 @@ const Rental = ({ navigation, route }) => {
                         // row 값 확인하기
                         // console.log('angle',row[`st_${idx+1}`].angle)
                         return (
-                            <View style={{ padding: 5 }}>
+                            <View 
+                                style={{ padding: 5 }}
+                                key={idx}
+                            >
                                 <TouchableOpacity
                                     key={idx}
                                     style={row[`st_${idx+1}`].state ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.3 }]} 

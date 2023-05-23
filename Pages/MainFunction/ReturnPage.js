@@ -1,8 +1,16 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, } from 'react-native';
+import { 
+    View, Text, StyleSheet, 
+    TouchableOpacity, Dimensions, 
+} from 'react-native';
+
+//fire store
+//npx expo install firebase
+import { db } from '../../firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
 
 
-const ReturnPage = () => {
+const ReturnPage = (props) => {
     const [workcomplete, setWorkcomplete] = useState(false);
 
     useEffect(() => {
@@ -11,7 +19,20 @@ const ReturnPage = () => {
             try {
                 const data = await getDocs(collection(db, "Station"))
                 data.docs.map((doc, idx) => {
-                    console.log(idx, '=', doc.data())
+                    let checkum=false
+                    console.log('props', props.route.params.data)
+                    if(doc.data().st_id == props.route.params.data.st_id){
+                        // 반납가능 여부 확인하기
+                        // station에 있는 우산의 state가 true이면 우산 있음, false면 우산 없음
+                        for (var i = 0; i < Object.keys(props.route.params.data.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
+                            console.log(props.route.params.data.um_count_state[String(i + 1)].state)
+                            if(!props.route.params.data.um_count_state[String(i + 1)].state){ // 우산 반납 가능 value = state가 false
+                                checkum = true // 우산 반납 가능함!
+                                break;
+                            }
+                        }
+                        console.log('checkum', checkum) // true이면 반납가능
+                    }
                 })
 
 
@@ -46,7 +67,7 @@ const ReturnPage = () => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={styles.buttonstyle}
-                    onPress={() => navigation.navigate('Rental', { data: stationNum })}
+                    onPress={() => props.navigation.navigate('FunctionList')}
 
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>반납 완료</Text>

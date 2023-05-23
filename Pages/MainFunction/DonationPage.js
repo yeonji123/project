@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal, Pressable, 
-    Image, Button, Alert } from 'react-native';
+import { 
+    View, Text, StyleSheet, 
+    TouchableOpacity, Dimensions, 
+    Modal, Pressable, 
+    Image, Alert 
+} from 'react-native';
 
 
 // npm i expo-location
