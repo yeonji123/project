@@ -59,7 +59,7 @@ const QRCodeScanner = ({ navigation }) => {
     // DB 확인하기
     console.log('DB 확인하기')
     try {
-      if (stationNum != null) {
+      if (stationNum != null || scanned==true) {
 
         let checkresult = false // 동일한 stationNum이 있는 지 확인하는 변수
 
@@ -214,7 +214,6 @@ const QRCodeScanner = ({ navigation }) => {
             <TouchableOpacity
               style={styles.assi}
               onPress={() => {
-                console.log('flash')
                 setFlash(
                   flash === Camera.Constants.FlashMode.off
                     ? Camera.Constants.FlashMode.torch

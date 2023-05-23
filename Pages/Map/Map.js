@@ -36,7 +36,7 @@ const Map = ({navigation}) => {
       try {
         const data = await getDocs(collection(db, "Station")) // Station이라는 테이블 명
         setStations(data.docs.map(doc => ({ ...doc.data(), id: doc.id }))) // map을 돌려서 데이터를 복사하여 붙여놓고, id를 추가해줌
-        console.log(data.docs.map)
+        
       } catch (error) {
         console.log('eerror', error.message)
       }
@@ -55,10 +55,12 @@ const Map = ({navigation}) => {
       }
 
       let location = await Location.getCurrentPositionAsync({}); //현재 위치 가져오기
-
+      console.log('location' )
       setmapRegion({ //현재 위치 set
         latitude: location.coords.latitude,
-        longitude: location.coords.longitude
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.5,
+        longitudeDelta: 0.5,
       })
     })();
   }, []);
@@ -94,8 +96,8 @@ const Map = ({navigation}) => {
           // region={mapRegion}
           // initialRegion={{mapRegion}}
           initialRegion={{
-            latitude: 36.7987869,
-            longitude: 127.0757584,
+            latitude: mapRegion.latitude,
+            longitude: mapRegion.longitude,
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
           }}
