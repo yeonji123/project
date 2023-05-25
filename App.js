@@ -24,7 +24,6 @@ import DonationPage from "./Pages/MainFunction/DonationPage";
 import ReturnPage from "./Pages/MainFunction/ReturnPage";
 import ScanStation from './Pages/Service/ScanStation';  
 
-import Map2 from './Pages/Map/Map2';
 
 
 
@@ -64,11 +63,6 @@ export default function App() {
           <Stack.Screen name="DonationPage" component={DonationPage} />
           <Stack.Screen name="ReturnPage" component={ReturnPage} />
           <Stack.Screen name="ScanStation" component={ScanStation} />
-
-
-          <Stack.Screen name='Map2' component={Map2} />
-
-
         </Stack.Navigator>
       </NavigationContainer>
       

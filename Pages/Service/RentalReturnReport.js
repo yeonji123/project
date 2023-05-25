@@ -56,12 +56,13 @@ const RentalReturnReposrt = ({ navigation, route }) => {
                     }
                 }
             })
+            // 현재 날짜
             let todayData = new Date();
             let today = todayData.toLocaleDateString()
-
+            // 데이터 베이스 저장 키 값
             let dbid = "RR_" + 'station1' + "_" + (notifyN + 1)
             console.log(dbid) // data id
-
+            // 데이터 베이스에 삽입
             const docRef = await setDoc(doc(db, "StationNotification", dbid), {
                 no_additional : sentence,
                 no_date : today,

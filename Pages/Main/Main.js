@@ -420,7 +420,6 @@ const styles = StyleSheet.create({
         height: '100%',
         marginRight: 7,
         borderRadius: 15,
-
     },
     scanner: {
         width: '48%',
