@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import {
     Text, View, StyleSheet,
     Image, ActivityIndicator,
@@ -11,14 +10,14 @@ import { useEffect, useState } from 'react'
 import * as Location from 'expo-location';
 
 
-import TitleName from '../../Component/TitleName'
-
 // firebase 연동
 import { db } from '../../firebaseConfig';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
 // device에 데이터 저장
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// navigation 초기화하기
+import { CommonActions } from '@react-navigation/native';
 
 
 //날씨 api키
@@ -34,10 +33,10 @@ const Main = ({ navigation }) => {
     const [weather, setWeather] = useState("");
     const [icon, seticon] = useState("");
     const [address, setAddress] = useState("");
-
+    const [id, setId] = useState("")
 
     const [users, setUsers] = useState();
-    const [donation, setDonation] = useState(); // 폐우산 기부 계산
+    const [donation, setDonation] = useState(""); // 폐우산 기부 계산
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -47,7 +46,13 @@ const Main = ({ navigation }) => {
             try {
                 // 사용자 DB 데이터 가져오기
                 const data = await getDocs(collection(db, "User"))
-                var id = await AsyncStorage.getItem('id')
+                var id = await AsyncStorage.getItem('id') // device에 저장되어 있는 id
+                setId(id)
+                console.log('donation', donation)
+                if (id==null){ // device에 저장된 id가 없으면 Login 페이지로 전환
+                    navigation.reset({routes: [{name: 'Login'}]})
+                }
+
 
                 // DB에서 디바이스 사용자 아이디와 동일한 데이터만 set하기
                 data.docs.map(doc => {
@@ -59,12 +64,15 @@ const Main = ({ navigation }) => {
 
                 // 기부 DB 데이터 가져오기
                 // 사용자가 기분한 내역을 확인하기 위해 (폐우산 기부 횟수)
-                const donation = await getDocs(collection(db, "Donation"))
-                donation.docs.map(doc => {
-                    if (doc.data().u_id == id) {
-                        setDonation(doc.data())
-                    }
-                })
+                if (id !== null) {
+                    const donation = await getDocs(collection(db, "Donation"))
+                    donation.docs.map(doc => {
+                        if (doc.data().u_id == id) {
+                            setDonation(doc.data())
+                        }
+                    })
+
+                }
 
             } catch (error) {
                 console.log('eeerror', error.message)
@@ -126,7 +134,7 @@ const Main = ({ navigation }) => {
                                         // station 유무 확인 함수
                                         setModalVisible(!modalVisible)
                                     }}>
-                                    <Text style={{fontSize:20, color:'#E7E7E7', fontWeight:'bold'}}>확인</Text>
+                                    <Text style={{ fontSize: 20, color: '#E7E7E7', fontWeight: 'bold' }}>확인</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -159,74 +167,116 @@ const Main = ({ navigation }) => {
 
 
             <View style={styles.userinfoView}>
-                <TouchableOpacity
-                    style={styles.userinfo}
-                    onPress={() => navigation.navigate('UserInfo', { users: users })}
-                >
-                    <View style={styles.weatherView}>
-                        <View style={styles.weather}>
-                            {
-                                weather != "" ?
-                                    <>
-                                        <View style={styles.temperature}>
-                                            <View style={{ width: '40%', height: '100%', backgroundColor: 'white', borderRadius: 50, marginRight: 4 }}>
-                                                <Image style={{ width: '100%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${icon}d.png` }} />
-                                            </View>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Text style={{ fontSize: 30 }}>{weather.main.temp.toFixed(0)}</Text>
-                                                <Text style={{ fontSize: 20 }}>  °C </Text>
-                                            </View>
-                                        </View>
-                                        <View style={styles.location}>
-                                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{address}</Text>
-                                        </View>
-                                    </>
-                                    :
-                                    <ActivityIndicator />
-                            }
-                        </View>
-                    </View>
-                    <View style={styles.userstate}>
-                        <View style={{ flexDirection: 'row', height: '100%', }}>
-                            {
-                                users ?
-                                    <>
-                                        <View style={{ width: '65%', padding: 3 }}>
-                                            <View style={{ alignItems: 'center', marginBottom: 3, paddingLeft: 7 }}>
-                                                <Text style={{ fontSize: 20 }}>{users.u_name}님은</Text>
-                                            </View>
-                                            <View style={{ alignItems: 'center' }}>
-                                                {
-                                                    users.u_rent ?
-                                                        <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 중</Text> :
-                                                        <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 가능</Text>
-                                                }
-                                            </View>
-                                        </View>
-                                    </> :
-                                    <ActivityIndicator />
-                            }
-                            <View style={{ width: '35%', hieght: '100%', justifyContent: 'center', alignItems: 'center', }}>
-                                {
-                                    // 이미지 링크 넣기 user DB에 스토리지 링크 넣어서 가져오기
-                                    users && users.u_profile ?
-                                        <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={{ uri: users.u_profile }}></Image>
-                                        :
-                                        <Image style={{ width: '50%', height: '100%', borderRadius: 15, }} source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png' }}></Image>
-                                }
+                {
+                    id && id != null ?
+                        <TouchableOpacity
+                            style={styles.userinfo}
+                            onPress={() => navigation.navigate('UserInfo', { users: users })}
+                        >
+                            <View style={styles.weatherView}>
+                                <View style={styles.weather}>
+                                    {
+                                        weather != "" ?
+                                            <>
+                                                <View style={styles.temperature}>
+                                                    <View style={{ width: '40%', height: '100%', backgroundColor: 'white', borderRadius: 50, marginRight: 4 }}>
+                                                        <Image style={{ width: '100%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${icon}d.png` }} />
+                                                    </View>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                        <Text style={{ fontSize: 30 }}>{weather.main.temp.toFixed(0)}</Text>
+                                                        <Text style={{ fontSize: 20 }}>  °C </Text>
+                                                    </View>
+                                                </View>
+                                                <View style={styles.location}>
+                                                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{address}</Text>
+                                                </View>
+                                            </>
+                                            :
+                                            <ActivityIndicator />
+                                    }
+                                </View>
                             </View>
-                        </View>
-                    </View>
-                    <View style={styles.donation}>
-                        {
-                            donation != null ?
-                                <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    {donation.length}</Text>
-                                :
-                                <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    0</Text>
-                        }
+                            <View style={styles.userstate}>
+                                <View style={{ flexDirection: 'row', height: '100%', }}>
+                                    {
+                                        users ?
+                                            <>
+                                                <View style={{ width: '65%', padding: 3 }}>
+                                                    <View style={{ alignItems: 'center', marginBottom: 3, paddingLeft: 7 }}>
+                                                        <Text style={{ fontSize: 20 }}>{users.u_name}님은</Text>
+                                                    </View>
+                                                    <View style={{ alignItems: 'center' }}>
+                                                        {
+                                                            users.u_rent ?
+                                                                <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 중</Text> :
+                                                                <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 가능</Text>
+                                                        }
+                                                    </View>
+                                                </View>
+                                            </> :
+                                            <ActivityIndicator />
+                                    }
+                                    <View style={{ width: '35%', hieght: '100%', justifyContent: 'center', alignItems: 'center', }}>
+                                        {
+                                            // 이미지 링크 넣기 user DB에 스토리지 링크 넣어서 가져오기
+                                            users && users.u_profile ?
+                                                <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={{ uri: users.u_profile }}></Image>
+                                                :
+                                                <Image style={{ width: '50%', height: '100%', borderRadius: 15, }} source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png' }}></Image>
+                                        }
+                                    </View>
+                                </View>
+                            </View>
+                            <View style={styles.donation}>
+                                {
+                                    id != null ?
+                                        <>
+                                            {
+                                                donation!=null && donation ?
+                                                    <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    {donation.length}</Text>
+                                                    :
+                                                    <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    0</Text>
+                                            }
+                                        </> : null
 
-                    </View>
-                </TouchableOpacity>
+                                }
+
+                            </View>
+                        </TouchableOpacity> :
+                        <TouchableOpacity
+                            style={styles.userinfo}
+                            onPress={() => navigation.navigate('Join')}
+
+                        >
+                            <View style={styles.weatherView}>
+                                <View style={styles.weather}>
+                                    {
+                                        weather != "" ?
+                                            <>
+                                                <View style={styles.temperature}>
+                                                    <View style={{ width: '40%', height: '100%', backgroundColor: 'white', borderRadius: 50, marginRight: 4 }}>
+                                                        <Image style={{ width: '100%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${icon}d.png` }} />
+                                                    </View>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                        <Text style={{ fontSize: 30 }}>{weather.main.temp.toFixed(0)}</Text>
+                                                        <Text style={{ fontSize: 20 }}>  °C </Text>
+                                                    </View>
+                                                </View>
+                                                <View style={styles.location}>
+                                                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{address}</Text>
+                                                </View>
+                                            </>
+                                            :
+                                            <ActivityIndicator />
+                                    }
+                                </View>
+                            </View>
+                            <View style={styles.login}>
+                                <Text style={{fontSize:25, fontWeight:'bold', color:'#6699FF'}}> 로그인 / 회원가입 하기</Text>
+                            </View>
+                        </TouchableOpacity>
+                }
+
             </View>
 
 
@@ -286,8 +336,8 @@ const styles = StyleSheet.create({
         marginTop: 22,
     },
     modalView: {
-        width:Dimensions.get('screen').width*0.85,
-        height:Dimensions.get('screen').height*0.7,
+        width: Dimensions.get('screen').width * 0.85,
+        height: Dimensions.get('screen').height * 0.7,
         margin: 20,
         backgroundColor: 'white',
         borderRadius: 10,
@@ -320,19 +370,19 @@ const styles = StyleSheet.create({
     },
     modalbot: {
         width: '100%',
-        height:'15%',
-        justifyContent:'center',
-        alignItems:'center',
-        padding:10,
+        height: '15%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
     },
-    modalbutton:{
-        width:'30%',
-        height:'80%',
-        backgroundColor:"#B2CCFF",
-        borderRadius:10,
-        justifyContent:'center',
-        textAlign:'center',
-        alignItems:'center',
+    modalbutton: {
+        width: '30%',
+        height: '80%',
+        backgroundColor: "#B2CCFF",
+        borderRadius: 10,
+        justifyContent: 'center',
+        textAlign: 'center',
+        alignItems: 'center',
     },
     explainView: {
         width: Dimensions.get('screen').width,
@@ -352,6 +402,12 @@ const styles = StyleSheet.create({
     arrowicon: {
         width: '12%',
         height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    login: {
+        width: '90%',
+        height: '65%',
         justifyContent: 'center',
         alignItems: 'center',
     },

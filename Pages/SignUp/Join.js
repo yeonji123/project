@@ -14,7 +14,7 @@ import { getDocs, collection, setDoc, doc } from 'firebase/firestore';
 const { StatusBarManager } = NativeModules
 
 
-const Join = ({ navigation }) => {
+const Join = (props) => {
   // DB에 저장된 사용자들의 정보
   const [users, setUsers] = useState();
 
@@ -239,7 +239,7 @@ const [birth, setBirth] = useState("");
 
 
   const SignUpButton = () => {
-    
+    Alert.alert('회원가입 완료')
     // 회원가입 DB 넣기
     (async () => {
       // 가입 날짜
@@ -257,8 +257,9 @@ const [birth, setBirth] = useState("");
         u_pw : password,
         u_rent : false,
       });
+      
       console.log("Document written with ID: ", docRef.id);
-
+      props.navigation.pop() // 회원가입 완료 후 로그인 화면으로 이동
     })();
 
 
@@ -379,17 +380,17 @@ const [birth, setBirth] = useState("");
         <TouchableOpacity
           style={styles.loginBTN}
           disabled={regiButton()}
-          onPress={() => { 
+          onPress={() => {
             console.log('sign up')
-            SignUpButton() 
+            SignUpButton()
           }}
         >
-          <Text style={regiButton ? styles.loginText : [styles.loginText, { opacity: 0.3 }]}>Sign Up</Text>
+          <Text style={regiButton() ?  [styles.loginText, { opacity: 0.3 }] : styles.loginText}>Sign Up</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginBTN}
+        <TouchableOpacity style={[styles.loginBTN, { backgroundColor: 'white' }]}
           onPress={() => {
-            navigation.navigate("Login")
+            props.navigation.navigate("Login")
           }}
         >
           <Text style={styles.loginText}>Login</Text>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { 
-    View, Text, StyleSheet, 
-    TouchableOpacity, Dimensions, 
+import {
+    View, Text, StyleSheet,
+    TouchableOpacity, Dimensions,
+    Alert,
 } from 'react-native';
 
 //fire store
@@ -19,19 +20,30 @@ const ReturnPage = (props) => {
             try {
                 const data = await getDocs(collection(db, "Station"))
                 data.docs.map((doc, idx) => {
-                    let checkum=false
+                    let checkum = false
                     console.log('props', props.route.params.data)
-                    if(doc.data().st_id == props.route.params.data.st_id){
+                    if (doc.data().st_id == props.route.params.data.st_id) {
                         // 반납가능 여부 확인하기
                         // station에 있는 우산의 state가 true이면 우산 있음, false면 우산 없음
                         for (var i = 0; i < Object.keys(props.route.params.data.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
                             console.log(props.route.params.data.um_count_state[String(i + 1)].state)
-                            if(!props.route.params.data.um_count_state[String(i + 1)].state){ // 우산 반납 가능 value = state가 false
+                            if (!props.route.params.data.um_count_state[String(i + 1)].state) { // 우산 반납 가능 value = state가 false
                                 checkum = true // 우산 반납 가능함!
                                 break;
                             }
                         }
                         console.log('checkum', checkum) // true이면 반납가능
+                        if (!checkum) {
+                            Alert.alert('반납 오류',
+                                '다른 station을 사용해주세요',
+                                [
+                                    {
+                                        text: "확인",
+                                        onPress: () => navigation.navigate('Main')
+                                    }
+                                ]
+                            )
+                        }
                     }
                 })
 
@@ -46,7 +58,7 @@ const ReturnPage = (props) => {
 
 
 
-    
+
 
 
     return (
@@ -80,38 +92,38 @@ const ReturnPage = (props) => {
 export default ReturnPage;
 
 
-const styles=StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
-        
+
     },
     explainView: {
         width: Dimensions.get('window').width * 0.9,
         height: Dimensions.get('window').height * 0.1,
-        padding:10,
+        padding: 10,
     },
-    pictureView:{
+    pictureView: {
         width: Dimensions.get('window').width * 0.9,
         height: Dimensions.get('window').height * 0.5,
-        justifyContent:'center',
-        alignItems:'center',
-        padding:10,
-        backgroundColor:'gray',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        backgroundColor: 'gray',
     },
-    text:{
-        fontSize:30,
-        fontWeight:'bold',
-        color:'black',
-        textAlign:'center',
+    text: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: 'black',
+        textAlign: 'center',
     },
     buttonView: {
         width: Dimensions.get('window').width * 0.9,
         height: Dimensions.get('window').height * 0.1,
         marginBottom: 40,
-        padding:10,
+        padding: 10,
     },
     buttonstyle: {
         width: '100%',

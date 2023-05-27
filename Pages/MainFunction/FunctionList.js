@@ -16,17 +16,14 @@ import { BleManager } from 'react-native-ble-plx';
 
 
 const FunctionList = ({ navigation, route }) => {
-    const [stationData, setStationData] = useState(route.params.data); // Station 전체 데이터
     const [retalButton, setRentalButton] = useState(true)
     const [returnButton, setReturnButton] = useState(true)
     const [userstate, setUserState] = useState(true)
-    const [stationNum, setStationNum] = useState('')
+    const [stationData, setStationData] = useState('')
     const [id, setId] = useState(AsyncStorage.getItem('id'))
 
 
-    const [manager] = useState(new BleManager());
-    const [devices, setDevices] = useState([]); //Scan devices
-    const [user, setUsers] = useState();
+ 
 
     useEffect(() => {
         // 로직
@@ -38,7 +35,7 @@ const FunctionList = ({ navigation, route }) => {
         console.log('stationData', route.params.data)
 
         if (route.params != undefined) {
-            setStationNum(route.params.data)
+            setStationData(route.params.data)
 
             var rentalCount = 0
             var returnCount = 0
@@ -95,55 +92,7 @@ const FunctionList = ({ navigation, route }) => {
 
 
 
-    // 블루투스 
-    useEffect(() => {
-        const subscription = manager.onStateChange(state => {
-            if (state === 'PoweredOn') scanAndConnect();
-        }, true);
-    }, []);
-
-
-    //scan
-    const scanAndConnect = async () => {
-        console.log('scanAndConnect')
-        await manager.startDeviceScan(null, null, (error, device) => {
-            if (error) {
-                console.log("scanAndConnect error");
-                return;
-            }
-            setDevices(prevDevices => {
-                if (!prevDevices.some(d => d.id === device.id)) {
-                    return [...prevDevices, device];
-                }
-                return prevDevices;
-            });
-        });
-        setTimeout(() => {
-            manager.stopDeviceScan(); // 10초 뒤에 블루투스 연동 가능한 기기 목록 그만 가져오기
-            connectToDevice(stationData.st_mac); // 블루투스 연동
-        }, 10000);
-    };
-
     
-    const connectToDevice = async device => { //mac주소 가져옴
-        try {
-            //connect
-            const connectedDevice = await manager.connectToDevice(device); //  mac 주소로 연결 
-            await connectedDevice.discoverAllServicesAndCharacteristics(); // 모든 서비스와 특성을 찾음
-            console.log('Connected to', connectedDevice.name); // 연결된 기기 이름
-
-            //Read Massage from Connected Device
-            connectedDevice.monitorCharacteristicForService(
-                '0000ffe0-0000-1000-8000-00805f9b34fb', //serviceUUID
-                '0000ffe1-0000-1000-8000-00805f9b34fb', //characterUUID
-                (error, Characteristic) => {
-                    console.log('monitorCharacteristicForService: ' + base64.decode(`${Characteristic?.value}`));
-                })
-        } catch (error) {
-            console.log('Connection/Read error:', error);
-        }
-    };
-
 
 
 
@@ -154,7 +103,7 @@ const FunctionList = ({ navigation, route }) => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={retalButton || userstate ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
-                    onPress={() => navigation.navigate('Rental', { data: stationNum })}
+                    onPress={() => navigation.navigate('Rental', { data: stationData })}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>대여하기</Text>
                 </TouchableOpacity>
@@ -164,7 +113,7 @@ const FunctionList = ({ navigation, route }) => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={retalButton || userstate ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
-                    onPress={() => navigation.navigate('ReturnPage', { data: stationNum })}
+                    onPress={() => navigation.navigate('ReturnPage', { data: stationData })}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>반납하기</Text>
                 </TouchableOpacity>

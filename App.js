@@ -23,7 +23,7 @@ import ExplainPage from "./Pages/MainFunction/ExplainPage";
 import DonationPage from "./Pages/MainFunction/DonationPage";
 import ReturnPage from "./Pages/MainFunction/ReturnPage";
 import ScanStation from './Pages/Service/ScanStation';  
-
+import Loading from './Component/Loading';  
 
 
 
@@ -50,6 +50,7 @@ export default function App() {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Map" component={Map} />
           <Stack.Screen name="QRCodeScanner" component={QRCodeScanner} />
+          <Stack.Screen name="Loading" component={Loading} />
           <Stack.Screen name="CustMain" component={CustMain} />
           <Stack.Screen name="UserInfo" component={UserInfo} />
           <Stack.Screen name="CameraCheck" component={CameraCheck} />

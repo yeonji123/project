@@ -119,7 +119,7 @@ const QRCodeScanner = ({ navigation }) => {
                   onPress={() => {
                     setScanned(false)
                     setModalVisible(!modalVisible)
-                    navigation.navigate("FunctionList", {
+                    navigation.navigate("Loading", {
                       data: stationData
                     })
                   }}>
