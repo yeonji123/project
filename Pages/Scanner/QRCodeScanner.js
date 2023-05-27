@@ -22,7 +22,7 @@ const QRCodeScanner = ({ navigation }) => {
   // 모달
   const [modalVisible, setModalVisible] = useState(false);
   const [numModalVisible, setNumModalVisible] = useState(false);
-  const [stationNum, setStationNum] = useState(); //입력한 stationnum
+  const [stationNum, setStationNum] = useState(); // 입력한 stationnum
   // station Data
   const [stationData, setStationData] = useState();
   const [stationName, setStationName] = useState('');

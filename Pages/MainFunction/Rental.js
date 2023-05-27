@@ -21,6 +21,13 @@ const Rental = ({ navigation, route }) => {
     const [checkModal, setCheckModal] = useState(false); // 모달창
 
 
+
+
+
+
+
+
+
     useEffect(() => {
         // 데이터 요청
         // props로 받은 station 번호로 데이터 요청
