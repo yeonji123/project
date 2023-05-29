@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { 
     View, Text, StyleSheet, Modal, 
     TouchableOpacity, Dimensions, 
-    ScrollView, Pressable, 
+    ScrollView, Pressable, Alert,
 } from 'react-native';
 
 import TitleName from '../../Component/TitleName';
@@ -65,6 +65,39 @@ const Rental = ({ navigation, route }) => {
             }
         })();
     }, []);
+
+
+
+
+
+    // 아두이노 에러 : 대여 실패
+    const rentalError = (errorRental) =>{
+        var errorRental = 0 // 에러 코드를 반환해줄 값
+        // 대여 에러
+        if (errorRental ==102){ 
+            // 1. 모터에 대여 우산이 없음
+            // 모터가 동작했는데 대여 우산이 없는 상태
+            props.navigation.navigate('FunctionList')
+            Alert.alert('대여 실패', '대여 우산이 없습니다.', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
+        }
+        else if (errorRental == 101){
+            // 2. 대여 동작이 완료되었으나, 대여 우산을 대여 하지 않음
+            // 모터가 돌아가서 사용자가 가져가기 기다림,
+            props.naviagtion.navigate('FunctionList')
+            Alert.alert('대여 실패', '대여 우산이 없습니다.', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
+
+        }else if (errorRental == 100){
+            // 대여 성공
+
+        }
+
+
+
+
+
+
+    }
+
 
 
 

@@ -58,7 +58,32 @@ const ReturnPage = (props) => {
 
 
 
+ // 아두이노 에러 : 반납 실패
+ const rentalError = (errorRental) =>{
+    var errorRental = 0 // 에러 코드를 반환해줄 값
+    // 반납 에러
+    if (errorRental ==102){ 
+        // 1. 모터에 반납 우산이 이미 있음
+        props.navigation.navigate('FunctionList')
+        Alert.alert('반납 실패', '반납 우산이 있습니다. 다시 반납하기 버튼을 클릭해주세요', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
+    }
+    else if (errorRental == 101){
+        // 2. 반납 동작이 완료되었으나, 반납 우산을 반납 하지 않음
+        // 모터가 돌아가서 사용자가 가져가기 기다림,
+        props.naviagtion.navigate('FunctionList')
+        Alert.alert('반납 실패', '반납하신 우산을 확인할 수 없습니다. 다시 반납하기 버튼을 클릭해주세요', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
 
+    }else if (errorRental == 100){
+        // 반납 성공
+
+    }
+
+
+
+
+
+
+}
 
 
     return (

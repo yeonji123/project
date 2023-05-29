@@ -15,7 +15,7 @@ import { BleManager } from 'react-native-ble-plx';
 
 
 
-const FunctionList = ({ navigation, route }) => {
+const FunctionList = (props) => {
     const [retalButton, setRentalButton] = useState(true)
     const [returnButton, setReturnButton] = useState(true)
     const [userstate, setUserState] = useState(true)
@@ -31,8 +31,8 @@ const FunctionList = ({ navigation, route }) => {
         // 2. 사용자 상태 확인(대여 / 반납 / 폐우산 기부 버튼 활성화)
         // 3. station에 우산(대여 가능)이 있는 지 확인하기
         // 4. station에 우산(반납 가능)이 있는 지 확인하기
-        console.log('funcionlist', route.params.data.st_id)
-        console.log('stationData', route.params.data)
+        console.log('funcionlist', props.route.params.data.st_id)
+        console.log('stationData', props.route.params.data)
 
         if (route.params != undefined) {
             setStationData(route.params.data)
