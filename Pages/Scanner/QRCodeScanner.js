@@ -14,7 +14,7 @@ import { collection, getDocs } from 'firebase/firestore';
 
 var isFirstGet = true;
 //default는 App.js에서만 사용해야 하는 듯 
-const QRCodeScanner = ({ navigation }) => {
+const QRCodeScanner = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
   // 카메라
   const [scanned, setScanned] = useState(false);
@@ -119,7 +119,7 @@ const QRCodeScanner = ({ navigation }) => {
                   onPress={() => {
                     setScanned(false)
                     setModalVisible(!modalVisible)
-                    navigation.navigate("Loading", {
+                    props.navigation.navigate("FunctionListv", {
                       data: stationData
                     })
                   }}>
@@ -228,7 +228,7 @@ const QRCodeScanner = ({ navigation }) => {
           <View style={{ height: '50%', width: '100%', alignItems: 'center', marginTop: 20 }}>
             <TouchableOpacity
               style={styles.assi}
-              onPress={() => navigation.pop()}
+              onPress={() => props.navigation.pop()}
             >
               <Text style={{ fontSize: 20, fontWeight: 'bold' }}>X</Text>
             </TouchableOpacity>
@@ -263,8 +263,8 @@ const styles = StyleSheet.create({
   },
   assi: {
     backgroundColor: 'white',
-    width: 70,
-    height: 70,
+    width: Dimensions.get('window').width * 0.15,
+    height: Dimensions.get('window').width * 0.15,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',

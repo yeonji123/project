@@ -30,14 +30,7 @@ const BTconnect = () => {
         }
         return () => subscription.remove();
     }
-
-    const rent = async () => {
-        //우산번호와 일치하는 각도 가져오기
-
-    }
-
-
-
+    
     //scan
     const scanAndConnect = async () => {
         console.log('scanAndConnect')

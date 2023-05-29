@@ -6,7 +6,7 @@ import base64 from 'react-native-base64';
 import { BleManager } from 'react-native-ble-plx';
 
 const Loading = (props) => {
-    const [stationData, setStationData] = useState(route.params.data); // Station 전체 데이터
+    const [stationData, setStationData] = useState(props.route.params.data); // Station 전체 데이터
 
 
     //블루투스

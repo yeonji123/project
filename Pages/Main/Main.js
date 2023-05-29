@@ -36,7 +36,7 @@ const Main = ({ navigation }) => {
     const [id, setId] = useState("")
 
     const [users, setUsers] = useState();
-    const [donation, setDonation] = useState(""); // 폐우산 기부 계산
+    const [donation, setDonation] = useState(); // 폐우산 기부 계산
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -58,7 +58,6 @@ const Main = ({ navigation }) => {
                 data.docs.map(doc => {
                     if (doc.data().u_id == id) {
                         setUsers(doc.data())
-                        console.log('data', doc.data())
                     }
                 })
 
@@ -101,10 +100,6 @@ const Main = ({ navigation }) => {
             seticon(iconsplit[0])
         })();
     }, [])
-
-
-
-
 
 
 
@@ -232,7 +227,7 @@ const Main = ({ navigation }) => {
                                     id != null ?
                                         <>
                                             {
-                                                donation!=null && donation ?
+                                                donation ?
                                                     <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    {donation.length}</Text>
                                                     :
                                                     <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    0</Text>

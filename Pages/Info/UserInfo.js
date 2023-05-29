@@ -30,8 +30,7 @@ const UserInfo = (props) => {
                         text: '확인',
                         onPress: () => {
                             AsyncStorage.removeItem('id')
-                            
-                            props.navigation.reset('Main')
+                            props.navigation.navigate('Login')
                         }
                     },
                 ]);

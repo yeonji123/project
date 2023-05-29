@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, Dimensions, ScrollView, TextInput, Keyboard, KeyboardAvoidingView,
-  Image, TouchableOpacity, NativeModules, Button, Platform, Alert
+  View, Text, StyleSheet, Dimensions, 
+  ScrollView, TextInput, Keyboard, 
+  KeyboardAvoidingView, Alert,
+  Image, TouchableOpacity, 
+  NativeModules, Button, Platform, 
 } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
@@ -25,7 +28,7 @@ const Join = (props) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [mail, setMail] = useState("");
-const [birth, setBirth] = useState("");
+  const [birth, setBirth] = useState("");
 
   //회원가입 버튼 활설화
   const [okId, setOkId] = useState(false);
