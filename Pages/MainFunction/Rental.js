@@ -22,12 +22,6 @@ const Rental = (props) => {
 
 
 
-
-
-
-
-
-
     useEffect(() => {
         // 데이터 요청
         // props로 받은 station 번호로 데이터 요청
@@ -67,37 +61,6 @@ const Rental = (props) => {
     }, []);
 
 
-
-
-
-    // 아두이노 에러 : 대여 실패
-    const rentalError = (errorRental) =>{
-        var errorRental = 0 // 에러 코드를 반환해줄 값
-        // 대여 에러
-        if (errorRental == 102){ 
-            // 1. 모터에 대여 우산이 없음
-            // 모터가 동작했는데 대여 우산이 없는 상태
-            props.navigation.pop()
-            Alert.alert('대여 실패', '대여 가능 우산이 없습니다 다시 버튼을 눌러주세요.', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
-        }
-        else if (errorRental == 101){
-            // 2. 대여 동작이 완료되었으나, 대여 우산을 대여 하지 않음
-            // 모터가 돌아가서 사용자가 가져가기 기다림,
-            props.navigation.pop()
-            Alert.alert('대여 실패', '대여하기 위해 동작했으나 우산을 대여하셨는지 확인해주세요', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
-
-        }else if (errorRental == 100){
-            // 대여 성공
-
-        }
-
-    }
-
-
-
-
-
-
     return (
         <View style={styles.container}>
             <TitleName title='대여하기' />
@@ -132,6 +95,8 @@ const Rental = (props) => {
                                         // station 유무 확인 함수
                                         
                                         console.log('station 작동')
+                                        setCheckModal(!checkModal)
+                                        props.navigation.navigate('RentalPage', { data: stationData })
                                     }}>
                                     <Text style={styles.textStyle}>확인</Text>
                                 </Pressable>
@@ -170,7 +135,7 @@ const Rental = (props) => {
                                     }}
                                     disabled={!row[`st_${idx+1}`].state}
                                 >
-                                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>{idx + 1}</Text>
+                                    <Text key={idx} style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>{idx + 1}</Text>
                                 </TouchableOpacity>
                             </View>
                         )

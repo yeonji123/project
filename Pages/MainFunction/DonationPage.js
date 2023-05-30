@@ -278,7 +278,7 @@ const DonationPage = ({ navigation, route }) => {
 
                         <View style={{ padding: 10 }}>
                             <View style={styles.pictureView}>
-
+                                <Image style={{width:'100%', height:'80%'}} source={require('../../assets/donationImage.gif')}></Image>
                             </View>
                         </View>
 
@@ -345,7 +345,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
-        backgroundColor: 'gray',
     },
     text: {
         fontSize: 30,

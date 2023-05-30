@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
     View, Text, StyleSheet,
     TouchableOpacity, Dimensions,
-    Alert,
+    Alert, Image
 } from 'react-native';
 
 //fire store
@@ -58,32 +58,49 @@ const ReturnPage = (props) => {
 
 
 
- // 아두이노 에러 : 반납 실패
- const rentalError = (errorRental) =>{
-    var errorRental = 0 // 에러 코드를 반환해줄 값
-    // 반납 에러
-    if (errorRental ==102){ 
-        // 1. 모터에 반납 우산이 이미 있음
-        props.navigation.navigate('FunctionList')
-        Alert.alert('반납 실패', '반납 우산이 있습니다. 다시 반납하기 버튼을 클릭해주세요', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
+    useEffect(() => {
+
+        // 데이터 요청
+        console.log('ReturnPage.js')
+        // 로직
+        // 1. 사용자가 반납하기를 누르면 이 페이지로 이동
+        // 2. 이 페이지에서 블루투스를 이용하여 station 작동
+        // 3. station 작동이 완료되면 대여 완료 버튼이 활성화
+        // 4. 반납 완료 버튼을 누르면 functionList 페이지로 이동
+
+        // 작동하면서 아두이노 에러 발생할 수 있으니까 
+        // station DB에서 station의 상태? 1초마다 계속 확인하는 코드 
+        // -> 모터에 반납 우산이 이미 있음
+        // -> 반납 동작이 완료되었으나, 
+
+
+        
+    }, []);
+
+
+
+
+    // 아두이노 에러 : 반납 실패
+    const rentalError = (errorRental) => {
+        var errorRental = 0 // 에러 코드를 반환해줄 값
+        // 반납 에러
+        if (errorRental == 102) {
+            // 1. 모터에 반납 우산이 이미 있음
+            props.navigation.pop()
+            Alert.alert('반납 실패', '반납 우산이 있습니다. 다시 반납하기 버튼을 클릭해주세요', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
+        }
+        else if (errorRental == 101) {
+            // 2. 반납 동작이 완료되었으나, 반납 우산을 반납 하지 않음
+            // 모터가 돌아가서 사용자가 가져가기 기다림,
+            props.naviagtion.pop()
+            Alert.alert('반납 실패', '반납하신 우산을 확인할 수 없습니다. 다시 반납하기 버튼을 클릭해주세요', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
+
+        } else if (errorRental == 100) {
+            // 반납 성공
+
+        }
+
     }
-    else if (errorRental == 101){
-        // 2. 반납 동작이 완료되었으나, 반납 우산을 반납 하지 않음
-        // 모터가 돌아가서 사용자가 가져가기 기다림,
-        props.naviagtion.navigate('FunctionList')
-        Alert.alert('반납 실패', '반납하신 우산을 확인할 수 없습니다. 다시 반납하기 버튼을 클릭해주세요', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
-
-    }else if (errorRental == 100){
-        // 반납 성공
-
-    }
-
-
-
-
-
-
-}
 
 
     return (
@@ -97,7 +114,7 @@ const ReturnPage = (props) => {
 
             <View style={{ padding: 10 }}>
                 <View style={styles.pictureView}>
-
+                    <Image style={{width:'100%', height:'80%',}} source={require('../../assets/returnImage.gif')} />
                 </View>
             </View>
 
@@ -105,7 +122,6 @@ const ReturnPage = (props) => {
                 <TouchableOpacity
                     style={styles.buttonstyle}
                     onPress={() => props.navigation.navigate('FunctionList')}
-
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>반납 완료</Text>
                 </TouchableOpacity>
@@ -136,7 +152,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
-        backgroundColor: 'gray',
     },
     text: {
         fontSize: 30,
@@ -157,7 +172,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
-    }
+    },
 
 
 })
