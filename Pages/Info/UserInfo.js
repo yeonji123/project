@@ -30,7 +30,7 @@ const UserInfo = (props) => {
                         text: '확인',
                         onPress: () => {
                             AsyncStorage.removeItem('id')
-                            props.navigation.navigate('Login')
+                            props.navigation.reset({routes:[{name:'Login'}]})
                         }
                     },
                 ]);

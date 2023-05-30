@@ -13,8 +13,8 @@ import { db } from '../../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 
 
-const Rental = ({ navigation, route }) => {
-    const [stationData, setStationData] = useState(); // Station 전체 데이터
+const Rental = (props) => {
+    const [stationData, setStationData] = useState(props.route.params.data); // Station 전체 데이터
     const [umbrellaData, setUmbrellaData] = useState([]); // Station에 있는 우산 데이터
     const [umNumber, setUmNumber] = useState(); // Station에 있는 우산 번호
     // 모달
@@ -33,11 +33,11 @@ const Rental = ({ navigation, route }) => {
         // props로 받은 station 번호로 데이터 요청
         (async () => {
             try {
-                console.log('route',route.params.data) //station의 정보를 route로 받음
+                console.log('props.route',props.route.params.data) //station의 정보를 props.route로 받음
                 const umlist = new Array() // set할 우산 데이터 배열
                 
                 // scan한 station의 정보를 읽어서 map으로 돌리기 위해 변환함
-                for (var i = 0; i < Object.keys(route.params.data.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
+                for (var i = 0; i < Object.keys(props.route.params.data.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
                     
                     // json 형식으로 만들어서 key값도 바꿔서 만들고 (키 값이 숫자로 되어 있어서 string으로 바꿔줌)
                     // umbrellaData에 넣어줌
@@ -47,8 +47,8 @@ const Rental = ({ navigation, route }) => {
                     var key = "st_"+String(i+1) // key값 : st_1, st_2, ... 가 됨
                     
                     var value = new Object(); // 새로운 Object 생성
-                    value['angle'] = route.params.data.um_count_state[String(i + 1)].angle
-                    value['state'] = route.params.data.um_count_state[String(i + 1)].state
+                    value['angle'] = props.route.params.data.um_count_state[String(i + 1)].angle
+                    value['state'] = props.route.params.data.um_count_state[String(i + 1)].state
                     // {"action_check": false, "값" : value , ...} 이런 형식으로 만들어짐
                     // [{ " key " : [{ " angle " : 값 , " state " : 값 }], ... }]
                     
@@ -74,27 +74,22 @@ const Rental = ({ navigation, route }) => {
     const rentalError = (errorRental) =>{
         var errorRental = 0 // 에러 코드를 반환해줄 값
         // 대여 에러
-        if (errorRental ==102){ 
+        if (errorRental == 102){ 
             // 1. 모터에 대여 우산이 없음
             // 모터가 동작했는데 대여 우산이 없는 상태
-            props.navigation.navigate('FunctionList')
-            Alert.alert('대여 실패', '대여 우산이 없습니다.', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
+            props.navigation.pop()
+            Alert.alert('대여 실패', '대여 가능 우산이 없습니다 다시 버튼을 눌러주세요.', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
         }
         else if (errorRental == 101){
             // 2. 대여 동작이 완료되었으나, 대여 우산을 대여 하지 않음
             // 모터가 돌아가서 사용자가 가져가기 기다림,
-            props.naviagtion.navigate('FunctionList')
-            Alert.alert('대여 실패', '대여 우산이 없습니다.', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
+            props.navigation.pop()
+            Alert.alert('대여 실패', '대여하기 위해 동작했으나 우산을 대여하셨는지 확인해주세요', [{ text: '확인', onPress: () => console.log('OK Pressed') }], { cancelable: false })
 
         }else if (errorRental == 100){
             // 대여 성공
 
         }
-
-
-
-
-
 
     }
 

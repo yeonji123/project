@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import {
-    View, Text, StyleSheet, 
-    Dimensions, ScrollView, 
+    View, Text, StyleSheet,
+    Dimensions, ScrollView,
     TextInput, TouchableOpacity,
-    Keyboard, Alert, 
+    Keyboard, Alert,
     KeyboardAvoidingView, NativeModules
 } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -104,65 +104,71 @@ const BreakReport = ({ navigation, route }) => {
 
     return (
         // <View style={styles.container}>
-            <KeyboardAvoidingView
-                style={styles.container}
-                behavior={"padding"}
-                keyboardVerticalOffset={statusBarHeight + 44}
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={"padding"}
+            keyboardVerticalOffset={statusBarHeight + 44}
+        >
+
+            <ScrollView 
+                contentContainerStyle={styles.breakReportView}
             >
-                <View style={styles.breakReportView}>
-                    <View style={styles.stationnum}>
-                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>신고할 station</Text>
-                        <TouchableOpacity
-                            style={styles.bigbutton}
-                            onPress={() => {
-                                console.log('check')
-                                navigation.navigate('ScanStation')
-                            }}
-                        >
-                            {
-                                station == null ?
-                                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>QR코드 촬영</Text>
-                                    : <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{station.st_id}</Text>
-                            }
 
-                        </TouchableOpacity>
-                    </View>
+                {/* <View style={styles.breakReportView}> */}
+                <View style={styles.stationnum}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>신고할 station</Text>
+                    <TouchableOpacity
+                        style={styles.bigbutton}
+                        onPress={() => {
+                            console.log('check')
+                            navigation.navigate('ScanStation')
+                        }}
+                    >
+                        {
+                            station == null ?
+                                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>QR코드 촬영</Text>
+                                : <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{station.st_id}</Text>
+                        }
 
-
-                    <View style={styles.breakInfo}>
-                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>고장 내용</Text>
-                        <Text>* 해당되는 문제를 클릭하여주세요(복수 선택 가능)</Text>
-                        <View style={styles.breakselect}>
-                            <View style={{ justifyContent: 'space-around', width: '50%', marginRight: 5 }}>
-                                <GraySmallButton title="여닫이 작동 안함" func={() => breakListFunc(0)} />
-                                <GraySmallButton title="폐우산 기부 안됨" func={() => breakListFunc(1)} />
-                            </View>
-                            <View style={{ justifyContent: 'space-around', width: '50%', marginLeft: 5 }}>
-                                <GraySmallButton title="모터 작동 안함" func={() => breakListFunc(2)} />
-                                <GraySmallButton title="QR코드 손실" func={() => breakListFunc(3)} />
-                            </View>
-                        </View>
-                    </View>
-
-
-                    <View style={styles.sentence}>
-                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>구체적인 고장 사유</Text>
-                        </TouchableWithoutFeedback>
-
-                        <View style={{ marginTop: 10, }}>
-                            <View style={styles.sentenceInputView}>
-                                <TextInput
-                                    value={sentence}
-                                    onChangeText={text => setSentence(text)}
-                                    placeholder="useless placeholder"
-                                    multiline={true}
-                                />
-                            </View>
-                        </View>
-                    </View>
-
+                    </TouchableOpacity>
                 </View>
+
+
+                <View style={styles.breakInfo}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>고장 내용</Text>
+                    <Text>* 해당되는 문제를 클릭하여주세요(복수 선택 가능)</Text>
+                    <View style={styles.breakselect}>
+                        <View style={{ justifyContent: 'space-around', width: '50%', marginRight: 5 }}>
+                            <GraySmallButton title="여닫이 작동 안함" func={() => breakListFunc(0)} />
+                            <GraySmallButton title="폐우산 기부 안됨" func={() => breakListFunc(1)} />
+                        </View>
+                        <View style={{ justifyContent: 'space-around', width: '50%', marginLeft: 5 }}>
+                            <GraySmallButton title="모터 작동 안함" func={() => breakListFunc(2)} />
+                            <GraySmallButton title="QR코드 손실" func={() => breakListFunc(3)} />
+                        </View>
+                    </View>
+                </View>
+
+
+                <View style={styles.sentence}>
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>구체적인 고장 사유</Text>
+                    </TouchableWithoutFeedback>
+
+                    <View style={{ marginTop: 10, }}>
+                        <View style={styles.sentenceInputView}>
+                            <TextInput
+                                value={sentence}
+                                onChangeText={text => setSentence(text)}
+                                placeholder="useless placeholder"
+                                multiline={true}
+                            />
+                        </View>
+                    </View>
+                </View>
+
+                {/* </View> */}
+
                 <View style={styles.submitView}>
                     <TouchableOpacity
                         style={styles.submit}
@@ -185,7 +191,8 @@ const BreakReport = ({ navigation, route }) => {
                         <Text style={{ fontSize: 20, fontWeight: 'bold' }}>제출하기</Text>
                     </TouchableOpacity>
                 </View>
-            </KeyboardAvoidingView>
+            </ScrollView>
+        </KeyboardAvoidingView>
         // </View>
     );
 };

@@ -34,15 +34,15 @@ const FunctionList = (props) => {
         console.log('funcionlist', props.route.params.data.st_id)
         console.log('stationData', props.route.params.data)
 
-        if (route.params != undefined) {
-            setStationData(route.params.data)
+        if (props.route.params != undefined) {
+            setStationData(props.route.params.data)
 
             var rentalCount = 0
             var returnCount = 0
 
-            for (var i = 0; i < Object.keys(route.params.data.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
+            for (var i = 0; i < Object.keys(props.route.params.data.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
                 // key값이 string이라서 변환 후 state읽기
-                if (route.params.data.um_count_state[String(i + 1)].state) { // true이면 대여 가능
+                if (props.route.params.data.um_count_state[String(i + 1)].state) { // true이면 대여 가능
                     rentalCount++; // 대여 가능한 우산 개수
                 } else {
                     returnCount++; // 반납 가능한 우산 개수 false이면 우산 없음
@@ -52,13 +52,13 @@ const FunctionList = (props) => {
 
 
     
-            if (Object.keys(route.params.data.um_count_state).length == rentalCount) {
+            if (Object.keys(props.route.params.data.um_count_state).length == rentalCount) {
                 // 전체 우산 개수와 대여 가능한 우산이 같으면
                 // 남은 공간이 없음 -> 반납할 수 없음
                 console.log('반납 불가능')
                 setRentalButton(!retalButton)
             }
-            if (Object.keys(route.params.data.um_count_state).length == returnCount) { 
+            if (Object.keys(props.route.params.data.um_count_state).length == returnCount) { 
                 // 전체 우산 넣는 부분과 반납 가능한 우산 개수가 같으면
                 // 대여 가능한 우산이 없음 -> 대여할 수 없음
                 console.log('대여 불가능')
@@ -103,7 +103,7 @@ const FunctionList = (props) => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={retalButton || userstate ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
-                    onPress={() => navigation.navigate('Rental', { data: stationData })}
+                    onPress={() => props.navigation.navigate('Rental', { data: stationData })}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>대여하기</Text>
                 </TouchableOpacity>
@@ -113,7 +113,7 @@ const FunctionList = (props) => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={retalButton || userstate ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
-                    onPress={() => navigation.navigate('ReturnPage', { data: stationData })}
+                    onPress={() => props.navigation.navigate('ReturnPage', { data: stationData })}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>반납하기</Text>
                 </TouchableOpacity>
@@ -123,7 +123,7 @@ const FunctionList = (props) => {
             <View style={styles.buttonView}>
                 <TouchableOpacity
                     style={styles.buttonstyle}
-                    onPress={() => navigation.navigate('DonationPage', { stationdata: route.params.data })}
+                    onPress={() => props.navigation.navigate('DonationPage', { stationdata: props.route.params.data })}
                 >
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>폐우산 기부하기</Text>
                 </TouchableOpacity>

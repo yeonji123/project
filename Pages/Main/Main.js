@@ -9,16 +9,11 @@ import { useEffect, useState } from 'react'
 // Location API
 import * as Location from 'expo-location';
 
-
 // firebase 연동
 import { db } from '../../firebaseConfig';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
 // device에 데이터 저장
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// navigation 초기화하기
-import { CommonActions } from '@react-navigation/native';
-
 
 //날씨 api키
 const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
@@ -70,7 +65,6 @@ const Main = ({ navigation }) => {
                             setDonation(doc.data())
                         }
                     })
-
                 }
 
             } catch (error) {
