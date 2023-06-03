@@ -41,10 +41,14 @@ const QRCodeScanner = (props) => {
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    console.log(data)
+    console.log('handleBarcodescanned', data)
+    // type check
+    console.log(typeof(data)) // string 
+    var s_data = data.split('"') // " " 기준으로 나누기
+    console.log('s_data', s_data[3])
+    
 
-    checkStation(data.st_id)
-
+    checkStation(s_data[3])
   };
 
   if (hasPermission === null) {
@@ -58,12 +62,15 @@ const QRCodeScanner = (props) => {
   const checkStation = async (station) => {
     // DB 확인하기
     console.log('DB 확인하기')
+    console.log(station)
     try {
-      if (stationNum != null || scanned==true) {
 
-        let checkresult = false // 동일한 stationNum이 있는 지 확인하는 변수
+      // 동일한 stationNum이 있는 지 확인하는 변수
+      let checkresult = false 
 
+      if (stationNum != null) {
         const data = await getDocs(collection(db, "Station"))
+
         data.docs.map((doc, idx) => {
           console.log(idx, '=', doc.data())
           if (doc.data().st_num == station) {
@@ -74,17 +81,29 @@ const QRCodeScanner = (props) => {
           }
         })
 
+      } else {
+        // station 정보 확인하기
+        console.log('else 문')
+        
+        const data = await getDocs(collection(db, "Station"))
+        data.docs.map((doc, idx) => {
+          console.log(idx, '=', doc.data())
+          if (doc.data().st_id == station) {
+            console.log('checkresult', doc.data())
+            setStationData(doc.data())
+            setStationName(doc.data().st_id)
+            checkresult = true //stationNum이랑 같은 게 있으면 true
+          }
+        })
+      }
 
-        if (checkresult) {
-          setNumModalVisible(false) // 번호 입력 모달창 닫기
-          setModalVisible(!modalVisible) // 스캔 모달창 열기
-        }
-        else {
-          alert('동일한 stationNum이 없습니다.')
-        }
 
-      }else{
-        alert('stationNum을 입력해주세요')
+      if (checkresult) {
+        setNumModalVisible(false) // 번호 입력 모달창 닫기
+        setModalVisible(!modalVisible) // 스캔 모달창 열기
+      }
+      else {
+        alert('동일한 stationNum이 없습니다.')
       }
     } catch (error) {
       console.log('eerror', error.message)
@@ -151,7 +170,7 @@ const QRCodeScanner = (props) => {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <View style={styles.modalTop}>
-                <Text style={{ fontSize: 20, textAlign: 'center',  }}>Station 번호 입력하기</Text>
+                <Text style={{ fontSize: 20, textAlign: 'center', }}>Station 번호 입력하기</Text>
               </View>
 
               <View style={styles.modalMid}>

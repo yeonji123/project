@@ -43,7 +43,7 @@ const Main = ({ navigation }) => {
                 const data = await getDocs(collection(db, "User"))
                 var id = await AsyncStorage.getItem('id') // device에 저장되어 있는 id
                 setId(id)
-                console.log('donation', donation)
+
                 if (id==null){ // device에 저장된 id가 없으면 Login 페이지로 전환
                     navigation.reset({routes: [{name: 'Login'}]})
                 }
@@ -53,20 +53,12 @@ const Main = ({ navigation }) => {
                 data.docs.map(doc => {
                     if (doc.data().u_id == id) {
                         setUsers(doc.data())
+                        console.log(doc.data().u_donation)
+                        setDonation(doc.data().u_donation)
                     }
                 })
 
-                // 기부 DB 데이터 가져오기
-                // 사용자가 기분한 내역을 확인하기 위해 (폐우산 기부 횟수)
-                if (id !== null) {
-                    const donation = await getDocs(collection(db, "Donation"))
-                    donation.docs.map(doc => {
-                        if (doc.data().u_id == id) {
-                            setDonation(doc.data())
-                        }
-                    })
-                }
-
+                
             } catch (error) {
                 console.log('eeerror', error.message)
             }
@@ -222,7 +214,7 @@ const Main = ({ navigation }) => {
                                         <>
                                             {
                                                 donation ?
-                                                    <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    {donation.length}</Text>
+                                                    <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    {donation}</Text>
                                                     :
                                                     <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    0</Text>
                                             }
