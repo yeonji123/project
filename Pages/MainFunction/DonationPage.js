@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { 
-    View, Text, StyleSheet, 
-    TouchableOpacity, Dimensions, 
-    Modal, Pressable, 
-    Image, Alert 
+import {
+    View, Text, StyleSheet,
+    TouchableOpacity, Dimensions,
+    Modal, Pressable,
+    Image, Alert, ActivityIndicator
 } from 'react-native';
 
 
@@ -15,8 +15,7 @@ import { db } from '../../firebaseConfig';
 import { addDoc, getDocs, collection, setDoc, doc } from 'firebase/firestore';
 // firestorage
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-//loading
-import Loading from '../../Component/Loading';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -24,7 +23,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DonationPage = ({ navigation, route }) => {
     // 사진 찍음 여부 확인 -> 사진 찍으면 true(=station 작동 disabled는 true)
-    const [isphoto, setIsphoto] = useState(false); 
+    const [isphoto, setIsphoto] = useState(false);
+    const [stationData, setStationData] = useState() // Station 전체 데이터
     const [stationID, setStationID] = useState(); // Station ID 데이터
     // 사진찍기
     const [hasCameraPermission, setHasCameraPermission] = useState(null); // 카메라 허용
@@ -34,13 +34,11 @@ const DonationPage = ({ navigation, route }) => {
     const [type, setType] = useState(Camera.Constants.Type.back); // 전면, 후면 type
     // 사진 찍은거 DB에 저장
     const [firebaseImage, setFirebaseImage] = useState(null); // DB에 저장된 사진 링크
-    // 로딩 여부
-    const [loading, setLoading] = useState(false);
     // 기부 내역
     const [donationData, setDonationData] = useState(); // 전체 기부 내역 데이터
     const [number, setNumber] = useState(); // 기부 우산 번호
-
-
+    // 로딩 여부
+    const [loading, setLoading] = useState(false);
 
 
 
@@ -49,24 +47,27 @@ const DonationPage = ({ navigation, route }) => {
         return <Text>No access to camera</Text>;
     }
 
-    // 로딩창 보여주기 DB에 넣고 사진을 DB에 저장하고 로딩창 보여주기
-    useEffect(() => {
-        let timer = setTimeout(() => { setLoading(false) }, 3000);
-        return () => { clearTimeout(timer) }
-    }, [loading])
+
 
 
     useEffect(() => {
         // 데이터 요청
         (async () => {
             try {
+
+
+                const id = await AsyncStorage.getItem('id')
+                console.log('id', id)
+
+                console.log('number', number)
                 console.log('Donation Page params', route.params.stationdata)
+                setStationData(route.params.stationdata)
                 // 기부한 내용을 확인해야함
 
                 // DB에 있는 Donation 데이터 가져오기
                 const data = await getDocs(collection(db, "Donation"));
                 setDonationData(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-            
+
                 // 사용할 station의 id
                 setStationID(route.params.stationdata.st_id)
                 // 카메라 허용 받기
@@ -77,19 +78,38 @@ const DonationPage = ({ navigation, route }) => {
                 console.log('eerror', error.message)
             }
         })();
-
-
     }, []);
 
+
+    useEffect(() => {
+        if (firebaseImage != null) {
+
+            console.log('firebaseImage', firebaseImage)
+            setLoading(false)
+            Alert.alert(
+                '폐우산 문 열기', '문이 열리면 우산을 넣어주세요. 우산을 넣었으면 문닫기 버튼을 눌러주세요',
+                [
+                    {
+                        text: "확인",
+                        onPress: () => {
+                            // 폐우산 문 열기 - station
+                            openDoor()
+                        }
+                    }
+                ]
+            )
+        }
+    }, [firebaseImage])
+
+    const openDoor = async () => {
+        console.log('openDoor')
+    }
 
 
     const takePicture = async () => {
         if (camera) {
             console.log('takePicture')
 
-            // 로딩 보여주기
-            setLoading(!loading)
-            
             const data = await camera.takePictureAsync(null)
             setImage(data.uri); // 이미지 set
             console.log('data', data.uri);
@@ -98,22 +118,29 @@ const DonationPage = ({ navigation, route }) => {
             setPhotoModal(!photoModal)
             // storage에 올리기
             uploadImage(data.uri);
+            setLoading(true)
         }
     }
 
 
-    
-    
-    // storage에 올리기 DB 설계
+
+
+    // storage에 이미지 올리기 DB 설계
     const uploadImage = async (uri) => {
+
+
         console.log('result.uri------> ', uri)
-        
+
         const storage = getStorage(); // firebase storage 가져오기
         const id = await AsyncStorage.getItem('id'); // 디바이스에 저장된 id 가져오기
+        
+        
         // DB에 저장되어 있는 데이터 값 확인하기
+        var number = await checkimageURL()
 
-        // return 해서 number에 저장
-        const number = checkimageURL() 
+
+        console.log('uploadImage number', number)
+
 
         // 링크 명 설정 : 사용자 ID_기부할 station의 ID_기부번호
         var imageid = `images/${id}_${stationID}_${number}.jpg`
@@ -121,68 +148,77 @@ const DonationPage = ({ navigation, route }) => {
 
         const responce = await fetch(uri); // file 형태나 blob 형태로 가져올 수 있음
         const blob = await responce.blob(); // blob 형태로 가져오기
-        
 
+        console.log('test')
         const response = await uploadBytes(storageRef, blob, {
             contentType: 'image/jpeg',
         }); // storage에 저장하기, content type은 이미지 형식으로 지정
-        
+
         const imageset = await getDownloadURL(storageRef) // storage에 저장된 이미지의 url 가져오기
+        console.log('imageset')
+
         setFirebaseImage(imageset) // DB에 저장하기 위해 state에 저장
         setIsphoto(true) // 사진 찍음 여부 확인 
         console.log('firebase upload image', imageset)
-        
-        // station 작동하기
-        // 작동 후 우산이 들어가면 ? 로직 다시 짜기 !!!!!!!!!!!
-    }
-    
-    // 입력한 이미지 URL 
-    const checkimageURL = () => {
-        var dbnum = 0 // DB에서 기부 횟수가 몇번째인지 확인하는 방법
-        const id = AsyncStorage.getItem('id') 
 
+    }
+
+
+
+
+    // 입력한 이미지 URL 
+    const checkimageURL = async () => {
+        var dbnum = 0 // DB에서 기부 횟수가 몇번째인지 확인하는 방법
+        const id = await AsyncStorage.getItem('id')
+        console.log('id', id)
         // DB에서 확인함
         donationData.map((item) => {
-            console.log(item.id)
-            if (item.id.includes(id)) { // 사용자가 기부한 내역 확인
+            console.log(item.id.split('_')[0])
+            if (item.id.split('_')[0] == id) { // 사용자가 기부한 내역 확인
                 dbnum = item.id.split('_')[1] // 마지막에 기부한 번호 확인
-                console.log('dbnum', dbnum)
+                dbnum = Number(dbnum) // 숫자로 변환
                 setNumber(dbnum + 1) // 다음 기부 번호( +1 )
             }
         })
 
-        if(dbnum==0){ // 기부한 적이 없다면 1로 설정
+        if (dbnum == 0) { // 기부한 적이 없다면 1로 설정
             console.log('첫 기부입니다')
             console.log(dbnum)
-            setNumber(dbnum + 1) 
+            setNumber(dbnum + 1)
         }
-        return dbnum+1
+
+        return dbnum + 1
     }
 
 
 
     // DB에 저장하기
-    const updateDB = async (imageid) =>{
-        try{
+    const updateDB = async () => {
+        try {
 
-            let todayData = new Date(); 
+            let todayData = new Date();
             let today = todayData.toLocaleDateString()
 
+            // DB 저장 doc id
+            var imageid = `${await AsyncStorage.getItem('id')}_${number}`
+            console.log(imageid)
+            console.log(stationID)
+
+
             const docRef = await setDoc(doc(db, "Donation", imageid), {
-                d_date : today,
+                d_date: today,
                 d_image: firebaseImage,
                 // d_num:
-                st_id : stationID,
-                u_id : await AsyncStorage.getItem('id'),
+                st_id: stationID,
+                u_id: await AsyncStorage.getItem('id'),
             });
-            console.log("Document written with ID: ", docRef.id);
             Alert.alert('기부가 완료되었습니다')
 
             // DB에 저장 되면 대여/반납/기부 페이지로 이동
-            navigation.navigate('FunctionList') 
+            navigation.navigate('Main')
 
         }
-        catch(error){
+        catch (error) {
             console.log('updateDB error', error.message)
         }
     }
@@ -195,7 +231,14 @@ const DonationPage = ({ navigation, route }) => {
         <View style={styles.container}>
             {
                 loading ?
-                    <Loading /> :
+                    <>
+                        <Image
+                            style={{ width: 100, height: 100, resizeMode: 'contain', }}
+                            source={require('../../assets/loading_do.gif')}
+                        />
+                        <Text>폐우산 사진을 저장 중입니다...</Text>
+                    </>
+                    :
                     <>
                         <View>
                             <Modal
@@ -246,6 +289,7 @@ const DonationPage = ({ navigation, route }) => {
                                                 <Pressable
                                                     onPress={() => {
                                                         console.log("찰칵")
+
                                                         takePicture()
                                                     }} >
                                                     <View style={styles.takeButton}></View>
@@ -278,34 +322,35 @@ const DonationPage = ({ navigation, route }) => {
 
                         <View style={{ padding: 10 }}>
                             <View style={styles.pictureView}>
-                                <Image style={{width:'100%', height:'80%'}} source={require('../../assets/donationImage.gif')}></Image>
+                                <Image style={{ width: '100%', height: '80%' }} source={require('../../assets/donationImage.gif')}></Image>
                             </View>
                         </View>
 
                         <View style={styles.buttonView}>
                             {
                                 isphoto ?
+
                                     <TouchableOpacity
                                         style={styles.buttonstyle}
                                         onPress={() => {
                                             console.log('기부 완료!')
                                             Alert.alert(
-                                                '기부가 완료 되었습니다. 확인을 클릭하시면 기부가 완료됩니다.',
+                                                '기부 완료!', '확인을 클릭하시면 기부가 완료됩니다. 메인 페이지로 넘어갑니다',
                                                 [
                                                     {
                                                         text: "확인",
                                                         onPress: () => {
-                                                            updateDB(firebaseImage)
-                                                            navigation.navigate('FunctionList', { data: route.params.stationdata })
+                                                            updateDB()
+                                                            // navigation.navigate('FunctionList', { data: route.params.stationdata })
                                                         }
                                                     }
                                                 ]
                                             )
-                                            
+
                                         }}
 
                                     >
-                                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>기부 완료</Text>
+                                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>폐우산 문 닫기</Text>
                                     </TouchableOpacity>
                                     :
                                     <TouchableOpacity

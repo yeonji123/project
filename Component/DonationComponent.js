@@ -10,19 +10,19 @@ const DonationComponent = (props) => {
                 console.log('donation')
             }}
         >
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', }}>
                 <View style={styles.stationInfo}>
                     <View style={styles.stationNum}>
-                        <Text style={{ fontSize: 25, marginLeft: 5, fontWeight:'bold', color:'white' }}>{props.num + 1}</Text>
+                        <Image style={{ width: '100%', height: '100%', }} source={require('../assets/um.png')} /> 
                     </View>
                     <Text style={{ fontSize: 25, fontWeight: 'bold', marginLeft: 5 }}>{props.date}</Text>
                     <Text style={{ fontSize: 20, padding: 5 }}>{props.stationnum}</Text>
                 </View>
                 <View style={styles.donaPickture}>
                     {
-                        props.d_image == null ?
-                        <Image style={{ width: '100%', height: '100%', }} source={{ uri: 'https://cdn-icons-png.flaticon.com/512/4343/4343277.png' }} /> :
-                        <Image style={{ width: '100%', height: '100%', }} source={{ uri: props.d_image }} />
+                        props.image == null ?
+                        <Image style={{ width: 110, height: 110, }} source={require('../assets/um.png')} /> :
+                        <Image style={{ width: 110, height: 110, }} source={{ uri: props.image }} />
                     }
                 </View>
             </View>
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     stationNum:{
-        backgroundColor: '#6699FF', 
+        backgroundColor: 'white', 
         width:35, 
         height:35,
         borderRadius:20, 
@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
         width:'60%',
         padding:8,
         justifyContent:'center',
-
     },
     donaPickture:{
         justifyContent:'center',

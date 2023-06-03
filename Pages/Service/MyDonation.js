@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MyDonation = ({ navigation }) => {
     const [donationList, setDonationList] = useState();
-
+    const [id, setId] = useState();
 
     useEffect(() => {
         // DB 읽어오기   
@@ -22,13 +22,12 @@ const MyDonation = ({ navigation }) => {
 
                 const data = await getDocs(collection(db, "Donation")) // Station이라는 테이블 명
                 const id = await AsyncStorage.getItem('id')
+                setId(id)
+
+
                 console.log(id)
-                data.docs.map((doc) => {
-                    console.log('doc', doc.data())
-                    if (doc.data().u_id == id) {
-                        setDonationList(doc.data())
-                    }
-                })
+                setDonationList(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+                
 
                 // setDonationList(data.docs.map(doc => ({ ...doc.data(), id: doc.id }))) // map을 돌려서 데이터를 복사하여 붙여놓고, id를 추가해줌
                 
@@ -50,9 +49,18 @@ const MyDonation = ({ navigation }) => {
                     <View style={{ padding: 10 }}>
                         {
                             donationList && donationList.map((item, index) => {
-                                return (
-                                    <DonationComponent key={index} num={index} date={item.d_date} stationnum={item.st_id} />
-                                )
+                                var num=0
+                                if (item.u_id.split('_')[0] == id) {
+                                    num+=1
+                                    return (
+                                        <View
+                                            key={index}
+                                            style={{ marginBottom: 10, }}
+                                        >
+                                            <DonationComponent key={index} num={num} date={item.d_date} stationnum={item.st_id} image={item.d_image}/>
+                                        </View>
+                                    )
+                                }
                             })
                         }
                         {

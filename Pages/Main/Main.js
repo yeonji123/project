@@ -42,6 +42,7 @@ const Main = ({ navigation }) => {
                 // 사용자 DB 데이터 가져오기
                 const data = await getDocs(collection(db, "User"))
                 var id = await AsyncStorage.getItem('id') // device에 저장되어 있는 id
+                console.log('id -> ', id)
                 setId(id)
 
                 if (id==null){ // device에 저장된 id가 없으면 Login 페이지로 전환
@@ -453,7 +454,6 @@ const styles = StyleSheet.create({
     },
     mapbutton: {
         width: '48%',
-        backgroundColor: 'red',
         height: '100%',
         marginRight: 7,
         borderRadius: 15,
