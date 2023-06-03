@@ -4,7 +4,8 @@ import {
     Dimensions, ScrollView,
     TextInput, TouchableOpacity,
     Keyboard, Alert,
-    KeyboardAvoidingView, NativeModules
+    KeyboardAvoidingView, NativeModules,
+    Image,
 } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
@@ -20,12 +21,17 @@ const { StatusBarManager } = NativeModules
 
 
 const BreakReport = ({ navigation, route }) => {
+
+
     const [breakList, setBreakList] = useState([false, false, false, false]); // 고장 내용 입력 list
     const [sentence, setSentence] = useState(''); // 구체적인 고장 사유 입력
     const [notifiData, setNotifiData] = useState(); // 고장 내용 입력 list
 
     const [station, setStation] = useState(route.params != undefined ? route.params.stationData : null); // scan한 station data
     const [statusBarHeight, setStatusBarHeight] = useState(0);
+
+    // 답변, 신고 내역 확인할때 사용 stete
+    const [checkBreak, setCheckBreak] = useState();
 
 
     const breakListFunc = (index) => {
@@ -40,6 +46,13 @@ const BreakReport = ({ navigation, route }) => {
             try {
 
                 if (route.params != undefined) {
+                    if (route.params.checkReport != undefined) {
+                        setCheckBreak(route.params.checkReport)
+                        console.log(route.params.checkReport.no_type)
+                        console.log(route.params.checkReport.no_type[0])
+                    }
+
+                    console.log('---------route.params.isbreak', route.params.checkReport)
                     console.log('---------route.params.stationData', route.params.stationData)
                     setStation(route.params.stationData)
                 }
@@ -88,6 +101,10 @@ const BreakReport = ({ navigation, route }) => {
 
             const docRef = await setDoc(doc(db, "StationNotification", dbid), {
                 no_additional: sentence,
+                a_id : '',
+                a_state: false,
+                answer: '',
+                no_category:'BR',
                 no_date: today,
                 no_num: notifyN + 1,
                 no_type: breakList,
@@ -103,98 +120,186 @@ const BreakReport = ({ navigation, route }) => {
 
 
     return (
-        // <View style={styles.container}>
-        <KeyboardAvoidingView
-            style={styles.container}
-            behavior={"padding"}
-            keyboardVerticalOffset={statusBarHeight + 44}
-        >
+        <>
+            {
+                checkBreak ?
+                    // 답변, 신고 내역 확인할때 UI
+                    (
+                        <KeyboardAvoidingView
+                            style={styles.container}
+                            behavior={"padding"}
+                            keyboardVerticalOffset={statusBarHeight + 44}
+                        >
+                            <View style={{ padding: 10, }}>
+                                <ScrollView
+                                    style={{width: '100%', height: '100%', }}
+                                >
 
-            <ScrollView 
-                contentContainerStyle={styles.breakReportView}
-            >
+                                    {/* <View style={styles.breakReportView}> */}
+                                    <View style={[styles.stationnum, {height:'20%'}]}>
+                                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>신고할 station</Text>
+                                        <TouchableOpacity
+                                            style={styles.bigbutton}
+                                            onPress={() => {
+                                                console.log('check')
+                                                navigation.navigate('ScanStation')
+                                            }}
+                                            disabled={true}
+                                        >
+                                            {
+                                                checkBreak == null ?
+                                                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>QR코드 촬영</Text>
+                                                    : <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{checkBreak.st_id}</Text>
+                                            }
 
-                {/* <View style={styles.breakReportView}> */}
-                <View style={styles.stationnum}>
-                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>신고할 station</Text>
-                    <TouchableOpacity
-                        style={styles.bigbutton}
-                        onPress={() => {
-                            console.log('check')
-                            navigation.navigate('ScanStation')
-                        }}
-                    >
-                        {
-                            station == null ?
-                                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>QR코드 촬영</Text>
-                                : <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{station.st_id}</Text>
-                        }
-
-                    </TouchableOpacity>
-                </View>
-
-
-                <View style={styles.breakInfo}>
-                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>고장 내용</Text>
-                    <Text>* 해당되는 문제를 클릭하여주세요(복수 선택 가능)</Text>
-                    <View style={styles.breakselect}>
-                        <View style={{ justifyContent: 'space-around', width: '50%', marginRight: 5 }}>
-                            <GraySmallButton title="여닫이 작동 안함" func={() => breakListFunc(0)} />
-                            <GraySmallButton title="폐우산 기부 안됨" func={() => breakListFunc(1)} />
-                        </View>
-                        <View style={{ justifyContent: 'space-around', width: '50%', marginLeft: 5 }}>
-                            <GraySmallButton title="모터 작동 안함" func={() => breakListFunc(2)} />
-                            <GraySmallButton title="QR코드 손실" func={() => breakListFunc(3)} />
-                        </View>
-                    </View>
-                </View>
+                                        </TouchableOpacity>
+                                    </View>
 
 
-                <View style={styles.sentence}>
-                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>구체적인 고장 사유</Text>
-                    </TouchableWithoutFeedback>
+                                    <View style={[styles.breakInfo,{height:'30%'}]}>
+                                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>고장 내용</Text>
 
-                    <View style={{ marginTop: 10, }}>
-                        <View style={styles.sentenceInputView}>
-                            <TextInput
-                                value={sentence}
-                                onChangeText={text => setSentence(text)}
-                                placeholder="useless placeholder"
-                                multiline={true}
-                            />
-                        </View>
-                    </View>
-                </View>
+                                        <View style={styles.breakselect}>
+                                            <View style={{ justifyContent: 'space-around', width: '50%', marginRight: 5 }}>
+                                                <GraySmallButton title="여닫이 작동 안함" disabled={true} color={checkBreak.no_type[0]} />
+                                                <GraySmallButton title="폐우산 기부 안됨" disabled={true} color={checkBreak.no_type[1]} />
+                                            </View>
+                                            <View style={{ justifyContent: 'space-around', width: '50%', marginLeft: 5 }}>
+                                                <GraySmallButton title="모터 작동 안함" disabled={true} color={checkBreak.no_type[2]} />
+                                                <GraySmallButton title="QR코드 손실" disabled={true} color={checkBreak.no_type[3]} />
+                                            </View>
+                                        </View>
+                                    </View>
 
-                {/* </View> */}
 
-                <View style={styles.submitView}>
-                    <TouchableOpacity
-                        style={styles.submit}
-                        onPress={() => {
-                            console.log('DB에 저장 ')
-                            Alert.alert('신고 접수',
-                                '신고 하시겠습니까?',
-                                [
-                                    {
-                                        text: "확인",
-                                        onPress: () => {
-                                            props.navigation.pop()
-                                            submit()
-                                        }
-                                    }
-                                ]
-                            )
-                        }}
-                    >
-                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>제출하기</Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-        </KeyboardAvoidingView>
-        // </View>
+                                    <View style={[styles.sentence, {height:'40%'}]}>
+                                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                                            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>구체적인 고장 사유</Text>
+                                        </TouchableWithoutFeedback>
+
+                                        <View style={{ marginTop: 10, }}>
+                                            <View style={styles.sentenceInputView}>
+                                                <Text style={{ fontSize: 18 }}>{checkBreak.no_additional}</Text>
+                                            </View>
+                                        </View>
+                                    </View>
+
+                                    <View style={{ width: '100%',padding: 10, flexDirection: 'row', marginBottom: 20 }}>
+                                        <Image style={{ width: 30, height: 30, marginTop: 10 }} source={require('../../assets/answer_arrow.gif')} />
+
+                                        <View style={{ backgroundColor: '#CEEBE9', width: '85%', borderRadius: 10, padding: 5, }}>
+                                            <View style={{ borderBottomColor: '#6699FF', borderBottomWidth: 2, }}>
+                                                <Text style={{ fontSize: 20, marginLeft: 10, marginTop: 5 }}>Answer</Text>
+                                                <Text style={{ fontSize: 15, marginLeft: 10, marginTop: 5, marginBottom: 10 }}>관리자 : {checkBreak.a_id}</Text>
+                                            </View>
+                                            <View style={{ padding: 5 }}>
+                                                <Text style={{ fontSize: 15, marginLeft: 10, marginTop: 5, marginBottom: 10 }} multiline={true} >{checkBreak.answer}ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd</Text>
+                                            </View>
+                                        </View>
+                                    </View>
+                                </ScrollView>
+                            </View>
+                        </KeyboardAvoidingView >
+                    )
+
+                    :
+
+                    // 사용자가 직접 작성하는 신고 내역                    
+                    (
+                        <KeyboardAvoidingView
+                            style={styles.container}
+                            behavior={"padding"}
+                            keyboardVerticalOffset={statusBarHeight + 44}
+                        >
+                            <View>
+                                <ScrollView
+                                    style={styles.breakReportView}
+                                >
+
+                                    {/* <View style={styles.breakReportView}> */}
+                                    <View style={styles.stationnum}>
+                                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>신고할 station</Text>
+                                        <TouchableOpacity
+                                            style={styles.bigbutton}
+                                            onPress={() => {
+                                                console.log('check')
+                                                navigation.navigate('ScanStation')
+                                            }}
+                                        >
+                                            {
+                                                station == null ?
+                                                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>QR코드 촬영</Text>
+                                                    : <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{station.st_id}</Text>
+                                            }
+
+                                        </TouchableOpacity>
+                                    </View>
+
+
+                                    <View style={styles.breakInfo}>
+                                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>고장 내용</Text>
+                                        <Text>* 해당되는 문제를 클릭하여주세요(복수 선택 가능)</Text>
+                                        <View style={styles.breakselect}>
+                                            <View style={{ justifyContent: 'space-around', width: '50%', marginRight: 5 }}>
+                                                <GraySmallButton title="여닫이 작동 안함" func={() => breakListFunc(0)} />
+                                                <GraySmallButton title="폐우산 기부 안됨" func={() => breakListFunc(1)} />
+                                            </View>
+                                            <View style={{ justifyContent: 'space-around', width: '50%', marginLeft: 5 }}>
+                                                <GraySmallButton title="모터 작동 안함" func={() => breakListFunc(2)} />
+                                                <GraySmallButton title="QR코드 손실" func={() => breakListFunc(3)} />
+                                            </View>
+                                        </View>
+                                    </View>
+
+
+                                    <View style={styles.sentence}>
+                                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                                            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>구체적인 고장 사유</Text>
+                                        </TouchableWithoutFeedback>
+
+                                        <View style={{ marginTop: 10, }}>
+                                            <View style={styles.sentenceInputView}>
+                                                <TextInput
+                                                    value={sentence}
+                                                    onChangeText={text => setSentence(text)}
+                                                    placeholder="useless placeholder"
+                                                    multiline={true}
+                                                />
+                                            </View>
+                                        </View>
+                                    </View>
+
+
+                                </ScrollView>
+                            </View>
+                            <View style={styles.submitView}>
+                                <TouchableOpacity
+                                    style={styles.submit}
+                                    onPress={() => {
+                                        console.log('DB에 저장 ')
+                                        Alert.alert('신고 접수',
+                                            '신고 하시겠습니까?',
+                                            [
+                                                {
+                                                    text: "확인",
+                                                    onPress: () => {
+                                                        props.navigation.pop()
+                                                        submit()
+                                                    }
+                                                }
+                                            ]
+                                        )
+                                    }}
+                                >
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>제출하기</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </KeyboardAvoidingView>
+                    )
+            }
+        </>
     );
+
 };
 
 export default BreakReport;
@@ -205,19 +310,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
-        justifyContent: 'space-between',
     },
     breakReportView: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height * 0.75,
         padding: 10,
+        marginTop: 10,
     },
     stationnum: {
-        height: '18%',
+        height: '30%',
         padding: 8,
     },
     breakInfo: {
-        height: '30%',
+        height: '50%',
         padding: 8,
     },
     breakselect: {
@@ -227,7 +332,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     sentence: {
-        height: '52%',
+        height: '100%',
         padding: 8,
     },
     sentenceInputView: {
@@ -257,5 +362,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#D9E5FF',
         borderRadius: 15,
         height: '40%',
+        width: '95%'
     },
 });

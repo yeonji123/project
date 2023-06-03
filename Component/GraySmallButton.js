@@ -1,9 +1,13 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 
 const GraySmallButton = (props) => {
     const [color, setColor] = useState(props.color);
+    
+    useEffect (() => {
+        setColor(props.color)
+    }, [props.color])
 
     return (
         <TouchableOpacity
@@ -12,6 +16,7 @@ const GraySmallButton = (props) => {
                 props.func()
                 setColor(!color)
             }}
+            disabled={props.disabled}
         >
             <Text style={color ? [styles.textstyle, { color: 'white' }] : styles.textstyle}>{props.title}</Text>
         </TouchableOpacity>

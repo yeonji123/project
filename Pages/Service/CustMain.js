@@ -28,9 +28,9 @@ const CustMain = ({navigation}) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-                onPress={() =>navigation.navigate("MyDonation")}
+                onPress={() =>navigation.navigate("ReposrtList")}
             >
-                <Detail title="나의 기부 내역 보기" icon="true" />
+                <Detail title="나의 신고 내역 보기" icon="true" />
             </TouchableOpacity>
         </View>
     );
@@ -51,5 +51,6 @@ const styles = StyleSheet.create({
     titleView: {
         justifyContent:'center',
         alignItems:'center',
+        
     },
 });

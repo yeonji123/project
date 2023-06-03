@@ -49,15 +49,15 @@ const MyDonation = ({ navigation }) => {
                     <View style={{ padding: 10 }}>
                         {
                             donationList && donationList.map((item, index) => {
-                                var num=0
+                                
                                 if (item.u_id.split('_')[0] == id) {
-                                    num+=1
+                                    
                                     return (
                                         <View
                                             key={index}
                                             style={{ marginBottom: 10, }}
                                         >
-                                            <DonationComponent key={index} num={num} date={item.d_date} stationnum={item.st_id} image={item.d_image}/>
+                                            <DonationComponent key={index} date={item.d_date} stationnum={item.st_id} image={item.d_image}/>
                                         </View>
                                     )
                                 }
