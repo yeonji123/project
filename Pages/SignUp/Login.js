@@ -55,7 +55,7 @@ const Login = (props) => {
                 } else {
                     await AsyncStorage.setItem('id', idTextInput)
                     Alert.alert('로그인 성공')
-                    props.navigation.navigate("Main")
+                    props.navigation.reset({routes:[{name:'Main'}]})
                 }
             }
             catch (error) {

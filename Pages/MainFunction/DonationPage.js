@@ -24,6 +24,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const DonationPage = ({ navigation, route }) => {
     // 사진 찍음 여부 확인 -> 사진 찍으면 true(=station 작동 disabled는 true)
     const [isphoto, setIsphoto] = useState(false);
+    const [id, setId] = useState() // id 가져오기
     const [stationData, setStationData] = useState() // Station 전체 데이터
     const [stationID, setStationID] = useState(); // Station ID 데이터
     // 사진찍기
@@ -57,6 +58,7 @@ const DonationPage = ({ navigation, route }) => {
 
 
                 const id = await AsyncStorage.getItem('id')
+                setId(id)
                 console.log('id', id)
 
                 console.log('number', number)
