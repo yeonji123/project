@@ -225,7 +225,7 @@ const QRCodeScanner = (props) => {
         <View style={styles.qrassiView}>
           <View style={{ flexDirection: 'row', height: '50%', width: '90%', justifyContent: 'space-between' }}>
             <TouchableOpacity
-              style={styles.assi}
+              style={[styles.assi,{padding:13}]}
               onPress={() => setNumModalVisible(true)}
             >
               <Image style={{ width: '100%', height: '100%' }} source={require('../../assets/keypad.png')} />
@@ -282,12 +282,12 @@ const styles = StyleSheet.create({
   },
   assi: {
     backgroundColor: 'white',
-    width: Dimensions.get('window').width * 0.15,
-    height: Dimensions.get('window').width * 0.15,
+    width: 55,
+    height: 55,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 15,
+    padding: 10,
   },
   centeredView: {
     flex: 1,

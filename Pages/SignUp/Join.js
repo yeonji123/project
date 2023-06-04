@@ -252,6 +252,7 @@ const Join = (props) => {
       // DB 넣기
       const docRef = await setDoc(doc(db, "User", id), {
         u_date : today,
+        u_donation:0,
         u_email : mail,
         u_id : id,
         u_name: name,

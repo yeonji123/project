@@ -9,9 +9,6 @@ import {
 import { db } from '../../firebaseConfig';
 import { addDoc, getDocs, collection, setDoc, doc } from 'firebase/firestore';
 
-// 블루투스
-import base64 from 'react-native-base64';
-import { BleManager } from 'react-native-ble-plx';
 
 
 
@@ -87,13 +84,6 @@ const FunctionList = (props) => {
         })();
     
     }, []);
-
-    
-
-
-
-    
-
 
 
 

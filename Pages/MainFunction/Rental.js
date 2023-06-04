@@ -14,7 +14,7 @@ import { collection, getDocs } from 'firebase/firestore';
 
 
 const Rental = (props) => {
-    const [stationData, setStationData] = useState(props.route.params.data); // Station 전체 데이터
+    const [stationData, setStationData] = useState(); // Station 전체 데이터
     const [umbrellaData, setUmbrellaData] = useState([]); // Station에 있는 우산 데이터
     const [umNumber, setUmNumber] = useState(); // Station에 있는 우산 번호
     // 모달
@@ -27,7 +27,7 @@ const Rental = (props) => {
         // props로 받은 station 번호로 데이터 요청
         (async () => {
             try {
-                console.log('props.route',props.route.params.data) //station의 정보를 props.route로 받음
+                console.log('props.route', props.route.params.data) //station의 정보를 props.route로 받음
                 const umlist = new Array() // set할 우산 데이터 배열
                 
                 // scan한 station의 정보를 읽어서 map으로 돌리기 위해 변환함
@@ -112,8 +112,7 @@ const Rental = (props) => {
 
             </View>
 
-
-
+            
             <ScrollView style={{ width: '100%', height: '100%', padding: 10 }}>
                 {
                     umbrellaData?.map((row, idx) => {

@@ -70,49 +70,85 @@ const BreakReport = ({ navigation, route }) => {
 
     const submit = () => {
         (async () => {
-            props.navigation.pop()
+            console.log(station)
+            if (station) {// station 스캔했으면
 
-            // notifyN : station의 다음 신고 내역 작성하기 위한 조사 notifyN
-            var notifyN = 0;
+                // notifyN : station의 다음 신고 내역 작성하기 위한 조사 notifyN
+                var notifyN = 0;
 
-            // 해당하는 station의 신고 내역을 다음 신고 번호를 부여하기 위해 staion의 신고 내역 DB 확인
-            notifiData.map((item) => {
-                if (item.id.split('_')[0] == 'BR' && item.id.split('_')[1] == station.st_id) { // scan한 station id와 동일
-                    if (item.id.split('_')[2] >= notifyN) {
-                        // station관련 신고의 번호와 달라야 하니까 
-                        // station 신고 번호 중 가장 큰 번호를 찾음
-                        notifyN = parseInt(item.id.split('_')[2])
+                // 해당하는 station의 신고 내역을 다음 신고 번호를 부여하기 위해 staion의 신고 내역 DB 확인
+                notifiData.map((item) => {
+                    if (item.id.split('_')[0] == 'BR' && item.id.split('_')[1] == station.st_id) { // scan한 station id와 동일
+                        if (item.id.split('_')[2] >= notifyN) {
+                            // station관련 신고의 번호와 달라야 하니까 
+                            // station 신고 번호 중 가장 큰 번호를 찾음
+                            notifyN = parseInt(item.id.split('_')[2])
+                        }
                     }
+                })
+
+                let todayData = new Date();
+                let today = todayData.toLocaleDateString()
+
+                let dbid = "BR_" + station.st_id + "_" + (notifyN + 1)
+                console.log(dbid) // data id
+
+
+                var okaysubmit = false
+                var errormessage = ""
+
+                console.log('sentence =', sentence)
+                console.log('nofityN =', notifyN + 1)
+                console.log('breakList =', breakList)
+                console.log('station.st_id =', station.st_id)
+                console.log('id', await AsyncStorage.getItem('id'))
+
+                if (!station) {
+                    console.log('station이 없음')
+                    errormessage = "QR코드 촬영하여 station을 선택해주세요"
+                } else if (sentence.length < 5) {
+                    errormessage = "구체적인 고장 사유를 입력해주세요(5자 이상)"
+                } else {
+                    okaysubmit = true
                 }
-            })
-
-            let todayData = new Date();
-            let today = todayData.toLocaleDateString()
-
-            let dbid = "BR_" + station.st_id + "_" + (notifyN + 1)
-            console.log(dbid) // data id
-
-            console.log('sentence =', sentence)
-            console.log('nofityN =', notifyN + 1)
-            console.log('breakList =', breakList)
-            console.log('station.st_id =', station.st_id)
-            console.log('id', await AsyncStorage.getItem('id'))
 
 
-            const docRef = await setDoc(doc(db, "StationNotification", dbid), {
-                no_additional: sentence,
-                a_id : '',
-                a_state: false,
-                answer: '',
-                no_category:'BR',
-                no_date: today,
-                no_num: notifyN + 1,
-                no_type: breakList,
-                st_id: station.st_id,
-                u_id: await AsyncStorage.getItem('id'),
-            });
-            console.log("Document written with ID: ", docRef.id);
+                console.log('errormessage', errormessage)
+                console.log('okaysubmit', okaysubmit)
 
+
+
+                if (okaysubmit) {
+
+                    const docRef = await setDoc(doc(db, "StationNotification", dbid), {
+                        no_additional: sentence,
+                        a_id: '',
+                        a_state: false,
+                        answer: '',
+                        no_category: 'BR',
+                        no_date: today,
+                        no_num: notifyN + 1,
+                        no_type: breakList,
+                        st_id: station.st_id,
+                        u_id: await AsyncStorage.getItem('id'),
+                    });
+
+                    Alert.alert('신고 접수',
+                        '신고가 완료되었습니다',
+                        [
+                            {
+                                text: "확인",
+                                onPress: () => navigation.pop()
+                            }
+                        ]
+                    )
+                }
+                else { // 만약에 false라면
+                    Alert.alert('신고 접수 실패', errormessage)
+                }
+            } else {
+                alert('QR코드 촬영하여 station을 선택해주세요')
+            }
 
         })();
     }
@@ -130,12 +166,12 @@ const BreakReport = ({ navigation, route }) => {
                             behavior={"padding"}
                             keyboardVerticalOffset={statusBarHeight + 44}
                         >
-                            <View style={{ padding: 10, height:'95%',  }}>
+                            <View style={{ padding: 10, height: '95%', }}>
                                 <ScrollView
-                                    style={{width: '100%', }}
+                                    style={{ width: '100%', }}
                                 >
 
-                                    <View style={{ height:100, padding:8 }}>
+                                    <View style={{ height: 100, padding: 8 }}>
                                         <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF', }}>신고할 station</Text>
                                         <TouchableOpacity
                                             style={styles.bigbutton}
@@ -155,7 +191,7 @@ const BreakReport = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <View style={{ height:150, padding:8, }}>
+                                    <View style={{ height: 150, padding: 8, }}>
                                         <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>고장 내용</Text>
 
                                         <View style={styles.breakselect}>
@@ -171,7 +207,7 @@ const BreakReport = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <View style={{ padding:8, height:250}}>
+                                    <View style={{ padding: 8, height: 250 }}>
                                         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                                             <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>구체적인 고장 사유</Text>
                                         </TouchableWithoutFeedback>
@@ -183,7 +219,7 @@ const BreakReport = ({ navigation, route }) => {
                                         </View>
                                     </View>
 
-                                    <View style={{ width: '100%', padding: 10, flexDirection: 'row', marginBottom: 20 ,  }}>
+                                    <View style={{ width: '100%', padding: 10, flexDirection: 'row', marginBottom: 20, }}>
                                         <Image style={{ width: 30, height: 30, marginTop: 10 }} source={require('../../assets/answer_arrow.gif')} />
 
                                         <View style={{ backgroundColor: '#CEEBE9', width: '85%', borderRadius: 10, padding: 5, }}>
@@ -276,18 +312,7 @@ const BreakReport = ({ navigation, route }) => {
                                     style={styles.submit}
                                     onPress={() => {
                                         console.log('DB에 저장 ')
-                                        Alert.alert('신고 접수',
-                                            '신고 하시겠습니까?',
-                                            [
-                                                {
-                                                    text: "확인",
-                                                    onPress: () => {
-                                                        props.navigation.pop()
-                                                        submit()
-                                                    }
-                                                }
-                                            ]
-                                        )
+                                        submit()
                                     }}
                                 >
                                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>제출하기</Text>

@@ -31,6 +31,8 @@ const RentalReturnReport = ({ navigation, route }) => {
 
     const [report, setReport] = useState(); // 신고 내용
 
+    const [isButton, setIsButton] = useState(false)
+    const [show, setShow] = useState(false); // 대여/반납 신고 선택
 
 
     useEffect(() => {
@@ -52,10 +54,19 @@ const RentalReturnReport = ({ navigation, route }) => {
     }, [route.params]);
 
 
+
+
     const rentalReport = (index) => {
+        setIsButton(true)
         const temp = rentalReturnList
         temp[index] = !temp[index]
+
         setRentalReturnList(temp)
+        if (index == 0) { // 대여하기라면
+            setShow(true)
+        }else{ // 반납이라면
+            setShow(false)
+        }
     }
 
 
@@ -64,10 +75,10 @@ const RentalReturnReport = ({ navigation, route }) => {
             console.log('notifi', notifiData)
             var notifyN = 0;
             notifiData.map((item) => {
-                if (item.id.split('_')[0] == 'RR' && item.id.split('_')[1] == 'station1') { // scan한 station id와 동일하고
-                    if (item.id.split('_')[2] >= notifyN) { // station관련 신고의 번호와 달라야하니까 
-                        notifyN = parseInt(item.id.split('_')[2])
-                    }
+                if (item.id.split('_')[0] == 'RR' && item.id.split('_')[1] == id) { // scan한 station id와 동일하고
+                    // station관련 신고의 번호와 달라야하니까 
+                    notifyN = parseInt(item.id.split('_')[2])
+                  
                 }
             })
             // 현재 날짜
@@ -77,28 +88,79 @@ const RentalReturnReport = ({ navigation, route }) => {
             let dbid = "RR_" + id + "_" + (notifyN + 1)
             console.log(dbid) // data id
 
-            // 데이터 베이스에 삽입
-            const docRef = await setDoc(doc(db, "StationNotification", dbid), {
-                no_additional: sentence,
-                no_date: today,
-                no_num: notifyN + 1,
-                no_radio : checked,
-                no_type: rentalReturnList, // first / second / third
-                no_category:"RR",    
-                a_id: "",
-                answer: "",
-                u_id: id
-            });
+            var okaysubmit = false
+            var errormessage = ""
+            console.log('rentalReturnList',rentalReturnList)
+            console.log('checked',checked)
+            console.log('sentence',sentence)
 
-            Alert.alert('신고 접수',
-                '신고가 완료되었습니다',
-                [
-                    {
-                        text: "확인",
-                        onPress: () => navigation.pop()
+            if (rentalReturnList[0] == true) { // 대여 신고라면
+                if (checked == 'forth') { //기타를 선택하면
+                    if (sentence == '' || sentence.length<8) { // 빈칸 x, 8자 이상
+                        errormessage = "8자 이상 구체적인 신고 내용을 입력해주세요"
+                    } else{
+                        okaysubmit = true
                     }
-                ]
-            )
+                } else {
+                    okaysubmit = true
+                }
+
+            } else if (rentalReturnList[1] == true) { // 반납 신고라면
+                if ( checked=='first' || checked=='second'){
+                    errormessage= "문제원인을 선택해주세요"
+                } else if (checked == 'forth') { //기타를 선택하면
+                    if (sentence == '' || sentence.length<8) { // 빈칸 x, 8자 이상
+                        errormessage = "8자 이상 구체적인 신고 내용을 입력해주세요"
+                    } else{
+                        okaysubmit = true
+                    }
+                } else if (checked == 'third'){
+                    okaysubmit = true
+                }
+
+            } else if(checked == 'fourth' && sentence.length>=8) { // 아무것도 체크 안하고 기타를 선택하면 그리고 8자 이상이면
+                okaysubmit = true
+            } else {
+                errormessage = "문제원인을 선택해주세요"
+            }
+
+            if (rentalReturnList[0] == true && rentalReturnList[1] == true) { // 대여, 반납 버튼 둘 다 눌렀으면
+                okaysubmit=false
+                errormessage = "대여/반납 중 하나를 선택해주세요"
+            } 
+            console.log('errormessage', errormessage)
+            console.log('okaysubmit', okaysubmit)
+
+            // 데이터 베이스에 삽입
+            if (okaysubmit) {
+                const docRef = await setDoc(doc(db, "StationNotification", dbid), {
+                    a_id: "",
+                    a_state: false,
+                    answer: "",
+                    no_additional: sentence,
+                    no_date: today,
+                    no_num: notifyN + 1,
+                    no_radio: checked,
+                    no_type: rentalReturnList, // first / second / third
+                    no_category: "RR",
+
+                    u_id: id
+                });
+
+                Alert.alert('신고 접수',
+                    '신고가 완료되었습니다',
+                    [
+                        {
+                            text: "확인",
+                            onPress: () => navigation.pop()
+                        }
+                    ]
+                )
+            }
+            else { // 만약에 false라면
+                Alert.alert('신고 접수 실패', errormessage)
+            }
+
         })();
     }
 
@@ -122,7 +184,7 @@ const RentalReturnReport = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <View style={[styles.radioView,{height:150, }]}>
+                                    <View style={[styles.radioView,{height:200, }]}>
                                         <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>문제 원인 선택하기</Text>
                                         <View style={styles.radio}>
                                             <RadioButton
@@ -147,6 +209,15 @@ const RentalReturnReport = ({ navigation, route }) => {
                                                 color='#6699FF'
                                                 value="third"
                                                 status={report.no_radio === 'third' ? 'checked' : 'unchecked'}
+
+                                            />
+                                            <Text style={{ fontSize: 17 }}>반납 하기가 안돼요</Text>
+                                        </View>
+                                        <View style={styles.radio}>
+                                            <RadioButton
+                                                color='#6699FF'
+                                                value="fourth"
+                                                status={report.no_radio === 'fourth' ? 'checked' : 'unchecked'}
 
                                             />
                                             <Text style={{ fontSize: 17 }}>기타(하단에 구체적인 신고 내용을 적어주세요)</Text>
@@ -201,38 +272,69 @@ const RentalReturnReport = ({ navigation, route }) => {
 
                             <View style={styles.rentalReportView}>
 
-                                    <View style={styles.problemView}>
-                                        <GraySmallButton title="대여가 안돼요" func={() => rentalReport(0)} height='80%' width='45%' />
-                                        <GraySmallButton title="반납이 안돼요" func={() => rentalReport(1)} height='80%' width='45%' />
-                                    </View>
+                                <View style={styles.problemView}>
+                                    <GraySmallButton title="대여가 안돼요" func={() => rentalReport(0)} height='80%' width='45%' />
+                                    <GraySmallButton title="반납이 안돼요" func={() => rentalReport(1)} height='80%' width='45%' />
+                                </View>
+                                
+
+                                <View style={styles.radioView}>
+                                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>문제 원인 선택하기</Text>
+                                    {
+                                        isButton ? // 버튼을 클릭했고 대여 신고면
+                                            (
+                                                show ?
+                                                    <>
+                                                        <View style={styles.radio}>
+                                                            <RadioButton
+                                                                color='#6699FF'
+                                                                value="first"
+                                                                status={checked === 'first' ? 'checked' : 'unchecked'}
+                                                                onPress={() => setChecked('first')}
+                                                            />
+                                                            <Text style={{ fontSize: 17 }}>대여했는데 우산을 잃어버렸어요</Text>
+                                                        </View>
+                                                        <View style={styles.radio}>
+                                                            <RadioButton
+                                                                color='#6699FF'
+                                                                value="second"
+                                                                status={checked === 'second' ? 'checked' : 'unchecked'}
+                                                                onPress={() => setChecked('second')}
+                                                            />
+                                                            <Text style={{ fontSize: 17 }}>대여하지 않았는데 대여중이라고 나와있어요</Text>
+                                                        </View>
+                                                    </>
+
+                                                    :
+                                                    <>
+                                                        <View style={styles.radio}>
+                                                            <RadioButton
+                                                                color='#6699FF'
+                                                                value="third"
+                                                                status={checked === 'third' ? 'checked' : 'unchecked'}
+                                                                onPress={() => setChecked('third')}
+                                                            />
+                                                            <Text style={{ fontSize: 17 }}>반납해야하는데 안돼요</Text>
+                                                        </View>
+
+                                                    </>
+                                            )
+                                    : null
+
+                                    }
 
 
-                                    <View style={styles.radioView}>
-                                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>문제 원인 선택하기</Text>
-                                        <View style={styles.radio}>
-                                            <RadioButton
-                                                color='#6699FF'
-                                                value="first"
-                                                status={checked === 'first' ? 'checked' : 'unchecked'}
-                                                onPress={() => setChecked('first')}
-                                            />
-                                            <Text style={{ fontSize: 17 }}>대여했는데 우산을 잃어버렸어요</Text>
-                                        </View>
-                                        <View style={styles.radio}>
-                                            <RadioButton
-                                                color='#6699FF'
-                                                value="second"
-                                                status={checked === 'second' ? 'checked' : 'unchecked'}
-                                                onPress={() => setChecked('second')}
-                                            />
-                                            <Text style={{ fontSize: 17 }}>대여하지 않았는데 대여중이라고 나와있어요</Text>
-                                        </View>
-                                        <View style={styles.radio}>
-                                            <RadioButton
-                                                color='#6699FF'
-                                                value="third"
-                                                status={checked === 'third' ? 'checked' : 'unchecked'}
-                                                onPress={() => setChecked('third')}
+                                            
+
+
+
+
+                                    <View style={styles.radio}>
+                                        <RadioButton
+                                            color='#6699FF'
+                                                value="forth"
+                                                status={checked === 'forth' ? 'checked' : 'unchecked'}
+                                                onPress={() => setChecked('forth')}
                                             />
                                             <Text style={{ fontSize: 17 }}>기타(하단에 구체적인 신고 내용을 적어주세요)</Text>
                                         </View>
@@ -267,9 +369,7 @@ const RentalReturnReport = ({ navigation, route }) => {
                             </View>
 
                         </KeyboardAvoidingView>
-
                     )
-
             }
 
 
@@ -301,7 +401,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     radioView: {
-        height: 150,
+        height: 180,
         padding: 8,
     },
     radio: {
