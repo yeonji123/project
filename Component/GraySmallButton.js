@@ -4,14 +4,14 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const GraySmallButton = (props) => {
     const [color, setColor] = useState(props.color);
-    
+
     useEffect (() => {
         setColor(props.color)
     }, [props.color])
 
     return (
         <TouchableOpacity
-            style={color ? [styles.smallbutton, { backgroundColor: '#6699FF' }] : styles.smallbutton}
+            style={color ? [styles.smallbutton, { backgroundColor: '#6699FF'}] : styles.smallbutton}
             onPress={() => {
                 props.func()
                 setColor(!color)
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding:10,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     textstyle:{
         fontSize: 20, 

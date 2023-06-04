@@ -130,14 +130,13 @@ const BreakReport = ({ navigation, route }) => {
                             behavior={"padding"}
                             keyboardVerticalOffset={statusBarHeight + 44}
                         >
-                            <View style={{ padding: 10, }}>
+                            <View style={{ padding: 10, height:'95%',  }}>
                                 <ScrollView
-                                    style={{width: '100%', height: '100%', }}
+                                    style={{width: '100%', }}
                                 >
 
-                                    {/* <View style={styles.breakReportView}> */}
-                                    <View style={[styles.stationnum, {height:'20%'}]}>
-                                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>신고할 station</Text>
+                                    <View style={{ height:100, padding:8 }}>
+                                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF', }}>신고할 station</Text>
                                         <TouchableOpacity
                                             style={styles.bigbutton}
                                             onPress={() => {
@@ -156,7 +155,7 @@ const BreakReport = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <View style={[styles.breakInfo,{height:'30%'}]}>
+                                    <View style={{ height:150, padding:8, }}>
                                         <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>고장 내용</Text>
 
                                         <View style={styles.breakselect}>
@@ -172,7 +171,7 @@ const BreakReport = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <View style={[styles.sentence, {height:'40%'}]}>
+                                    <View style={{ padding:8, height:250}}>
                                         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                                             <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>구체적인 고장 사유</Text>
                                         </TouchableWithoutFeedback>
@@ -184,7 +183,7 @@ const BreakReport = ({ navigation, route }) => {
                                         </View>
                                     </View>
 
-                                    <View style={{ width: '100%',padding: 10, flexDirection: 'row', marginBottom: 20 }}>
+                                    <View style={{ width: '100%', padding: 10, flexDirection: 'row', marginBottom: 20 ,  }}>
                                         <Image style={{ width: 30, height: 30, marginTop: 10 }} source={require('../../assets/answer_arrow.gif')} />
 
                                         <View style={{ backgroundColor: '#CEEBE9', width: '85%', borderRadius: 10, padding: 5, }}>
@@ -193,7 +192,7 @@ const BreakReport = ({ navigation, route }) => {
                                                 <Text style={{ fontSize: 15, marginLeft: 10, marginTop: 5, marginBottom: 10 }}>관리자 : {checkBreak.a_id}</Text>
                                             </View>
                                             <View style={{ padding: 5 }}>
-                                                <Text style={{ fontSize: 15, marginLeft: 10, marginTop: 5, marginBottom: 10 }} multiline={true} >{checkBreak.answer}ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd</Text>
+                                                <Text style={{ fontSize: 15, marginLeft: 10, marginTop: 5, marginBottom: 10 }} multiline={true} >{checkBreak.answer}</Text>
                                             </View>
                                         </View>
                                     </View>
@@ -306,7 +305,7 @@ export default BreakReport;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex : 1,
         backgroundColor: '#fff',
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
@@ -362,6 +361,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#D9E5FF',
         borderRadius: 15,
         height: '40%',
-        width: '95%'
+        width: '100%'
     },
 });

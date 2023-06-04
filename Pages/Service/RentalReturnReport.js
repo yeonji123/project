@@ -37,7 +37,7 @@ const RentalReturnReport = ({ navigation, route }) => {
         (async () => {
             try {
                 if (route.params != undefined) {
-                    console.log('---------route.params.report', route.params.checkReport.no_type[0])
+                    console.log('---------route.params.report', route.params.checkReport)
                     setReport(route.params.checkReport)
                 }
                 console.log('retalreturnReport')
@@ -113,16 +113,16 @@ const RentalReturnReport = ({ navigation, route }) => {
                             style={styles.container}
                             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                         >
-                            <View style={{padding:10,}}>
-                                <ScrollView style={{width:'100%',height:'100%',}}>
+                            <View style={{padding:10,height:'95%', }}>
+                                <ScrollView >
 
-                                    <View style={[styles.problemView, { height: '15%' }]}>
+                                    <View style={[styles.problemView, { height: 80}]}>
                                         <GraySmallButton title="대여가 안돼요" height='80%' width='45%' disabled={true} color={route.params.checkReport.no_type[0]} />
                                         <GraySmallButton title="반납이 안돼요" height='80%' width='45%' disabled={true} color={report.no_type[1]} />
                                     </View>
 
 
-                                    <View style={[styles.radioView,{height:'30%',}]}>
+                                    <View style={[styles.radioView,{height:150, }]}>
                                         <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>문제 원인 선택하기</Text>
                                         <View style={styles.radio}>
                                             <RadioButton
@@ -154,7 +154,7 @@ const RentalReturnReport = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <View style={[styles.sentence,{height:'50%',}]}>
+                                    <View style={[styles.sentence,{ height:250,}]}>
                                         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                                             <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>구체적인 신고 내용</Text>
                                             <View style={{ marginTop: 10, }}>
@@ -199,10 +199,7 @@ const RentalReturnReport = ({ navigation, route }) => {
                             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                         >
 
-                            <View>
-
-                                <ScrollView style={styles.rentalReportView}>
-
+                            <View style={styles.rentalReportView}>
 
                                     <View style={styles.problemView}>
                                         <GraySmallButton title="대여가 안돼요" func={() => rentalReport(0)} height='80%' width='45%' />
@@ -257,7 +254,6 @@ const RentalReturnReport = ({ navigation, route }) => {
                                             </View>
                                         </TouchableWithoutFeedback>
                                     </View>
-                                </ScrollView>
                             </View>
                             <View style={styles.submitView}>
                                 <TouchableOpacity
@@ -299,14 +295,13 @@ const styles = StyleSheet.create({
     },
     problemView: {
         width: '100%',
-        height: '20%',
+        height: 80,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        paddingTop: 10,
         marginBottom: 5,
     },
     radioView: {
-        height: '40%',
+        height: 150,
         padding: 8,
     },
     radio: {
@@ -314,7 +309,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     sentence: {
-        height: '70%',
+        height:250,
         padding: 8,
         marginTop: 10,
     },
