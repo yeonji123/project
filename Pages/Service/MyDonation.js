@@ -9,6 +9,7 @@ import { addDoc, getDocs, collection, setDoc, doc } from 'firebase/firestore';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import TitleName from '../../Component/TitleName';
 
 const MyDonation = ({ navigation }) => {
     const [donationList, setDonationList] = useState();
@@ -26,10 +27,10 @@ const MyDonation = ({ navigation }) => {
 
 
                 console.log(id)
-                setDonationList(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
                 
 
-                // setDonationList(data.docs.map(doc => ({ ...doc.data(), id: doc.id }))) // map을 돌려서 데이터를 복사하여 붙여놓고, id를 추가해줌
+
+                setDonationList(data.docs.map(doc => ({ ...doc.data(), id: doc.id }))) // map을 돌려서 데이터를 복사하여 붙여놓고, id를 추가해줌
                 
 
             } catch (error) {
@@ -43,8 +44,8 @@ const MyDonation = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={{ color: '#6699FF', fontWeight: 'bold', fontSize: 25, padding: 10 }}>나의 기부 내역</Text>
-            <View style={{width:'100%', height:'100%', }}>
+            <TitleName title={"나의 기부 내역"}/>
+            <View style={{width:'100%', height:'100%', marginTop:5}}>
                 <ScrollView>
                     <View style={{ padding: 10 }}>
                         {

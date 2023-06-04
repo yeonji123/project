@@ -269,16 +269,26 @@ const Main = ({ navigation }) => {
                     style={styles.mapbutton}
                     onPress={() => navigation.navigate('Map')}
                 >
-                    <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={require('../../assets/map_sample.png')}></Image>
-
+                    <View style={styles.shadow}>
+                        <Image style={{ width: '100%', height: '70%', borderRadius: 15 }} source={require('../../assets/main_map.gif')}></Image>
+                        <View style={{width:'100%', height:'30%', justifyContent:'center', alignItems:'center'}}>
+                            <Text style={{fontSize:20, marginBottom:5 }}>우산 station</Text>
+                            <Text style={{fontSize:25, fontWeight:'bold'}}>찾기</Text>
+                        </View>
+                    </View>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={styles.scanner}
                     onPress={() => navigation.navigate('QRCodeScanner')}
                 >
-                    <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={require('../../assets/qr_sample.png')}></Image>
-
+                    <View style={styles.shadow}>
+                        <Image style={{ width: '100%', height: '70%', borderRadius: 15}} source={require('../../assets/main_qr_1.gif')}></Image>
+                        <View style={{ width: '100%', height: '30%', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 20, marginBottom: 5 }}>QR 스캔하고</Text>
+                            <Text style={{ fontSize: 25, fontWeight: 'bold' }}>대여하기</Text>
+                        </View>
+                    </View>
                 </TouchableOpacity>
             </View>
 
@@ -450,13 +460,31 @@ const styles = StyleSheet.create({
         height: Dimensions.get('screen').height * 0.35,
         padding: 15,
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        
     },
     mapbutton: {
         width: '48%',
         height: '100%',
         marginRight: 7,
         borderRadius: 15,
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    shadow:{
+        width: '100%', 
+        height: '100%', 
+        justifyContent: 'center', 
+        elevation: 20,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 3.84,
+        backgroundColor:'white',
+        borderRadius: 10
     },
     scanner: {
         width: '48%',
