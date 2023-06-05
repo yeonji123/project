@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 // firebase 연동
 import { db } from '../../firebaseConfig';
-import { doc, collection, getDocs, addDoc} from 'firebase/firestore';
+import { doc, collection, getDocs, addDoc, updateDoc } from 'firebase/firestore';
 
 const UserInfo = (props) => {
     const [data, setData] = useState(props.route.params.users);
@@ -22,7 +22,7 @@ const UserInfo = (props) => {
     useEffect(() => {
         console.log('UserInfo')
         console.log(props.route.params)
-        readDB()
+
     }, [])
 
     const logoutButton = () => {
@@ -50,35 +50,17 @@ const UserInfo = (props) => {
 
     }
 
-    const readDB = async () => {
-        try {
-            const id = await AsyncStorage.getItem('id')
-            console.log('readDB --- id', id)
-            const data = await getDocs(collection(db, "User"))
-            setData(data.docs.map(doc => {
-                if (doc.id === id) {
-                    console.log(doc.data())
-                    return { ...doc.data(), id: doc.id }
-                }
-            }))
-        } catch (e) {
-            console.log(e)
-        }
-    }
 
     const profileDBinsert = async (image) => {
         try {
             const id = await AsyncStorage.getItem('id')
             console.log('profileDBinsert --- id', id)
             
+            await updateDoc(doc(db, "User", id), {
+                u_profile: image
+            })
 
-            const docRef = await addDoc(doc(db, "User", id),
-                {
-                    u_profile: image
-                }
-            )
             console.log('data', data)
-            readDB()
 
         } catch (e) {
             console.log(e)
@@ -129,6 +111,7 @@ const UserInfo = (props) => {
                                     onPress={() => {
                                         
                                         pickImage()
+
                                     }}
                                 >
                                     <Image source={{uri:profileImage}} style={{width:'100%', height:'100%', borderRadius:100 }} />
@@ -145,7 +128,7 @@ const UserInfo = (props) => {
                                                     pickImage()
                                                 }}
                                             >
-                                                <Image source={{ uri: data.u_profile }} style={{width:'100%', height:'100%'}} />
+                                                <Image source={{ uri: data.u_profile }} style={{width:'100%', height:'100%', borderRadius:100}} />
                                             </TouchableOpacity>)
                                             :
                                             (<TouchableOpacity
