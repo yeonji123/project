@@ -1,7 +1,7 @@
 
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState, useRef, } from 'react';
-import { View, Text, StyleSheet, Dimensions, Button, Alert, Modal, Pressable, Image, TextInput, Keyboard, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { View,  StyleSheet, Text,} from 'react-native';
 
 import Main from './Pages/Main/Main';
 import Main2 from './Pages/Main/Main2';
@@ -31,15 +31,25 @@ import ReposrtList from './Pages/Service/ReportList';
 import 'expo-dev-client';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+
+
+// import Text from './Component/DefaultText';
 const Stack = createStackNavigator();
+
 // expo install react-native-safe-area-context
 // npm install @react-navigation/native
 // expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
 
 
 export default function App() {
+  const [fontLoad, setFontLoad] = useState(false)
+
   
+
+
   return (
+
+
     <>
       <StatusBar style="auto" />
       <NavigationContainer>
@@ -69,6 +79,7 @@ export default function App() {
       </NavigationContainer>
       
     </>
+
   );
 }
 
@@ -79,6 +90,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  appLoading:{
+    flex:1,
+    justifyContent:'center',
+    alignItems:'center',
   },
 });
 

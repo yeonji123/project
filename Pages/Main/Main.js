@@ -34,6 +34,8 @@ const Main = ({ navigation }) => {
     const [donation, setDonation] = useState(); // 폐우산 기부 계산
 
     const [modalVisible, setModalVisible] = useState(false);
+    const [profileImage, setProfileImage] = useState(null);
+
 
     useEffect(() => {
         (async () => {
@@ -88,7 +90,30 @@ const Main = ({ navigation }) => {
         })();
     }, [])
 
-
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+      
+        if (!result.canceled) {
+          setProfileImage(result.assets[0].uri); // 선택한 이미지의 URI를 상태로 설정
+        }
+      };
+    
+      useEffect(() => {
+        (async () => {
+          if (Platform.OS !== 'web') {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+              alert('이미지 라이브러리 접근 권한이 없습니다.');
+            }
+          }
+        })();
+      }, []);
+    
 
     return (
         <View style={styles.container}>
@@ -198,7 +223,10 @@ const Main = ({ navigation }) => {
                                             </> :
                                             <ActivityIndicator />
                                     }
-                                    <View style={{ width: '35%', hieght: '100%', justifyContent: 'center', alignItems: 'center', }}>
+                                    <View style={{ width: '35%', hieght: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor:'red' }}>
+                                        
+
+
                                         {
                                             // 이미지 링크 넣기 user DB에 스토리지 링크 넣어서 가져오기
                                             users && users.u_profile ?

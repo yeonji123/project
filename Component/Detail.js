@@ -4,6 +4,9 @@ import {
     Dimensions, Image, 
 } from 'react-native';
 
+
+
+
 const Detail = (props) => {
     return (
         <View 
