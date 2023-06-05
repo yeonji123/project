@@ -90,30 +90,21 @@ const Main = ({ navigation }) => {
         })();
     }, [])
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [1, 1],
-          quality: 1,
-        });
-      
-        if (!result.canceled) {
-          setProfileImage(result.assets[0].uri); // 선택한 이미지의 URI를 상태로 설정
+        const readDB = async () => {
+        try {
+            const id = await AsyncStorage.getItem('id')
+            console.log('readDB --- id', id)
+            const data = await getDocs(collection(db, "User"))
+            setData(data.docs.map(doc => {
+                if (doc.id === id) {
+                    console.log(doc.data())
+                    return { ...doc.data(), id: doc.id }
+                }
+            }))
+        } catch (e) {
+            console.log(e)
         }
-      };
-    
-      useEffect(() => {
-        (async () => {
-          if (Platform.OS !== 'web') {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-              alert('이미지 라이브러리 접근 권한이 없습니다.');
-            }
-          }
-        })();
-      }, []);
-    
+    }
 
     return (
         <View style={styles.container}>
@@ -186,11 +177,11 @@ const Main = ({ navigation }) => {
                                         weather != "" ?
                                             <>
                                                 <View style={styles.temperature}>
-                                                    <View style={{ width: '40%', height: '100%', backgroundColor: 'white', borderRadius: 50, marginRight: 4 }}>
+                                                    <View style={{ width: '40%', height: '100%', backgroundColor: 'white', borderRadius: 100, marginRight: 4 }}>
                                                         <Image style={{ width: '100%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${icon}d.png` }} />
                                                     </View>
                                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                        <Text style={{ fontSize: 30 }}>{weather.main.temp.toFixed(0)}</Text>
+                                                        <Text style={{ fontSize: 30 }}> {weather.main.temp.toFixed(0)}</Text>
                                                         <Text style={{ fontSize: 20 }}>  °C </Text>
                                                     </View>
                                                 </View>
@@ -204,54 +195,53 @@ const Main = ({ navigation }) => {
                                 </View>
                             </View>
                             <View style={styles.userstate}>
-                                <View style={{ flexDirection: 'row', height: '100%', }}>
+                                <View style={{ flexDirection: 'row', height: '100%', alignItems:'center'}}>
                                     {
                                         users ?
                                             <>
-                                                <View style={{ width: '65%', padding: 3 }}>
-                                                    <View style={{ alignItems: 'center', marginBottom: 3, paddingLeft: 7 }}>
-                                                        <Text style={{ fontSize: 20 }}>{users.u_name}님은</Text>
+                                                <View style={{ width: '50%', height:'70%', justifyContent:'center',}}>
+                                                    <View style={{ height:'40%', justifyContent:'flex-end', alignItems:'center'}}>
+                                                        <Text style={{ fontSize: 22, marginBottom:2}}>{users.u_name}님은</Text>
                                                     </View>
-                                                    <View style={{ alignItems: 'center' }}>
+                                                    <View style={{ height:'50%', justifyContent:'center', width:'100%', alignItems:'center'}}>
                                                         {
                                                             users.u_rent ?
-                                                                <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 중</Text> :
-                                                                <Text style={{ fontSize: 35, fontWeight: 'bold' }}>대여 가능</Text>
+                                                                <Text style={{ fontSize: 38, fontWeight: 'bold', color:'#FF7CBB'}}>대여 중</Text> :
+                                                                <Text style={{ fontSize: 38, fontWeight: 'bold', color:'#05C19C' }}>대여 가능</Text>
                                                         }
                                                     </View>
                                                 </View>
                                             </> :
                                             <ActivityIndicator />
                                     }
-                                    <View style={{ width: '35%', hieght: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor:'red' }}>
-                                        
-
-
+                                    <View style={{ width: '40%', hieght: '70%', justifyContent: 'center', alignItems: 'center', }}>
                                         {
                                             // 이미지 링크 넣기 user DB에 스토리지 링크 넣어서 가져오기
                                             users && users.u_profile ?
-                                                <Image style={{ width: '100%', height: '100%', borderRadius: 15, }} source={{ uri: users.u_profile }}></Image>
+                                                <View style={styles.imagestyle}>
+                                                    <Image style={{ width: '100%', height: '100%', borderRadius: 100 }} source={{ uri: users.u_profile }}></Image>
+                                                </View>
                                                 :
-                                                <Image style={{ width: '50%', height: '100%', borderRadius: 15, }} source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png' }}></Image>
+                                                <View style={styles.imagestyle}>
+                                                    <Image style={{ width: '100%', height: '100%', borderRadius: 100 }} source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png' }}></Image>
+                                                </View>
+                                        }
+                                        {
+                                            id != null ?
+                                                <>
+                                                    {
+                                                        donation ?
+                                                            <Text style={{ fontSize: 15 }}>폐우산 기부 횟수 : {donation}</Text>
+                                                            :
+                                                            <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 : 0</Text>
+                                                    }
+                                                </> : null
+
                                         }
                                     </View>
                                 </View>
                             </View>
-                            <View style={styles.donation}>
-                                {
-                                    id != null ?
-                                        <>
-                                            {
-                                                donation ?
-                                                    <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    {donation}</Text>
-                                                    :
-                                                    <Text style={{ fontSize: 16 }}>폐우산 기부 횟수 :    0</Text>
-                                            }
-                                        </> : null
-
-                                }
-
-                            </View>
+                            
                         </TouchableOpacity> :
                         <TouchableOpacity
                             style={styles.userinfo}
@@ -443,7 +433,7 @@ const styles = StyleSheet.create({
         height: '100%',
         backgroundColor: '#F2F2F2',
         borderRadius: 15,
-        padding: 15,
+        padding: 5,
         alignItems: 'center',
     },
     weatherView: {
@@ -457,6 +447,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        paddingBottom: 3,
     },
     temperature: {
         flexDirection: 'row',
@@ -473,8 +464,10 @@ const styles = StyleSheet.create({
     },
     userstate: {
         width: '100%',
-        height: '45%',
-        paddingTop: 15,
+        height: '65%',
+        paddingTop: 5,
+        alignItems: 'center',
+        paddingBottom:10,
     },
     donation: {
         width: '100%',
@@ -536,5 +529,13 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         borderRadius: 15,
         flexDirection: 'row'
+    },
+    imagestyle:{
+        width: '55%',  
+        height:'70%',
+        borderRadius:100, 
+        borderWidth:3, 
+        borderColor:'#6699FF', 
+        marginBottom:10
     },
 });

@@ -1,20 +1,28 @@
 import { useEffect, useState } from 'react';
 import { 
     View, Text, StyleSheet, Dimensions, 
-    Alert, TouchableOpacity, ScrollView 
+    Alert, TouchableOpacity, ScrollView,
+    Image
 } from 'react-native';
 
 import TitleName from '../../Component/TitleName';
 import Detail from '../../Component/Detail';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import * as ImagePicker from 'expo-image-picker';
+// firebase 연동
+import { db } from '../../firebaseConfig';
+import { doc, collection, getDocs, addDoc} from 'firebase/firestore';
+
 const UserInfo = (props) => {
     const [data, setData] = useState(props.route.params.users);
+    const [editMode, setEditMode] = useState(false); // 이미지 수정 모드이면 true, 아니면 false
+    const [profileImage, setProfileImage] = useState(''); // 프로필 이미지 URI
 
     useEffect(() => {
         console.log('UserInfo')
         console.log(props.route.params)
-        
+        readDB()
     }, [])
 
     const logoutButton = () => {
@@ -42,6 +50,70 @@ const UserInfo = (props) => {
 
     }
 
+    const readDB = async () => {
+        try {
+            const id = await AsyncStorage.getItem('id')
+            console.log('readDB --- id', id)
+            const data = await getDocs(collection(db, "User"))
+            setData(data.docs.map(doc => {
+                if (doc.id === id) {
+                    console.log(doc.data())
+                    return { ...doc.data(), id: doc.id }
+                }
+            }))
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const profileDBinsert = async (image) => {
+        try {
+            const id = await AsyncStorage.getItem('id')
+            console.log('profileDBinsert --- id', id)
+            
+
+            const docRef = await addDoc(doc(db, "User", id),
+                {
+                    u_profile: image
+                }
+            )
+            console.log('data', data)
+            readDB()
+
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setEditMode(true)
+
+            profileDBinsert(result.assets[0].uri)
+
+            setProfileImage(result.assets[0].uri); // 선택한 이미지의 URI를 상태로 설정
+        }
+    };
+
+    useEffect(() => {
+        (async () => {
+            if (Platform.OS !== 'web') {
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== 'granted') {
+                    alert('이미지 라이브러리 접근 권한이 없습니다.');
+                }
+            }
+        })();
+    }, []);
+
+
 
 
     return (
@@ -49,6 +121,54 @@ const UserInfo = (props) => {
             <ScrollView style={styles.scrollview}>
                 <View style={styles.titleView}>
                     <TitleName title="프로필"></TitleName>
+                    <View style={{ width: '100%', height: 120, justifyContent:'center', alignItems:'center', }}>
+                        {
+                            editMode ?
+                                <TouchableOpacity
+                                    style={styles.imagestyle}
+                                    onPress={() => {
+                                        
+                                        pickImage()
+                                    }}
+                                >
+                                    <Image source={{uri:profileImage}} style={{width:'100%', height:'100%', borderRadius:100 }} />
+                                    
+                                </TouchableOpacity>
+                                :
+                                <>
+                                    {
+                                        data.u_profile != "" ? (
+                                            <TouchableOpacity
+                                                style={styles.imagestyle}
+                                                onPress={() => {
+                                                    setEditMode(true)
+                                                    pickImage()
+                                                }}
+                                            >
+                                                <Image source={{ uri: data.u_profile }} style={{width:'100%', height:'100%'}} />
+                                            </TouchableOpacity>)
+                                            :
+                                            (<TouchableOpacity
+                                                style={styles.imagestyle}
+                                                onPress={() => {
+                                                    setEditMode(true)
+                                                    pickImage()
+                                                }}
+                                            >
+                                                <Image source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6522/6522516.png' }} style={{width:'100%', height:'100%', borderRadius:100}} />
+
+                                            </TouchableOpacity>)
+
+                                    }
+                                </>
+                        }
+                        <Text>* 프로필을 클릭하여 수정해보세요*</Text>
+                    </View>
+
+
+
+
+
                     <Detail title="닉네임" value={data.u_name} icon="false"/>
                     <Detail title="ID" value={data.u_id}  icon="false"/>
                     <Detail title="PW" value="*****"  icon="false"/>
@@ -123,5 +243,12 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginTop: 20,
     },
-
+    imagestyle:{
+        width: 100,  
+        borderRadius:100, 
+        borderWidth:3, 
+        borderColor:'#6699FF', 
+        marginTop:20,
+        marginBottom:5,
+    }
 });
