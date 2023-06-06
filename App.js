@@ -42,9 +42,6 @@ const Stack = createStackNavigator();
 
 
 export default function App() {
-  const [fontLoad, setFontLoad] = useState(false)
-
-  
 
 
   return (

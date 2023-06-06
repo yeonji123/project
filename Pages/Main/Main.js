@@ -119,7 +119,7 @@ const Main = ({ navigation }) => {
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <View style={styles.modalTop}>
-                                <Text style={{ fontSize: 20, textAlign: 'center', }}>UMStation은?</Text>
+                                <Text style={{ fontSize: 20, textAlign: 'center', }}>pure-a은?</Text>
                             </View>
 
                             <View style={styles.modalMid}>
@@ -154,7 +154,7 @@ const Main = ({ navigation }) => {
                 >
                     <View style={{ flexDirection: 'row', width: '100%' }}>
                         <View style={{ padding: 10, alignItems: 'center', width: '88%' }}>
-                            <Text style={{ fontSize: 20, }}>          UMStation 설명</Text>
+                            <Text style={{ fontSize: 20, }}>          pure-a 설명</Text>
                         </View>
                         <View style={styles.arrowicon}>
                             <Image style={{ width: '50%', height: '50%' }} source={require('../../assets/arrow_icon.png')} />
@@ -190,7 +190,17 @@ const Main = ({ navigation }) => {
                                                 </View>
                                             </>
                                             :
-                                            <ActivityIndicator />
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    justifyContent: 'center',
+                                                    padding: 5,
+                                                }}
+                                            >
+                                                <ActivityIndicator />
+                                            </View>
                                     }
                                 </View>
                             </View>
@@ -212,7 +222,17 @@ const Main = ({ navigation }) => {
                                                     </View>
                                                 </View>
                                             </> :
-                                            <ActivityIndicator />
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    justifyContent: 'center',
+                                                    padding: 5,
+                                                }}
+                                            >
+                                                <ActivityIndicator />
+                                            </View>
                                     }
                                     <View style={{ width: '40%', hieght: '70%', justifyContent: 'center', alignItems: 'center', }}>
                                         {
@@ -267,7 +287,18 @@ const Main = ({ navigation }) => {
                                                 </View>
                                             </>
                                             :
-                                            <ActivityIndicator />
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    width:'100%',
+                                                    height: '100%',
+                                                    justifyContent: 'center',
+                                                    padding: 5,
+                                                }}
+                                            >
+
+                                                <ActivityIndicator />
+                                            </View>
                                     }
                                 </View>
                             </View>
@@ -291,7 +322,7 @@ const Main = ({ navigation }) => {
                         <Image style={{ width: '100%', height: '70%', borderRadius: 15 }} source={require('../../assets/main_map.gif')}></Image>
                         <View style={{width:'100%', height:'30%', justifyContent:'center', alignItems:'center'}}>
                             <Text style={{fontSize:20, marginBottom:5 }}>우산 station</Text>
-                            <Text style={{fontSize:25, fontWeight:'bold'}}>찾기</Text>
+                            <Text style={{fontSize:25, fontWeight:'bold'}}>찾아보기</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -317,7 +348,7 @@ const Main = ({ navigation }) => {
                     style={styles.service}
                     onPress={() => navigation.navigate('CustMain')}
                 >
-                    <View style={{ width: '20%', height: '100%', padding: 10, alignItems: 'center' }}>
+                    <View style={{ width: '20%', height: '100%', alignItems: 'center', padding:10,}}>
                         <Image style={{ width: '80%', height: '100%' }} source={require('../../assets/service_icon.png')}></Image>
                     </View>
                     <View style={{ width: '80%', justifyContent: 'center', alignItems: 'center' }}>
@@ -509,7 +540,6 @@ const styles = StyleSheet.create({
     },
     scanner: {
         width: '48%',
-        backgroundColor: 'skyblue',
         height: '100%',
         marginLeft: 7,
         borderRadius: 15,

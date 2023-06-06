@@ -1,5 +1,5 @@
 import React, { useEffect, useState,  useRef,} from 'react';
-import {  View, StyleSheet, Dimensions, Pressable, Image, } from 'react-native';
+import {  View, StyleSheet, Dimensions, Pressable, Image, Text,  } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 // npm i react-native-maps
 import * as Location from 'expo-location';

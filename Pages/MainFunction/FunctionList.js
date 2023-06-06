@@ -95,7 +95,7 @@ const FunctionList = (props) => {
                     style={retalButton || userstate ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
                     onPress={() => props.navigation.navigate('Rental', { data: stationData })}
                 >
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>대여하기</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#6699FF' }}>대여하기</Text>
                 </TouchableOpacity>
             </View>
 
@@ -105,7 +105,7 @@ const FunctionList = (props) => {
                     style={retalButton || userstate ? styles.buttonstyle : [styles.buttonstyle, { opacity: 0.5 }]}
                     onPress={() => props.navigation.navigate('ReturnPage', { data: stationData })}
                 >
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>반납하기</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#6699FF' }}>반납하기</Text>
                 </TouchableOpacity>
             </View>
 
@@ -115,7 +115,7 @@ const FunctionList = (props) => {
                     style={styles.buttonstyle}
                     onPress={() => props.navigation.navigate('DonationPage', { stationdata: props.route.params.data })}
                 >
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>폐우산 기부하기</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#6699FF' }}>폐우산 기부하기</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -141,9 +141,17 @@ const styles = StyleSheet.create({
     buttonstyle: {
         width: '100%',
         height: Dimensions.get('window').height * 0.10,
-        backgroundColor: '#6699FF',
+        backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 3.84,
+        borderRadius: 10
     }
 });

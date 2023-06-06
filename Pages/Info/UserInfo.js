@@ -60,8 +60,6 @@ const UserInfo = (props) => {
                 u_profile: image
             })
 
-            console.log('data', data)
-
         } catch (e) {
             console.log(e)
         }
@@ -105,7 +103,7 @@ const UserInfo = (props) => {
                     <TitleName title="프로필"></TitleName>
                     <View style={{ width: '100%', height: 120, justifyContent:'center', alignItems:'center', }}>
                         {
-                            editMode ?
+                            editMode && profileImage ?
                                 <TouchableOpacity
                                     style={styles.imagestyle}
                                     onPress={() => {
@@ -124,7 +122,7 @@ const UserInfo = (props) => {
                                             <TouchableOpacity
                                                 style={styles.imagestyle}
                                                 onPress={() => {
-                                                    setEditMode(true)
+                                                    
                                                     pickImage()
                                                 }}
                                             >
@@ -134,7 +132,7 @@ const UserInfo = (props) => {
                                             (<TouchableOpacity
                                                 style={styles.imagestyle}
                                                 onPress={() => {
-                                                    setEditMode(true)
+                                                    
                                                     pickImage()
                                                 }}
                                             >
@@ -145,7 +143,7 @@ const UserInfo = (props) => {
                                     }
                                 </>
                         }
-                        <Text>* 프로필을 클릭하여 수정해보세요*</Text>
+                        <Text style={{marginTop:5}}>* 프로필을 클릭하여 수정해보세요*</Text>
                     </View>
 
 
@@ -210,10 +208,6 @@ const styles = StyleSheet.create({
     titleView: {
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    titleView: {
-        justifyContent: 'center',
-        alignItems: 'center',
         paddingTop: 20,
     },
     logoutView: {
@@ -232,6 +226,5 @@ const styles = StyleSheet.create({
         borderWidth:3, 
         borderColor:'#6699FF', 
         marginTop:20,
-        marginBottom:5,
     }
 });
