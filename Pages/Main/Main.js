@@ -1,7 +1,8 @@
 import {
     Text, View, StyleSheet,
     Image, ActivityIndicator,
-    Modal, TouchableOpacity, Dimensions
+    Modal, TouchableOpacity, Dimensions,
+    ScrollView,
 } from 'react-native';
 import { useEffect, useState } from 'react'
 
@@ -118,13 +119,51 @@ const Main = ({ navigation }) => {
                     }}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                            <View style={styles.modalTop}>
-                                <Text style={{ fontSize: 20, textAlign: 'center', }}>pure-a은?</Text>
-                            </View>
+                            <ScrollView
+                                style={{ width: '100%', height: '100%', }}
+                            >
+                                <View style={{width: '100%', height: 550, justifyContent: 'center', alignItems: 'center',}}>
+                                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius:10 }} source={require('../../assets/1_modal.png')} />
+                                </View>
 
-                            <View style={styles.modalMid}>
-                                <Text style={{ fontSize: 20, textAlign: 'center', }}>Station 번호</Text>
-                            </View>
+                                <View style={{width:'100%', height:150, justifyContent:'center', flexDirection:'row',}}>
+                                    <View style={{width:'40%',  }}>
+                                        <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>Step 1</Text>
+                                        <Image style={{ width: '100%', height: '70%', resizeMode: 'contain', borderRadius: 10 }} source={require('../../assets/step_1.gif')} />
+                                    </View>
+                                    <View style={{width:'50%', justifyContent:'center',  }}>
+                                        <Text style={{color:'white', fontSize:18, fontWeight:'bold'}}>로그인 / 회원가입 하기</Text>
+                                    </View>
+                                </View>
+
+                                
+                                <View style={{width:'100%', height:150, justifyContent:'center', flexDirection:'row',}}>
+                                    <View style={{width:'50%', justifyContent:'center', alignItems:'flex-end' }}>
+                                        <Text style={{color:'white', fontSize:18, fontWeight:'bold'}}>Station QR</Text>
+                                        <Text style={{color:'white', fontSize:18, fontWeight:'bold'}}>촬영하기</Text>
+                                    </View>
+                                    <View style={{width:'40%', justifyContent:'center',  }}>
+                                        <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>Step 2</Text>
+                                        <Image style={{ width: '100%', height: '70%', resizeMode: 'contain', borderRadius: 10 }} source={require('../../assets/step_2.gif')} />
+                                    </View>
+                                </View>
+
+                                <View style={{width:'100%', height:150, justifyContent:'center', flexDirection:'row',}}>
+                                    <View style={{width:'40%',  }}>
+                                        <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>Step 3</Text>
+                                        <Image style={{ width: '100%', height: '70%', resizeMode: 'contain', borderRadius: 10 }} source={require('../../assets/step_3.gif')} />
+                                    </View>
+                                    <View style={{width:'50%', justifyContent:'center',  }}>
+                                        <Text style={{color:'white', fontSize:18, fontWeight:'bold'}}>우산 대여 / 반납 / 기부</Text>
+                                    </View>
+                                </View>
+
+                                <View style={{width: '100%', height: 550, justifyContent: 'center', alignItems: 'center',}}>
+                                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius:10 }} source={require('../../assets/2_modal.png')} />
+                                </View>
+
+                            </ScrollView>
+                           
                             <View style={styles.modalbot}>
                                 <TouchableOpacity
                                     style={styles.modalbutton}
@@ -132,7 +171,7 @@ const Main = ({ navigation }) => {
                                         // station 유무 확인 함수
                                         setModalVisible(!modalVisible)
                                     }}>
-                                    <Text style={{ fontSize: 20, color: '#E7E7E7', fontWeight: 'bold' }}>확인</Text>
+                                    <Text style={{ fontSize: 20, color: 'white', fontWeight: 'bold' }}>확인</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -380,7 +419,7 @@ const styles = StyleSheet.create({
         width: Dimensions.get('screen').width * 0.85,
         height: Dimensions.get('screen').height * 0.7,
         margin: 20,
-        backgroundColor: 'white',
+        backgroundColor: '#B2CCFF',
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
@@ -419,7 +458,7 @@ const styles = StyleSheet.create({
     modalbutton: {
         width: '30%',
         height: '80%',
-        backgroundColor: "#B2CCFF",
+        backgroundColor: "#6699FF",
         borderRadius: 10,
         justifyContent: 'center',
         textAlign: 'center',

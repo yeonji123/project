@@ -1,7 +1,7 @@
 
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState, useRef, } from 'react';
-import { View,  StyleSheet, Text,} from 'react-native';
+import { View, StyleSheet, Text, } from 'react-native';
 
 import Main from './Pages/Main/Main';
 import Main2 from './Pages/Main/Main2';
@@ -22,8 +22,8 @@ import RentalPage from "./Pages/MainFunction/RentalPage";
 import ExplainPage from "./Pages/MainFunction/ExplainPage";
 import DonationPage from "./Pages/MainFunction/DonationPage";
 import ReturnPage from "./Pages/MainFunction/ReturnPage";
-import ScanStation from './Pages/Service/ScanStation';  
-import Loading from './Component/Loading';  
+import ScanStation from './Pages/Service/ScanStation';
+import Loading from './Component/Loading';
 import ReposrtList from './Pages/Service/ReportList';
 
 
@@ -41,59 +41,57 @@ const Stack = createStackNavigator();
 // expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
 
 
+
 export default function App() {
+  
+    return (
+      <>
+        <StatusBar style="auto" />
+        <NavigationContainer>
+          <Stack.Navigator initialization="Main">
+            <Stack.Screen name="Main" component={Main} />
+            <Stack.Screen name="Join" component={Join} />
+            <Stack.Screen name='SignUp' component={SignUp} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Map" component={Map} />
+            <Stack.Screen name="QRCodeScanner" component={QRCodeScanner} />
+            <Stack.Screen name="Loading" component={Loading} />
+            <Stack.Screen name="CustMain" component={CustMain} />
+            <Stack.Screen name="UserInfo" component={UserInfo} />
+            <Stack.Screen name="CameraCheck" component={CameraCheck} />
+            <Stack.Screen name="BreakReport" component={BreakReport} />
+            <Stack.Screen name="MyDonation" component={MyDonation} />
+            <Stack.Screen name="RentalReturnReport" component={RentalReturnReport} />
+            <Stack.Screen name="FunctionList" component={FunctionList} />
+            <Stack.Screen name="Rental" component={Rental} />
+            <Stack.Screen name="RentalPage" component={RentalPage} />
+            <Stack.Screen name="ExplainPage" component={ExplainPage} />
+            <Stack.Screen name="DonationPage" component={DonationPage} />
+            <Stack.Screen name="ReturnPage" component={ReturnPage} />
+            <Stack.Screen name="ScanStation" component={ScanStation} />
+            <Stack.Screen name="ReposrtList" component={ReposrtList} />
+          </Stack.Navigator>
+        </NavigationContainer>
+
+      </>
+
+    );
+  }
 
 
-  return (
-
-
-    <>
-      <StatusBar style="auto" />
-      <NavigationContainer>
-        <Stack.Navigator initialization="Main">
-          <Stack.Screen name="Main" component={Main} />
-          <Stack.Screen name="Join" component={Join} />
-          <Stack.Screen name='SignUp' component={SignUp} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Map" component={Map} />
-          <Stack.Screen name="QRCodeScanner" component={QRCodeScanner} />
-          <Stack.Screen name="Loading" component={Loading} />
-          <Stack.Screen name="CustMain" component={CustMain} />
-          <Stack.Screen name="UserInfo" component={UserInfo} />
-          <Stack.Screen name="CameraCheck" component={CameraCheck} />
-          <Stack.Screen name="BreakReport" component={BreakReport} />
-          <Stack.Screen name="MyDonation" component={MyDonation} />
-          <Stack.Screen name="RentalReturnReport" component={RentalReturnReport} />
-          <Stack.Screen name="FunctionList" component={FunctionList} />
-          <Stack.Screen name="Rental" component={Rental} />
-          <Stack.Screen name="RentalPage" component={RentalPage} />
-          <Stack.Screen name="ExplainPage" component={ExplainPage} />
-          <Stack.Screen name="DonationPage" component={DonationPage} />
-          <Stack.Screen name="ReturnPage" component={ReturnPage} />
-          <Stack.Screen name="ScanStation" component={ScanStation} />
-          <Stack.Screen name="ReposrtList" component={ReposrtList} />
-        </Stack.Navigator>
-      </NavigationContainer>
-      
-    </>
-
-  );
-}
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  appLoading:{
-    flex:1,
-    justifyContent:'center',
-    alignItems:'center',
-  },
-});
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    appLoading: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
 
 
 
