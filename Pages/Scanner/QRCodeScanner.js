@@ -43,6 +43,7 @@ const QRCodeScanner = (props) => {
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     console.log('handleBarcodescanned', data)
     // type check
+    // station id
     console.log(typeof(data)) // string 
     var s_data = data.split('"') // " " 기준으로 나누기
     console.log('s_data', s_data[3])
@@ -64,46 +65,42 @@ const QRCodeScanner = (props) => {
     console.log('DB 확인하기')
     console.log(station)
     try {
-
-      // 동일한 stationNum이 있는 지 확인하는 변수
+      // 예외 처리 변수
       let checkresult = false 
 
-      if (stationNum != null) {
-        const data = await getDocs(collection(db, "Station"))
+      const data = await getDocs(collection(db, "Station"))
 
+      // scan 했을 떄
+      if (station != null){
         data.docs.map((doc, idx) => {
-          console.log(idx, '=', doc.data())
-          if (doc.data().st_num == station) {
-            console.log('checkresult', doc.data())
+          // station scan하고 station의 상태가 false인 경우 -> 사용 가능
+          if (doc.data().st_id == station && !doc.data().st_state) {
+            checkresult = true
             setStationData(doc.data())
-            setStationName(doc.data().st_id)
-            checkresult = true //stationNum이랑 같은 게 있으면 true
-          }
-        })
-
-      } else {
-        // station 정보 확인하기
-        console.log('else 문')
-        
-        const data = await getDocs(collection(db, "Station"))
-        data.docs.map((doc, idx) => {
-          console.log(idx, '=', doc.data())
-          if (doc.data().st_id == station) {
-            console.log('checkresult', doc.data())
-            setStationData(doc.data())
-            setStationName(doc.data().st_id)
-            checkresult = true //stationNum이랑 같은 게 있으면 true
+            setStationName(station)
           }
         })
       }
 
+      // stationNum 입력했을 때
+      else if (stationNum != null) {
+        data.docs.map((doc, idx) => {
+          // station Num을 입력하고 station의 상태가 false인 경우 -> 사용 가능
+          if (doc.data().st_num == station && !doc.data().st_state) {
+            checkresult = true
+            setStationData(doc.data())
+            setStationName(doc.data().st_id)
+          }
+        })
+      } 
 
-      if (checkresult) {
+      if (checkresult) { // station 사용 가능
         setNumModalVisible(false) // 번호 입력 모달창 닫기
         setModalVisible(!modalVisible) // 스캔 모달창 열기
       }
       else {
-        alert('동일한 stationNum이 없습니다.')
+        alert('사용할 수 없는 Station입니다. 다시 스캔해주세요')
+        
       }
     } catch (error) {
       console.log('eerror', error.message)
@@ -191,7 +188,6 @@ const QRCodeScanner = (props) => {
                   style={{ width: '50%' }}
                   onPress={() => {
                     // station 유무 확인 함수
-                    setStationNum()
                     checkStation(stationNum)
                   }}>
                   <Text style={styles.textStyle}>확인</Text>
@@ -216,7 +212,7 @@ const QRCodeScanner = (props) => {
         barCodeTypes={BarCodeScanner.type}
         flashMode={flash}
       >
-        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 20 }}>Scan your QR code</Text>
+        
         <Image
           style={styles.qr}
           source={require('../../assets/qr_scan.png')}

@@ -205,12 +205,13 @@ const DonationPage = ({ navigation, route }) => {
             var imageid = `${await AsyncStorage.getItem('id')}_${number}`
             console.log(imageid)
             console.log(stationID)
-
+            // 두자리 수 랜덤값
+            var number = Math.floor(Math.random() *101)
 
             const docRef = await setDoc(doc(db, "Donation", imageid), {
                 d_date: today,
                 d_image: firebaseImage,
-                // d_num:
+                d_num:number,
                 st_id: stationID,
                 u_id: await AsyncStorage.getItem('id'),
             });
@@ -331,7 +332,6 @@ const DonationPage = ({ navigation, route }) => {
                         <View style={styles.buttonView}>
                             {
                                 isphoto ?
-
                                     <TouchableOpacity
                                         style={styles.buttonstyle}
                                         onPress={() => {

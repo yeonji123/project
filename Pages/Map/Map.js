@@ -14,15 +14,14 @@ import { collection, getDocs } from 'firebase/firestore';
 
 const Map = ({navigation}) => {
   const [mapRegion, setmapRegion] = useState({ //나의 위치 usestate
-    latitude: 36.7987869, //위도
-    longitude: 127.0757584, //경도
+    latitude: 36.7992587626175, //위도
+    longitude: 127.07589223496811, //경도
   });
   //firestor 연동
   const [stations, setStations] = useState();
   //에니메이션으로 이동
   const mapRef = React.useRef(null);
   const [region, setRegion] = React.useState();
-
 
   // 드래그 해서 위치의 위도경도 가져오기
   const mapRegionChangehandle = (region) => {
@@ -36,7 +35,9 @@ const Map = ({navigation}) => {
       try {
         const data = await getDocs(collection(db, "Station")) // Station이라는 테이블 명
         setStations(data.docs.map(doc => ({ ...doc.data(), id: doc.id }))) // map을 돌려서 데이터를 복사하여 붙여놓고, id를 추가해줌
-        
+
+      
+
       } catch (error) {
         console.log('eerror', error.message)
       }
@@ -96,8 +97,8 @@ const Map = ({navigation}) => {
           // region={mapRegion}
           // initialRegion={{mapRegion}}
           initialRegion={{
-            latitude: mapRegion.latitude,
-            longitude: mapRegion.longitude,
+            latitude: mapRegion ? mapRegion.latitude:0,
+            longitude: mapRegion ? mapRegion.longitude:0,
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
           }}
@@ -120,7 +121,6 @@ const Map = ({navigation}) => {
               var returnCount = 0
               // DB에 있는 데이터 값
               // {"1": {"angle": 0, "state": true}, "2": {"angle": 90, "state": false}, ...}
-
               for (var i=0; i<Object.keys(e.um_count_state).length; i++) { // um_count_state의 길이만큼 반복
                 // key값이 string이라서 변환 후 state읽기
                 if (e.um_count_state[String(i+1)].state) { // true이면 대여 가능
@@ -129,17 +129,17 @@ const Map = ({navigation}) => {
                   returnCount++;
                 }
               }
-
+              
               return (
                 <Marker
                   key={idx}
-                  coordinate={{ latitude: e.st_p_x, longitude: e.st_p_y }}
+                  coordinate={{ latitude: stations ? e.st_p_x: 0, longitude: stations ? e.st_p_y: 0}}
                   onPress={() => {
                     console.log(e)
                     onDetail(e.st_p_x, e.st_p_y)
                   }}
                 >
-                  <Callout style={{ width: Dimensions.get('screen').width * 0.6 }}>
+                  <Callout style={{ width: Dimensions.get('screen').width * 0.6,}}>
 
                     <View style={{ justifyContent: 'center', padding: 5 }}>
                       <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#6699FF' }}>{e.st_id}</Text>

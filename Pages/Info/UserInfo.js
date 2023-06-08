@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 // firebase 연동
 import { db } from '../../firebaseConfig';
-import { doc, collection, getDocs, addDoc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 
 const UserInfo = (props) => {
     const [data, setData] = useState(props.route.params.users);

@@ -86,8 +86,7 @@ const Main = ({ navigation }) => {
             const res = await response.json()
             // console.log('temp -> ',res)
             setWeather(res)
-            iconsplit = res.weather[0].icon.split('n')
-            seticon(iconsplit[0])
+            seticon(res.weather[0].icon)
         })();
     }, [])
 
@@ -193,7 +192,7 @@ const Main = ({ navigation }) => {
                 >
                     <View style={{ flexDirection: 'row', width: '100%' }}>
                         <View style={{ padding: 10, alignItems: 'center', width: '88%' }}>
-                            <Text style={{ fontSize: 20, }}>          pure-a 설명</Text>
+                            <Text style={{ fontSize: 20, }}>          PURE-A </Text>
                         </View>
                         <View style={styles.arrowicon}>
                             <Image style={{ width: '50%', height: '50%' }} source={require('../../assets/arrow_icon.png')} />
@@ -217,7 +216,7 @@ const Main = ({ navigation }) => {
                                             <>
                                                 <View style={styles.temperature}>
                                                     <View style={{ width: '40%', height: '100%', backgroundColor: 'white', borderRadius: 100, marginRight: 4 }}>
-                                                        <Image style={{ width: '100%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${icon}d.png` }} />
+                                                        <Image style={{ width: '100%', height: '100%' }} source={{ uri: `http://openweathermap.org/img/wn/${icon}.png` }} />
                                                     </View>
                                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                                         <Text style={{ fontSize: 30 }}> {weather.main.temp.toFixed(0)}</Text>
@@ -387,7 +386,7 @@ const Main = ({ navigation }) => {
                     style={styles.service}
                     onPress={() => navigation.navigate('CustMain')}
                 >
-                    <View style={{ width: '20%', height: '100%', alignItems: 'center', padding:10,}}>
+                    <View style={{ width: '15%', height: '100%', alignItems: 'center', padding:10,}}>
                         <Image style={{ width: '80%', height: '100%' }} source={require('../../assets/service_icon.png')}></Image>
                     </View>
                     <View style={{ width: '80%', justifyContent: 'center', alignItems: 'center' }}>

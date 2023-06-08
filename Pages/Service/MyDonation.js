@@ -12,7 +12,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import TitleName from '../../Component/TitleName';
 
 const MyDonation = ({ navigation }) => {
-    const [donationList, setDonationList] = useState();
+    const [donationList, setDonationList] = useState('');
+    const [isdonation, setIsDonation] = useState(false)
     const [id, setId] = useState();
 
     useEffect(() => {
@@ -28,7 +29,12 @@ const MyDonation = ({ navigation }) => {
                 console.log(id)
 
                 setDonationList(data.docs.map(doc => ({ ...doc.data(), id: doc.id }))) // map을 돌려서 데이터를 복사하여 붙여놓고, id를 추가해줌
-
+                
+                data.docs.map(doc => {
+                    if (doc.data().u_id == id){
+                        setIsDonation(true)
+                    }
+                })
 
             } catch (error) {
                 console.log('eerror', error.message)
@@ -51,7 +57,7 @@ const MyDonation = ({ navigation }) => {
                         <View style={{ padding: 10 }}>
                             {
                                 donationList && donationList.map((item, index) => {
-
+                                    
                                     if (item.u_id.split('_')[0] == id) {
 
                                         return (
@@ -66,12 +72,12 @@ const MyDonation = ({ navigation }) => {
                                 })
                             }
                             {
-                                donationList == null ?
+                                !isdonation ?
                                     <Text style={{ color: 'gray', fontWeight: 'bold', fontSize: 20, padding: 10 }}>기부 내역이 없습니다</Text>
                                     :
                                     null
                             }
-                            {/* <DonationComponent date="2023.04.08" stationnum="station1" statiodnadd="충청남도 아산시 탕정면 선물로 221번길 70"/> */}
+                            
                         </View>
 
                     </ScrollView>

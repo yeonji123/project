@@ -7,7 +7,7 @@
     "icon": "./assets/um.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/step_1.gif",
+      "image": "./assets/um.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

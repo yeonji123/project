@@ -15,6 +15,7 @@ import { addDoc, getDocs, collection, setDoc, doc } from 'firebase/firestore';
 
 import GraySmallButton from '../../Component/GraySmallButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { heightPercentageToDP } from 'react-native-responsive-screen';
 
 // 키보드가 가리는 문제 때문에 아마 아이폰에만 있을 듯?
 const { StatusBarManager } = NativeModules
@@ -163,14 +164,11 @@ const BreakReport = ({ navigation, route }) => {
                     (
                         <KeyboardAvoidingView
                             style={styles.container}
-                            behavior={"padding"}
+                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                             keyboardVerticalOffset={statusBarHeight + 44}
                         >
-                            <View style={{ padding: 10, height: '95%', }}>
-                                <ScrollView
-                                    style={{ width: '100%', }}
-                                >
-
+                            <View style={{ height: '95%', }}>
+                                <ScrollView>
                                     <View style={{ height: 100, padding: 8 }}>
                                         <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF', }}>신고할 station</Text>
                                         <TouchableOpacity
@@ -241,18 +239,15 @@ const BreakReport = ({ navigation, route }) => {
 
                     // 사용자가 직접 작성하는 신고 내역                    
                     (
-                        <KeyboardAvoidingView
-                            style={styles.container}
-                            behavior={"padding"}
-                            keyboardVerticalOffset={statusBarHeight + 44}
-                        >
-                            <View>
-                                <ScrollView
-                                    style={styles.breakReportView}
-                                >
+                        <>
+                            <KeyboardAvoidingView
+                                style={styles.container}
+                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                                keyboardVerticalOffset={statusBarHeight + 44}
+                            >
+                                <ScrollView style={{ height: '100%', }}>
 
-                                    {/* <View style={styles.breakReportView}> */}
-                                    <View style={styles.stationnum}>
+                                    <View style={[styles.stationnum, { height: 100 }]}>
                                         <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>신고할 station</Text>
                                         <TouchableOpacity
                                             style={styles.bigbutton}
@@ -271,7 +266,7 @@ const BreakReport = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <View style={styles.breakInfo}>
+                                    <View style={[styles.breakInfo, { height: 150 }]}>
                                         <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>고장 내용</Text>
                                         <Text>* 해당되는 문제를 클릭하여주세요(복수 선택 가능)</Text>
                                         <View style={styles.breakselect}>
@@ -287,7 +282,7 @@ const BreakReport = ({ navigation, route }) => {
                                     </View>
 
 
-                                    <View style={styles.sentence}>
+                                    <View style={[styles.sentence, { height: 250 }]}>
                                         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                                             <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}>구체적인 고장 사유</Text>
                                         </TouchableWithoutFeedback>
@@ -302,11 +297,11 @@ const BreakReport = ({ navigation, route }) => {
                                                 />
                                             </View>
                                         </View>
+
                                     </View>
 
-
                                 </ScrollView>
-                            </View>
+                            </KeyboardAvoidingView>
                             <View style={styles.submitView}>
                                 <TouchableOpacity
                                     style={styles.submit}
@@ -318,7 +313,7 @@ const BreakReport = ({ navigation, route }) => {
                                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>제출하기</Text>
                                 </TouchableOpacity>
                             </View>
-                        </KeyboardAvoidingView>
+                        </>
                     )
             }
         </>
@@ -330,14 +325,15 @@ export default BreakReport;
 
 const styles = StyleSheet.create({
     container: {
-        flex : 1,
+        flex: 1,
         backgroundColor: '#fff',
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
+        padding:10,
     },
     breakReportView: {
         width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height * 0.75,
+        height: Dimensions.get('window').height * 0.80,
         padding: 10,
         marginTop: 10,
     },
@@ -377,15 +373,16 @@ const styles = StyleSheet.create({
     },
     submitView: {
         width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height * 0.25,
+        height: Dimensions.get('window').height * 0.15,
         padding: 10,
+    backgroundColor: 'white'
     },
     submit: {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#D9E5FF',
         borderRadius: 15,
-        height: '40%',
+        height: '80%',
         width: '100%'
     },
 });

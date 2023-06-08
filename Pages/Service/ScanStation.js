@@ -100,7 +100,7 @@ const ScanStation = ({ navigation }) => {
                             </View>
 
                             <View style={styles.modalMid}>
-                                <Text style={{ fontSize: 25, }}>{stationName}가 맞나요?</Text>
+                                <Text style={{ fontSize: 25, }}>{stationData}가 맞나요?</Text>
                             </View>
 
                             <View style={styles.modalbot}>
@@ -183,7 +183,6 @@ const ScanStation = ({ navigation }) => {
                 barCodeTypes={BarCodeScanner.type}
                 flashMode={flash}
             >
-                <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 20 }}>Scan your QR code</Text>
                 <Image
                     style={styles.qr}
                     source={require('../../assets/qr_scan.png')}
@@ -195,7 +194,7 @@ const ScanStation = ({ navigation }) => {
                             style={styles.assi}
                             onPress={() => setNumModalVisible(true)}
                         >
-                            <Image style={{ width: '100%', height: '100%' }} source={require('../../assets/keypad.png')} />
+                            <Image style={{ width: '80%', height: '100%' }} source={require('../../assets/keypad.png')} />
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.assi}
