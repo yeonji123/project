@@ -114,11 +114,20 @@ const ReturnPage = (props) => {
 
             <View style={{ padding: 10 }}>
                 <View style={styles.pictureView}>
+                    
                     <Image style={{width:'100%', height:'80%',}} source={require('../../assets/returnImage.gif')} />
                 </View>
             </View>
 
             <View style={styles.buttonView}>
+                <TouchableOpacity
+                    style={styles.buttonstyle}
+                    onPress={() => props.navigation.navigate('FunctionList')}
+                >
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>반납 완료</Text>
+                </TouchableOpacity>
+
+
                 <TouchableOpacity
                     style={styles.buttonstyle}
                     onPress={() => props.navigation.navigate('FunctionList')}
@@ -164,9 +173,11 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height * 0.1,
         marginBottom: 40,
         padding: 10,
+        flexDirection:'row',
+        justifyContent:'space-between',
     },
     buttonstyle: {
-        width: '100%',
+        width: '43%',
         height: Dimensions.get('window').height * 0.10,
         backgroundColor: '#6699FF',
         justifyContent: 'center',

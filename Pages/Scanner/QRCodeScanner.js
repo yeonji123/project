@@ -69,12 +69,22 @@ const QRCodeScanner = (props) => {
       let checkresult = false 
 
       const data = await getDocs(collection(db, "Station"))
-
+      // stationNum 입력했을 때
+      if (stationNum != null) {
+        data.docs.map((doc, idx) => {
+          // station Num을 입력하고 station의 상태가 false인 경우 -> 사용 가능
+          if (doc.data().st_num == station && doc.data().st_state) {
+            checkresult = true
+            setStationData(doc.data())
+            setStationName(doc.data().st_id)
+          }
+        })
+      } 
       // scan 했을 떄
-      if (station != null){
+      else if (station != null){
         data.docs.map((doc, idx) => {
           // station scan하고 station의 상태가 false인 경우 -> 사용 가능
-          if (doc.data().st_id == station && !doc.data().st_state) {
+          if (doc.data().st_id == station && doc.data().st_state) {
             checkresult = true
             setStationData(doc.data())
             setStationName(station)
@@ -82,17 +92,7 @@ const QRCodeScanner = (props) => {
         })
       }
 
-      // stationNum 입력했을 때
-      else if (stationNum != null) {
-        data.docs.map((doc, idx) => {
-          // station Num을 입력하고 station의 상태가 false인 경우 -> 사용 가능
-          if (doc.data().st_num == station && !doc.data().st_state) {
-            checkresult = true
-            setStationData(doc.data())
-            setStationName(doc.data().st_id)
-          }
-        })
-      } 
+     
 
       if (checkresult) { // station 사용 가능
         setNumModalVisible(false) // 번호 입력 모달창 닫기

@@ -4,7 +4,7 @@ import {
     Modal, TouchableOpacity, Dimensions,
     ScrollView,
 } from 'react-native';
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 
 // Location API
@@ -22,7 +22,7 @@ const API_KEY = "204756a8614d5d5f3d4e6544f1cd8c7d"
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
-
+import { useFocusEffect } from '@react-navigation/native';
 
 const Main = ({ navigation }) => {
     //날씨
@@ -35,21 +35,29 @@ const Main = ({ navigation }) => {
     const [donation, setDonation] = useState(); // 폐우산 기부 계산
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [profileImage, setProfileImage] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            console.log('main focused')
+            readDB()
+        });
+        return unsubscribe;
+    }, []);
 
 
     useEffect(() => {
         (async () => {
             // firebase
             try {
+                console.log('Main')
                 // 사용자 DB 데이터 가져오기
                 const data = await getDocs(collection(db, "User"))
                 var id = await AsyncStorage.getItem('id') // device에 저장되어 있는 id
                 console.log('id -> ', id)
                 setId(id)
 
-                if (id==null){ // device에 저장된 id가 없으면 Login 페이지로 전환
-                    navigation.reset({routes: [{name: 'Login'}]})
+                if (id == null) { // device에 저장된 id가 없으면 Login 페이지로 전환
+                    navigation.reset({ routes: [{ name: 'Login' }] })
                 }
 
 
@@ -58,11 +66,12 @@ const Main = ({ navigation }) => {
                     if (doc.data().u_id == id) {
                         setUsers(doc.data())
                         console.log(doc.data().u_donation)
+                        console.log(doc.data().u_rent)
                         setDonation(doc.data().u_donation)
                     }
                 })
 
-                
+
             } catch (error) {
                 console.log('eeerror', error.message)
             }
@@ -90,17 +99,19 @@ const Main = ({ navigation }) => {
         })();
     }, [])
 
-        const readDB = async () => {
+    const readDB = async () => {
         try {
             const id = await AsyncStorage.getItem('id')
-            console.log('readDB --- id', id)
+
             const data = await getDocs(collection(db, "User"))
-            setData(data.docs.map(doc => {
-                if (doc.id === id) {
-                    console.log(doc.data())
-                    return { ...doc.data(), id: doc.id }
+            data.docs.map(doc => {
+                if (doc.data().u_id == id) {
+                    setUsers(doc.data())
+                    console.log(doc.data().u_donation)
+                    console.log(doc.data().u_rent)
+                    setDonation(doc.data().u_donation)
                 }
-            }))
+            })
         } catch (e) {
             console.log(e)
         }
@@ -121,48 +132,48 @@ const Main = ({ navigation }) => {
                             <ScrollView
                                 style={{ width: '100%', height: '100%', }}
                             >
-                                <View style={{width: '100%', height: 550, justifyContent: 'center', alignItems: 'center',}}>
-                                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius:10 }} source={require('../../assets/1_modal.png')} />
+                                <View style={{ width: '100%', height: 550, justifyContent: 'center', alignItems: 'center', }}>
+                                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10 }} source={require('../../assets/1_modal.png')} />
                                 </View>
 
-                                <View style={{width:'100%', height:150, justifyContent:'center', flexDirection:'row',}}>
-                                    <View style={{width:'40%',  }}>
+                                <View style={{ width: '100%', height: 150, justifyContent: 'center', flexDirection: 'row', }}>
+                                    <View style={{ width: '40%', }}>
                                         <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>Step 1</Text>
                                         <Image style={{ width: '100%', height: '70%', resizeMode: 'contain', borderRadius: 10 }} source={require('../../assets/step_1.gif')} />
                                     </View>
-                                    <View style={{width:'50%', justifyContent:'center',  }}>
-                                        <Text style={{color:'white', fontSize:18, fontWeight:'bold'}}>로그인 / 회원가입 하기</Text>
+                                    <View style={{ width: '50%', justifyContent: 'center', }}>
+                                        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>로그인 / 회원가입 하기</Text>
                                     </View>
                                 </View>
 
-                                
-                                <View style={{width:'100%', height:150, justifyContent:'center', flexDirection:'row',}}>
-                                    <View style={{width:'50%', justifyContent:'center', alignItems:'flex-end' }}>
-                                        <Text style={{color:'white', fontSize:18, fontWeight:'bold'}}>Station QR</Text>
-                                        <Text style={{color:'white', fontSize:18, fontWeight:'bold'}}>촬영하기</Text>
+
+                                <View style={{ width: '100%', height: 150, justifyContent: 'center', flexDirection: 'row', }}>
+                                    <View style={{ width: '50%', justifyContent: 'center', alignItems: 'flex-end' }}>
+                                        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Station QR</Text>
+                                        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>촬영하기</Text>
                                     </View>
-                                    <View style={{width:'40%', justifyContent:'center',  }}>
+                                    <View style={{ width: '40%', justifyContent: 'center', }}>
                                         <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>Step 2</Text>
                                         <Image style={{ width: '100%', height: '70%', resizeMode: 'contain', borderRadius: 10 }} source={require('../../assets/step_2.gif')} />
                                     </View>
                                 </View>
 
-                                <View style={{width:'100%', height:150, justifyContent:'center', flexDirection:'row',}}>
-                                    <View style={{width:'40%',  }}>
+                                <View style={{ width: '100%', height: 150, justifyContent: 'center', flexDirection: 'row', }}>
+                                    <View style={{ width: '40%', }}>
                                         <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>Step 3</Text>
                                         <Image style={{ width: '100%', height: '70%', resizeMode: 'contain', borderRadius: 10 }} source={require('../../assets/step_3.gif')} />
                                     </View>
-                                    <View style={{width:'50%', justifyContent:'center',  }}>
-                                        <Text style={{color:'white', fontSize:18, fontWeight:'bold'}}>우산 대여 / 반납 / 기부</Text>
+                                    <View style={{ width: '50%', justifyContent: 'center', }}>
+                                        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>우산 대여 / 반납 / 기부</Text>
                                     </View>
                                 </View>
 
-                                <View style={{width: '100%', height: 550, justifyContent: 'center', alignItems: 'center',}}>
-                                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius:10 }} source={require('../../assets/2_modal.png')} />
+                                <View style={{ width: '100%', height: 550, justifyContent: 'center', alignItems: 'center', }}>
+                                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10 }} source={require('../../assets/2_modal.png')} />
                                 </View>
 
                             </ScrollView>
-                           
+
                             <View style={styles.modalbot}>
                                 <TouchableOpacity
                                     style={styles.modalbutton}
@@ -243,19 +254,19 @@ const Main = ({ navigation }) => {
                                 </View>
                             </View>
                             <View style={styles.userstate}>
-                                <View style={{ flexDirection: 'row', height: '100%', alignItems:'center'}}>
+                                <View style={{ flexDirection: 'row', height: '100%', alignItems: 'center' }}>
                                     {
                                         users ?
                                             <>
-                                                <View style={{ width: '50%', height:'70%', justifyContent:'center',}}>
-                                                    <View style={{ height:'40%', justifyContent:'flex-end', alignItems:'center'}}>
-                                                        <Text style={{ fontSize: 22, marginBottom:2}}>{users.u_name}님은</Text>
+                                                <View style={{ width: '50%', height: '70%', justifyContent: 'center', }}>
+                                                    <View style={{ height: '40%', justifyContent: 'flex-end', alignItems: 'center' }}>
+                                                        <Text style={{ fontSize: 22, marginBottom: 2 }}>{users.u_name}님은</Text>
                                                     </View>
-                                                    <View style={{ height:'50%', justifyContent:'center', width:'100%', alignItems:'center'}}>
+                                                    <View style={{ height: '50%', justifyContent: 'center', width: '100%', alignItems: 'center' }}>
                                                         {
                                                             users.u_rent ?
-                                                                <Text style={{ fontSize: 38, fontWeight: 'bold', color:'#FF7CBB'}}>대여 중</Text> :
-                                                                <Text style={{ fontSize: 38, fontWeight: 'bold', color:'#05C19C' }}>대여 가능</Text>
+                                                                <Text style={{ fontSize: 38, fontWeight: 'bold', color: '#FF7CBB' }}>대여 중</Text> :
+                                                                <Text style={{ fontSize: 38, fontWeight: 'bold', color: '#05C19C' }}>대여 가능</Text>
                                                         }
                                                     </View>
                                                 </View>
@@ -299,7 +310,7 @@ const Main = ({ navigation }) => {
                                     </View>
                                 </View>
                             </View>
-                            
+
                         </TouchableOpacity> :
                         <TouchableOpacity
                             style={styles.userinfo}
@@ -328,7 +339,7 @@ const Main = ({ navigation }) => {
                                             <View
                                                 style={{
                                                     flexDirection: 'row',
-                                                    width:'100%',
+                                                    width: '100%',
                                                     height: '100%',
                                                     justifyContent: 'center',
                                                     padding: 5,
@@ -341,7 +352,7 @@ const Main = ({ navigation }) => {
                                 </View>
                             </View>
                             <View style={styles.login}>
-                                <Text style={{fontSize:25, fontWeight:'bold', color:'#6699FF'}}> 로그인 / 회원가입 하기</Text>
+                                <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6699FF' }}> 로그인 / 회원가입 하기</Text>
                             </View>
                         </TouchableOpacity>
                 }
@@ -354,13 +365,13 @@ const Main = ({ navigation }) => {
             <View style={styles.mainfunctionView}>
                 <TouchableOpacity
                     style={styles.mapbutton}
-                    onPress={() => navigation.navigate('Map')}
+                    onPress={() => navigation.navigate('SearchStation')}
                 >
                     <View style={styles.shadow}>
                         <Image style={{ width: '100%', height: '70%', borderRadius: 15 }} source={require('../../assets/main_map.gif')}></Image>
-                        <View style={{width:'100%', height:'30%', justifyContent:'center', alignItems:'center'}}>
-                            <Text style={{fontSize:20, marginBottom:5 }}>우산 station</Text>
-                            <Text style={{fontSize:25, fontWeight:'bold'}}>찾아보기</Text>
+                        <View style={{ width: '100%', height: '30%', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 20, marginBottom: 5 }}>우산 station</Text>
+                            <Text style={{ fontSize: 25, fontWeight: 'bold' }}>찾아보기</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -370,7 +381,7 @@ const Main = ({ navigation }) => {
                     onPress={() => navigation.navigate('QRCodeScanner')}
                 >
                     <View style={styles.shadow}>
-                        <Image style={{ width: '100%', height: '70%', borderRadius: 15}} source={require('../../assets/main_qr_1.gif')}></Image>
+                        <Image style={{ width: '100%', height: '70%', borderRadius: 15 }} source={require('../../assets/main_qr_1.gif')}></Image>
                         <View style={{ width: '100%', height: '30%', justifyContent: 'center', alignItems: 'center' }}>
                             <Text style={{ fontSize: 20, marginBottom: 5 }}>QR 스캔하고</Text>
                             <Text style={{ fontSize: 25, fontWeight: 'bold' }}>대여하기</Text>
@@ -386,7 +397,7 @@ const Main = ({ navigation }) => {
                     style={styles.service}
                     onPress={() => navigation.navigate('CustMain')}
                 >
-                    <View style={{ width: '15%', height: '100%', alignItems: 'center', padding:10,}}>
+                    <View style={{ width: '15%', height: '100%', alignItems: 'center', padding: 10, }}>
                         <Image style={{ width: '80%', height: '100%' }} source={require('../../assets/service_icon.png')}></Image>
                     </View>
                     <View style={{ width: '80%', justifyContent: 'center', alignItems: 'center' }}>
@@ -536,7 +547,7 @@ const styles = StyleSheet.create({
         height: '65%',
         paddingTop: 5,
         alignItems: 'center',
-        paddingBottom:10,
+        paddingBottom: 10,
     },
     donation: {
         width: '100%',
@@ -551,20 +562,20 @@ const styles = StyleSheet.create({
         padding: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        
+
     },
     mapbutton: {
         width: '48%',
         height: '100%',
         marginRight: 7,
         borderRadius: 15,
-        justifyContent:'center',
-        alignItems:'center',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    shadow:{
-        width: '100%', 
-        height: '100%', 
-        justifyContent: 'center', 
+    shadow: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
         elevation: 20,
         shadowColor: "#000",
         shadowOffset: {
@@ -573,7 +584,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.3,
         shadowRadius: 3.84,
-        backgroundColor:'white',
+        backgroundColor: 'white',
         borderRadius: 10
     },
     scanner: {
@@ -598,12 +609,12 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         flexDirection: 'row'
     },
-    imagestyle:{
-        width: '55%',  
-        height:'70%',
-        borderRadius:100, 
-        borderWidth:3, 
-        borderColor:'#6699FF', 
-        marginBottom:10
+    imagestyle: {
+        width: '55%',
+        height: '70%',
+        borderRadius: 100,
+        borderWidth: 3,
+        borderColor: '#6699FF',
+        marginBottom: 10
     },
 });

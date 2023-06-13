@@ -25,17 +25,15 @@ import ReturnPage from "./Pages/MainFunction/ReturnPage";
 import ScanStation from './Pages/Service/ScanStation';
 import Loading from './Component/Loading';
 import ReposrtList from './Pages/Service/ReportList';
-
+import MapView from './Pages/Map/MapView';
 
 
 import 'expo-dev-client';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
-
 // import Text from './Component/DefaultText';
 const Stack = createStackNavigator();
-
 // expo install react-native-safe-area-context
 // npm install @react-navigation/native
 // expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
@@ -70,6 +68,9 @@ export default function App() {
             <Stack.Screen name="ReturnPage" component={ReturnPage} />
             <Stack.Screen name="ScanStation" component={ScanStation} />
             <Stack.Screen name="ReposrtList" component={ReposrtList} />
+
+
+            <Stack.Screen name='MapView' component={MapView}/>
           </Stack.Navigator>
         </NavigationContainer>
 
