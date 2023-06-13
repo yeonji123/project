@@ -26,6 +26,7 @@ import ScanStation from './Pages/Service/ScanStation';
 import Loading from './Component/Loading';
 import ReposrtList from './Pages/Service/ReportList';
 import MapView from './Pages/Map/MapView';
+import SearchStation from './Pages/Map/SearchStation';
 
 
 import 'expo-dev-client';
@@ -68,7 +69,7 @@ export default function App() {
             <Stack.Screen name="ReturnPage" component={ReturnPage} />
             <Stack.Screen name="ScanStation" component={ScanStation} />
             <Stack.Screen name="ReposrtList" component={ReposrtList} />
-
+            <Stack.Screen name="SearchStation" component={SearchStation} />
 
             <Stack.Screen name='MapView' component={MapView}/>
           </Stack.Navigator>
